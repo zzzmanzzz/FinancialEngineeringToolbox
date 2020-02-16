@@ -2,29 +2,30 @@ package org.concerto.FinancialEngineeringToolbox.Bond;
 
 public class Perpetual extends AbstractBond {
 
-    public Perpetual(double couponRate, double parValue) {
+    public Perpetual(double couponRate, double parValue, double marketPrice) {
         this.parValue = parValue;
         this.couponRate = couponRate;
-        this.period = Integer.MAX_VALUE;
+        this.N = Integer.MAX_VALUE;
+        this.marketPrice = marketPrice;
     }
 
     @Override
-    public double getPresentPrice(double marketRate) {
-        return couponRate * parValue / marketRate;
+    public double getInitialPrice(double marketRate) {
+        return (couponRate * parValue) / (marketRate);
     }
 
     @Override
-    public double getYTM(double markePrice) {
-        return couponRate * parValue / markePrice;
+    public double getYTM() {
+        return (couponRate * parValue) / (marketPrice);
     }
 
     @Override
-    public double getMacaulayDuration(double marketRate) {
-        return 1 + 1 / marketRate;
+    public double getMacaulayDuration(double requiredYield) {
+        return 1 + 1 / requiredYield;
     }
 
     @Override
-    public double getModifiedDuration(double marketRate, double marketPrice) {
-        return getMacaulayDuration(marketRate) / (1 + getYTM(marketPrice));
+    public double getModifiedDuration(double requiredYield) {
+        return getMacaulayDuration(requiredYield) / (1 + requiredYield);
     }
 }
