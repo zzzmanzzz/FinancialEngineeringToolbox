@@ -121,7 +121,7 @@ public class BlackScholes {
     }
 
     public double getGamma() {
-        return (exp(-y * t) / (sqrt(2 * PI) * S * sigma * sqrt(t)) ) * exp(-d_1 * d_1 / 2);
+        return (exp(-(y * t )) / (sqrt(t) * S * sigma )) * n.density(d_1);
     }
 
     public double getCallRho() {
