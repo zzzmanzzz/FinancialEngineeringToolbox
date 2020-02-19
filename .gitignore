@@ -7,6 +7,12 @@
 # BlueJ files
 *.ctxt
 
+# Maven generated files
+target/
+
+#Intellij
+.idea/
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 

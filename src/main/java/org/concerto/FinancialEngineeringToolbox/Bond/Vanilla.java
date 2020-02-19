@@ -1,8 +1,8 @@
 package org.concerto.FinancialEngineeringToolbox.Bond;
 
+import org.concerto.FinancialEngineeringToolbox.Constant;
+
 public class Vanilla extends AbstractBond {
-    final static double EPSILON = 1e-10;
-    final static int MAXTRY = 2000;
 
     public Vanilla(double parValue, double couponRate, int N, double marketPrice) {
         this.parValue = parValue;
@@ -14,9 +14,9 @@ public class Vanilla extends AbstractBond {
     @Override
     public double getYTM() {
         double prevYTM = 0.5;
-       for(int i = 0 ; i < MAXTRY ; i++ ) {
+       for(int i = 0 ; i < Constant.MAXTRY ; i++ ) {
             double temp = prevYTM - ((getInitialPrice(prevYTM) - marketPrice ) / derivative(prevYTM));
-            if(Math.abs(marketPrice - getInitialPrice(temp) ) < EPSILON) {
+            if(Math.abs(marketPrice - getInitialPrice(temp) ) < Constant.EPSILON) {
                 prevYTM = temp;
                 break;
             }
