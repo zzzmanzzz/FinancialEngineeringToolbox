@@ -43,7 +43,7 @@ public abstract class AbstractBond {
     }
 
     abstract public double getYTM();
-    abstract public double getInitialPrice(double requiredYield);
+    abstract public double getFairPrice(double requiredYield);
     abstract public double getMacaulayDuration(double requiredYield);
     abstract public double getModifiedDuration(double requiredYield);
 

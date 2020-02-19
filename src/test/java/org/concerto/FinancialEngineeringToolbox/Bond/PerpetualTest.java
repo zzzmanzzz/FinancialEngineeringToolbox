@@ -10,7 +10,7 @@ class PerpetualTest {
     @Test
     void getInitialPrice() {
         Perpetual p = new Perpetual(0.05 , 100, 95);
-        double initPrice = p.getInitialPrice(0.05);
+        double initPrice = p.getFairPrice(0.05);
         assertEquals(100, initPrice, ConstantForTest.EPSLION);
     }
 

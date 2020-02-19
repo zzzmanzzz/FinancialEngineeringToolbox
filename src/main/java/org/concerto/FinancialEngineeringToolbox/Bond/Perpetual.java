@@ -10,7 +10,7 @@ public class Perpetual extends AbstractBond {
     }
 
     @Override
-    public double getInitialPrice(double marketRate) {
+    public double getFairPrice(double marketRate) {
         return (couponRate * parValue) / (marketRate);
     }
 

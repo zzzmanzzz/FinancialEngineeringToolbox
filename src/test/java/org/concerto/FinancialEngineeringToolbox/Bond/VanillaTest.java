@@ -16,7 +16,7 @@ class VanillaTest {
     @Test
     void getInitialPrice() {
         Vanilla v = new Vanilla(1000, 0.08, 5, 0);
-        assertEquals(924.1842646118307, v.getInitialPrice(0.1), ConstantForTest.EPSLION);
+        assertEquals(924.1842646118307, v.getFairPrice(0.1), ConstantForTest.EPSLION);
     }
 
     @Test

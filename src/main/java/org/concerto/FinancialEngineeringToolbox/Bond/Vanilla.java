@@ -15,8 +15,8 @@ public class Vanilla extends AbstractBond {
     public double getYTM() {
         double prevYTM = 0.5;
        for(int i = 0 ; i < Constant.MAXTRY ; i++ ) {
-            double temp = prevYTM - ((getInitialPrice(prevYTM) - marketPrice ) / derivative(prevYTM));
-            if(Math.abs(marketPrice - getInitialPrice(temp) ) < Constant.EPSILON) {
+            double temp = prevYTM - ((getFairPrice(prevYTM) - marketPrice ) / derivative(prevYTM));
+            if(Math.abs(marketPrice - getFairPrice(temp) ) < Constant.EPSILON) {
                 prevYTM = temp;
                 break;
             }
@@ -26,7 +26,7 @@ public class Vanilla extends AbstractBond {
     }
 
     @Override
-    public double getInitialPrice(double requiredYield) {
+    public double getFairPrice(double requiredYield) {
         double ret = 0;
         for(int i = 0 ; i <= N; i ++ ) {
             if (i == 0) {
@@ -41,7 +41,7 @@ public class Vanilla extends AbstractBond {
     @Override
     public double getMacaulayDuration(double requiredYield) {
         double W = 0;
-        double P = getInitialPrice(requiredYield);
+        double P = getFairPrice(requiredYield);
         for(int i = 0 ; i <= N; i++ ) {
             if (i == 0) {
                 W += N * parValue * Math.pow((1 + requiredYield), -N);

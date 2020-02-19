@@ -17,7 +17,7 @@ public class ZeroCoupon extends AbstractBond {
     }
 
     @Override
-    public double getInitialPrice(double marketRate) {
+    public double getFairPrice(double marketRate) {
         return parValue * pow( 1 + marketRate, -N);
     }
 
