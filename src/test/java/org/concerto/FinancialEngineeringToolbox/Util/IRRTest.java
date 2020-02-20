@@ -22,6 +22,5 @@ class IRRTest {
         double[] inflow = {0, 25, 50, 75, 100};
         double[] outflow = {100, 0, 0, 0};
         assertThrows(DimensionMismatchException.class, ()->IRR.getIRR(inflow, outflow));
-
     }
 }
