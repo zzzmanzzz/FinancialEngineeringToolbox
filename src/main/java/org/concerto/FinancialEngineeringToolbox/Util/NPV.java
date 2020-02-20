@@ -12,7 +12,7 @@ public class NPV {
     @Param  int from            Net cash flow is discounted to this index
     @Param  int to              Last net cash flow index to discount
      */
-    static double getPresentValue(double[] inflow, double[] outflow, double[] rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
+    static public double getPresentValue(double[] inflow, double[] outflow, double[] rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         if(inflow.length != outflow.length  ||  rate.length != inflow.length) {
             String msg = String.format("Inflow[%d], outflow[%d], rate[%d]", inflow.length, outflow.length, rate.length);
             throw new DimensionMismatchException(msg, null);
@@ -38,7 +38,7 @@ public class NPV {
      @Param  int from            Net cash flow is discounted to this index
      @Param  int to              Last net cash flow index to discount
      */
-    static double getPresentValue(double[] inflow, double initialOutflow, double[] rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
+    static public double getPresentValue(double[] inflow, double initialOutflow, double[] rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         double[] _outflow = new double[inflow.length];
         _outflow[0] = initialOutflow;
 
@@ -53,7 +53,7 @@ public class NPV {
      @Param  int from            Net cash flow is discounted to this index
      @Param  int to              Last net cash flow index to discount
      */
-    static double getPresentValue(double[] inflow, double initialOutflow, double rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
+    static public double getPresentValue(double[] inflow, double initialOutflow, double rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         double[] _outflow = new double[inflow.length];
         _outflow[0] = initialOutflow;
 
@@ -72,7 +72,7 @@ public class NPV {
      @Param  int from            Net cash flow is discounted to this index
      @Param  int to              Last net cash flow index to discount
      */
-    static double getPresentValue(double[] inflow, double[] outflow, double rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
+    static public double getPresentValue(double[] inflow, double[] outflow, double rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         double[] _rate = new double[inflow.length];
         for(int i = 0 ; i <= inflow.length - 1 ; i++) {
             _rate[i] = rate;

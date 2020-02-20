@@ -3,6 +3,8 @@ package org.concerto.FinancialEngineeringToolbox.Bond;
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class VanillaTest {
@@ -29,5 +31,15 @@ class VanillaTest {
     void getModifiedDuration() {
         Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
         assertEquals(2.43631, v.getModifiedDuration(0.12), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getCashFlow() {
+        Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
+        double[] expectInflow = {0, 100, 100, 1100};
+        double[] expectOutflow = {1000, 0, 0, 0};
+        Map<String, double[]> cashFlow = v.getCashFlow();
+        assertArrayEquals(expectInflow, cashFlow.get("inflow"));
+        assertArrayEquals(expectOutflow, cashFlow.get("outflow"));
     }
 }

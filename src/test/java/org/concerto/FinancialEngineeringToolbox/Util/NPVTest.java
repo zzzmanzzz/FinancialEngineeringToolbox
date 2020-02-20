@@ -10,13 +10,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class NPVTest {
 
     @Test
-    void getPresentValueOK() throws DimensionMismatchException, IndexOutOfRangeException {
+    void getPresentValueOK1() throws DimensionMismatchException, IndexOutOfRangeException {
         double[] inflow = {0, 25, 50, 75};
         double[] outflow = {100, 0, 0, 0};
         double[] rate = {0.09, 0.09, 0.09, 0.09};
         int from = 0;
         int to = 3;
         assertEquals(22.93354, NPV.getPresentValue(inflow, outflow, rate, 0, 3), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getPresentValueOK2() throws DimensionMismatchException, IndexOutOfRangeException {
+        double[] inflow = {0, 100, 100, 1100};
+        int from = 0;
+        int to = 3;
+        assertEquals(951.96337, NPV.getPresentValue(inflow, 0, 0.12, 0, 3), ConstantForTest.EPSLION);
     }
 
     @Test

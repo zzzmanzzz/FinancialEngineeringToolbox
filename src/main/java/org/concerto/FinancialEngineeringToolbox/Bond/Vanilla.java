@@ -1,6 +1,12 @@
 package org.concerto.FinancialEngineeringToolbox.Bond;
 
-import org.concerto.FinancialEngineeringToolbox.Constant;
+import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
+import org.concerto.FinancialEngineeringToolbox.Exception.IndexOutOfRangeException;
+import org.concerto.FinancialEngineeringToolbox.Util.IRR;
+import org.concerto.FinancialEngineeringToolbox.Util.NPV;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Vanilla extends AbstractBond {
 
@@ -13,29 +19,27 @@ public class Vanilla extends AbstractBond {
 
     @Override
     public double getYTM() {
-        double prevYTM = 0.5;
-       for(int i = 0 ; i < Constant.MAXTRY ; i++ ) {
-            double temp = prevYTM - ((getFairPrice(prevYTM) - marketPrice ) / derivative(prevYTM));
-            if(Math.abs(marketPrice - getFairPrice(temp) ) < Constant.EPSILON) {
-                prevYTM = temp;
-                break;
-            }
-            prevYTM = temp;
+        Map<String, double[]> cashFlow = getCashFlow();
+        try {
+            return IRR.getIRR(cashFlow.get("inflow"), cashFlow.get("outflow"));
+        } catch (DimensionMismatchException e) {
+            //this should be internal error
+            throw new RuntimeException(e.getMessage());
         }
-        return prevYTM;
     }
 
     @Override
     public double getFairPrice(double requiredYield) {
-        double ret = 0;
-        for(int i = 0 ; i <= N; i ++ ) {
-            if (i == 0) {
-                ret += parValue * Math.pow((1 + requiredYield), -N);
-            } else {
-                ret += parValue * couponRate * Math.pow((1 + requiredYield), -i);
-            }
+        Map<String, double[]> cashflow = getCashFlow();
+        try {
+            return NPV.getPresentValue(cashflow.get("inflow"), 0.0, requiredYield, 0, N);
+        } catch (DimensionMismatchException e) {
+            //this should be internal error
+            throw new RuntimeException(e.getMessage());
+        } catch (IndexOutOfRangeException e) {
+            //this should be internal error
+            throw new RuntimeException(e.getMessage());
         }
-        return ret;
     }
 
     @Override
@@ -57,15 +61,31 @@ public class Vanilla extends AbstractBond {
         return getMacaulayDuration(requiredYield) / (1 + requiredYield);
     }
 
-    private double derivative(double requiredYield) {
-        double ret = 0;
-        for(int i = 0 ; i <= N; i++ ) {
-            if (i == 0) {
-                ret += -N * parValue * Math.pow((1 + requiredYield), -(N + 1));
-            } else {
-                ret += -i * parValue * couponRate * Math.pow((1 + requiredYield), -(i + 1));
+    public Map<String, double[]> getCashFlow() {
+
+        double[] inflow = new double[N+1];
+        double[] outflow = new double[N+1];
+
+        for(int i = 0 ; i < inflow.length ; i++) {
+            if(i == 0) {
+                inflow[i] = 0;
+                outflow[i] = marketPrice;
+                continue;
+            }
+
+            if(i > 0 && i < N) {
+                inflow[i] = couponRate * parValue;
+                outflow[i] = 0;
+            }
+
+            if(i == N) {
+                inflow[i] = (1 + couponRate )* parValue;
+                outflow[i] = 0;
             }
         }
+        Map<String, double[]> ret = new HashMap<>();
+        ret.put("inflow", inflow);
+        ret.put("outflow", outflow);
         return ret;
     }
 }
