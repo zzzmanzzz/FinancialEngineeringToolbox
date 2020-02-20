@@ -1,9 +1,15 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation;
 
+import org.concerto.FinancialEngineeringToolbox.Constant;
+
 public class GBM {
 
     public static double[] staticPriceSimulation(double S0, double sigma, double T, double riskFreeRate , int simulationNumber) {
-        NormalizedGaussian NG = new NormalizedGaussian(simulationNumber);
+        return staticPriceSimulation(S0, sigma, T, riskFreeRate, simulationNumber, Constant.RANDOMSEED);
+    }
+
+    public static double[] staticPriceSimulation(double S0, double sigma, double T, double riskFreeRate , int simulationNumber, int randomSeed) {
+        NormalizedGaussian NG = new NormalizedGaussian(simulationNumber, randomSeed);
         double[] ret = new double[simulationNumber];
         double[] r = NG.nextRandomVector();
 

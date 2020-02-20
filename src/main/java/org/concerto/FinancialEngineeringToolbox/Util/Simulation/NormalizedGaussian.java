@@ -5,13 +5,22 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.NormalizedRandomGenerator;
 import org.apache.commons.math3.random.UncorrelatedRandomVectorGenerator;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.concerto.FinancialEngineeringToolbox.Constant;
 
 public class NormalizedGaussian {
     private UncorrelatedRandomVectorGenerator random;
 
-    public NormalizedGaussian(int dimension) {
-        NormalizedRandomGenerator nr = new GaussianRandomGenerator(new JDKRandomGenerator()) ;
+    private void init(int dimension, int randomSeed) {
+        NormalizedRandomGenerator nr = new GaussianRandomGenerator(new JDKRandomGenerator(randomSeed)) ;
         random = new UncorrelatedRandomVectorGenerator(dimension, nr);
+    }
+
+    public NormalizedGaussian(int dimension) {
+        init(dimension, Constant.RANDOMSEED);
+    }
+
+    public NormalizedGaussian(int dimension, int randomSeed) {
+        init(dimension, randomSeed);
     }
 
     public double[] nextRandomVector() {
