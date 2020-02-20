@@ -8,7 +8,7 @@ public class GBM {
         double[] r = NG.nextRandomVector();
 
         for(int i = 0 ; i < simulationNumber; i++ ) {
-            ret[i] = S0 * Math.exp((riskFreeRate - 0.5 * sigma * sigma) * T) + sigma * Math.sqrt(T) * r[i];
+            ret[i] = S0 * Math.exp((riskFreeRate - 0.5 * sigma * sigma) * T + sigma * Math.sqrt(T) * r[i]) ;
         }
         return ret;
     }

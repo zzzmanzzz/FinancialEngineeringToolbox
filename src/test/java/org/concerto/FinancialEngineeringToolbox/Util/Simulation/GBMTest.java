@@ -22,6 +22,8 @@ class GBMTest {
             ds.addValue(i);
         }
 
-        assertEquals(103.82119, ds.getMean(), ConstantForTest.EPSLION);
+        assertEquals(110.5327, ds.getMean(), 0.5);
+        assertEquals(40.51795, ds.getStandardDeviation(), 0.5);
+        assertEquals(1.167, ds.getSkewness(), 0.5);
     }
 }
