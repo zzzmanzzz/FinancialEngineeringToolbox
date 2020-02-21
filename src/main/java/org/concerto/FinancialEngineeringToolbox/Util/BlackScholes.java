@@ -1,5 +1,6 @@
 package org.concerto.FinancialEngineeringToolbox.Util;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.concerto.FinancialEngineeringToolbox.Constant;
 
 import static java.lang.Math.*;
 
@@ -22,7 +23,7 @@ public class BlackScholes {
         this.r = r;
         this.t = t;
         this.y = y;
-        this.tradingDays = 252;
+        this.tradingDays = Constant.TRADINGDAYS;
         this.n = new NormalDistribution(0.0, 1.0);
         this.d_1 = d_1();
         this.d_2 = d_2();
@@ -121,7 +122,7 @@ public class BlackScholes {
     }
 
     public double getGamma() {
-        return (exp(-(y * t )) / (sqrt(t) * S * sigma )) * n.density(d_1);
+        return (exp(-(y * t )) * n.density(d_1)) / (sqrt(t) * S * sigma );
     }
 
     public double getCallRho() {
@@ -136,18 +137,14 @@ public class BlackScholes {
         return (S * exp(-y * t) * sqrt(t) / sqrt(2 * PI)) * exp(-d_1 * d_1 / 2);
     }
 
-    private double getThetaCommonPart() {
-        return -(S * sigma * exp(-y * t) * exp(-d_1 * d_1 /2) / sqrt(8 * PI * t));
-    }
-
     public double getCallTheta() {
-        double A = getThetaCommonPart();
-        return (-A - r * K * exp(-r * t) * n.cumulativeProbability(d_2) + y * S * exp(-y * t) * n.cumulativeProbability(d_1)) / tradingDays;
+        double A = (-exp(-y * t) * n.density(d_1) * S * sigma ) / (2 * sqrt(t));
+        return (A - r * K * exp(-r * t) * n.cumulativeProbability(d_2) + y * S * exp(-y * t) * n.cumulativeProbability(d_1)) / tradingDays;
     }
 
     public double getPutTheta() {
-        double A = getThetaCommonPart();
-        return (-A + r * K * exp(-r * t) * n.cumulativeProbability(-d_2) - y * S * exp(-y * t) * n.cumulativeProbability(-d_1)) / tradingDays;
+        double A = (-exp(-y * t) * n.density(-d_1) * S * sigma ) / (2 * sqrt(t));
+        return (A + r * K * exp(-r * t)* n.cumulativeProbability(-d_2) - y * S * exp(-y * t) * n.cumulativeProbability(-d_1)) / tradingDays;
     }
 
 }
