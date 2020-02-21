@@ -5,12 +5,14 @@ import org.concerto.FinancialEngineeringToolbox.Exception.IndexOutOfRangeExcepti
 
 public class NPV {
     /**
-    All dimension of arrays should be the same
-    @Param  double[] inflow     Cash inflow
-    @Param  double[] outflow    Cash outflow
-    @Param  double[] rate       Required rate
-    @Param  int from            Net cash flow is discounted to this index
-    @Param  int to              Last net cash flow index to discount
+     All dimension of arrays should be the same
+     @Param  double[] inflow     Cash inflow
+     @Param  double[] outflow    Cash outflow
+     @Param  double[] rate       Required rate
+     @Param  int from            Net cash flow is discounted to this index
+     @Param  int to              Last net cash flow index to discount
+
+     @return double Present price at time "from"
      */
     static public double getPresentValue(double[] inflow, double[] outflow, double[] rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         if(inflow.length != outflow.length  ||  rate.length != inflow.length) {
@@ -37,6 +39,8 @@ public class NPV {
      @Param  double[] rate       Required rate
      @Param  int from            Net cash flow is discounted to this index
      @Param  int to              Last net cash flow index to discount
+
+     @return double Present price at time "from"
      */
     static public double getPresentValue(double[] inflow, double initialOutflow, double[] rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         double[] _outflow = new double[inflow.length];
@@ -52,6 +56,8 @@ public class NPV {
      @Param  double   rate       Fix required rate
      @Param  int from            Net cash flow is discounted to this index
      @Param  int to              Last net cash flow index to discount
+
+     @return double Present price at time "from"
      */
     static public double getPresentValue(double[] inflow, double initialOutflow, double rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         double[] _outflow = new double[inflow.length];
@@ -71,6 +77,8 @@ public class NPV {
      @Param  double   rate       Fix required rate
      @Param  int from            Net cash flow is discounted to this index
      @Param  int to              Last net cash flow index to discount
+
+     @return double Present price at time "from"
      */
     static public double getPresentValue(double[] inflow, double[] outflow, double rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
         double[] _rate = new double[inflow.length];
