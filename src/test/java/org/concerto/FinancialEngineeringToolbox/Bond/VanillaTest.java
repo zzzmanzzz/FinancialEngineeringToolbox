@@ -40,6 +40,12 @@ class VanillaTest {
     }
 
     @Test
+    void getEffectiveConvexity() {
+        Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
+        assertEquals(8.41807, v.getEffectiveConvexity(0.12), ConstantForTest.EPSLION);
+    }
+
+    @Test
     void getCashFlow() {
         Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
         double[] expectInflow = {0, 100, 100, 1100};

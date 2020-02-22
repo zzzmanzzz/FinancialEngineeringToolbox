@@ -28,4 +28,5 @@ public class Perpetual extends AbstractBond {
     public double getModifiedDuration(double requiredYield) {
         return getMacaulayDuration(requiredYield) / (1 + requiredYield);
     }
+
 }
