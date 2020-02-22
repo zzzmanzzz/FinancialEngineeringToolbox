@@ -55,7 +55,7 @@ class GBMTest {
         }
 
         assertEquals(105.04348, ds.getMean(), 0.5);
-        assertEquals(26.35430, ds.getStandardDeviation(), 0.5);
+        assertEquals(27.1867, ds.getStandardDeviation(), 0.5);
         assertEquals(1.167, ds.getSkewness(), 0.5);
 
     }
