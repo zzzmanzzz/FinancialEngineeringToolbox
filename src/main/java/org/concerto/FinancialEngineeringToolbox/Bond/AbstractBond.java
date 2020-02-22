@@ -46,6 +46,13 @@ public abstract class AbstractBond {
     abstract public double getFairPrice(double requiredYield);
     abstract public double getMacaulayDuration(double requiredYield);
     abstract public double getModifiedDuration(double requiredYield);
+    public double getEffectiveDuration(double requiredYield) {
+        double delta =  0.00005;
+        double price = getFairPrice(requiredYield);
+        double pricePlus = getFairPrice(requiredYield + delta);
+        double priceMinus = getFairPrice( requiredYield - delta);
+        return (priceMinus - pricePlus) / (2 * price * delta);
+    }
 
 
 }

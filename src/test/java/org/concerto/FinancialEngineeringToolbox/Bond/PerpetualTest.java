@@ -34,4 +34,11 @@ class PerpetualTest {
         double MDD = p.getModifiedDuration(p.getYTM());
         assertEquals(19, MDD, ConstantForTest.EPSLION);
     }
+
+    @Test
+    void getEffectiveDuration() {
+        Perpetual p = new Perpetual(0.05 , 100, 95);
+        double ED = p.getEffectiveDuration(p.getYTM());
+        assertEquals(19.00001, ED, ConstantForTest.EPSLION);
+    }
 }

@@ -32,6 +32,12 @@ class VanillaTest {
         Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
         assertEquals(2.43631, v.getModifiedDuration(0.12), ConstantForTest.EPSLION);
     }
+    
+    @Test
+    void getEffectiveDuration() {
+        Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
+        assertEquals(2.43631, v.getEffectiveDuration(0.12), ConstantForTest.EPSLION);
+    }
 
     @Test
     void getCashFlow() {
