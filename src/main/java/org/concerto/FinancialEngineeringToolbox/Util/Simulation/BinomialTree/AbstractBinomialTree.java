@@ -99,7 +99,7 @@ public abstract class AbstractBinomialTree {
         return D;
     }
 
-    public double getFairPrice(String optionType, int[] strikeSchedule) {
+    public double getFairPrice(String optionType, boolean[] strikeSchedule) {
 
         double[] St = new double[N+1];
         double[] C = new double[N+1];
