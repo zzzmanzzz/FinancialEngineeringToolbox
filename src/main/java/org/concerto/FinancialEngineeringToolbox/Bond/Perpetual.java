@@ -29,4 +29,9 @@ public class Perpetual extends AbstractBond {
         return getMacaulayDuration(requiredYield) / (1 + requiredYield);
     }
 
+    @Override
+    public double getConvexity(double requiredYield) {
+        return getModifiedDuration(requiredYield);
+    }
+
 }

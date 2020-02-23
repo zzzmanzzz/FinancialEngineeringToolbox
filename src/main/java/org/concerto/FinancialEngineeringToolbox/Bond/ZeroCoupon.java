@@ -30,4 +30,9 @@ public class ZeroCoupon extends AbstractBond {
     public double getModifiedDuration(double marketRate) {
         return N / (1 + marketRate);
     }
+
+    @Override
+    public double getConvexity(double requiredYield) {
+        return 0;
+    }
 }

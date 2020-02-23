@@ -38,14 +38,14 @@ class PerpetualTest {
     @Test
     void getEffectiveDuration() {
         Perpetual p = new Perpetual(0.05 , 100, 95);
-        double ED = p.getEffectiveDuration(p.getYTM());
-        assertEquals(19.00001, ED, ConstantForTest.EPSLION);
+        double ED = p.getEffectiveDuration(p.getYTM(), 0.0001);
+        assertEquals(19.00006, ED, ConstantForTest.EPSLION);
     }
 
     @Test
     void getEffectiveConvexity() {
         Perpetual p = new Perpetual(0.05 , 100, 95);
-        double EC = p.getEffectiveConvexity(p.getYTM());
-        assertEquals(722.00065, EC, ConstantForTest.EPSLION);
+        double EC = p.getEffectiveConvexity(p.getYTM(), 0.01);
+        assertEquals(374.52017, EC, ConstantForTest.EPSLION);
     }
 }

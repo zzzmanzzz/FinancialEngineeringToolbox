@@ -61,6 +61,21 @@ public class Vanilla extends AbstractBond {
         return getMacaulayDuration(requiredYield) / (1 + requiredYield);
     }
 
+    @Override
+    public double getConvexity(double requiredYield) {
+        double P = getFairPrice(requiredYield);
+        double W = 0;
+
+        for(int i = 0 ; i <= N; i++ ) {
+            if (i == 0) {
+                W += (N * (N + 1) * parValue) / Math.pow((1 + requiredYield), N);
+            } else {
+                W += (parValue * couponRate * (i + 1) * i) / Math.pow((1 + requiredYield), i);
+            }
+        }
+        return W / (P * (1 + requiredYield) * (1 + requiredYield));
+    }
+
     public Map<String, double[]> getCashFlow() {
 
         double[] inflow = new double[N+1];

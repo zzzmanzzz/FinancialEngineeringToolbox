@@ -46,20 +46,19 @@ public abstract class AbstractBond {
     abstract public double getFairPrice(double requiredYield);
     abstract public double getMacaulayDuration(double requiredYield);
     abstract public double getModifiedDuration(double requiredYield);
+    abstract public double getConvexity(double requiredYield);
 
-    public double getEffectiveDuration(double requiredYield) {
-        double delta =  0.00005;
+    public double getEffectiveDuration(double requiredYield, double deltaYield) {
         double price = getFairPrice(requiredYield);
-        double pricePlus = getFairPrice(requiredYield + delta);
-        double priceMinus = getFairPrice( requiredYield - delta);
-        return (priceMinus - pricePlus) / (2 * price * delta);
+        double pricePlus = getFairPrice(requiredYield + deltaYield);
+        double priceMinus = getFairPrice( requiredYield - deltaYield);
+        return (priceMinus - pricePlus) / (2 * price * deltaYield);
     }
 
-    public double getEffectiveConvexity(double requiredYield) {
-        double delta =  0.00005;
+    public double getEffectiveConvexity(double requiredYield, double deltaYield) {
         double price = getFairPrice(requiredYield);
-        double pricePlus = getFairPrice(requiredYield + delta);
-        double priceMinus = getFairPrice( requiredYield - delta);
-        return (priceMinus + pricePlus - 2 * price) / ( price * delta * delta);
+        double pricePlus = getFairPrice(requiredYield + deltaYield);
+        double priceMinus = getFairPrice( requiredYield - deltaYield);
+        return (priceMinus + pricePlus - 2 * price) / (2 * price * deltaYield * deltaYield);
     }
 }

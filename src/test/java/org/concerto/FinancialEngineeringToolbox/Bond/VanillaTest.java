@@ -36,13 +36,19 @@ class VanillaTest {
     @Test
     void getEffectiveDuration() {
         Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
-        assertEquals(2.43631, v.getEffectiveDuration(0.12), ConstantForTest.EPSLION);
+        assertEquals(2.43693, v.getEffectiveDuration(0.12, 0.01), ConstantForTest.EPSLION);
     }
 
     @Test
     void getEffectiveConvexity() {
-        Vanilla v = new Vanilla(1000, 0.1, 3, 1000);
-        assertEquals(8.41807, v.getEffectiveConvexity(0.12), ConstantForTest.EPSLION);
+        Vanilla v = new Vanilla(1000, 0.06, 4, 1000);
+        assertEquals(8.10448, v.getEffectiveConvexity(0.05, 0.0001), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getConvexity() {
+        Vanilla v = new Vanilla(1000, 0.04, 12, 1000);
+        assertEquals(105.04958, v.getConvexity(0.05), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -54,4 +60,6 @@ class VanillaTest {
         assertArrayEquals(expectInflow, cashFlow.get("inflow"));
         assertArrayEquals(expectOutflow, cashFlow.get("outflow"));
     }
+
+
 }
