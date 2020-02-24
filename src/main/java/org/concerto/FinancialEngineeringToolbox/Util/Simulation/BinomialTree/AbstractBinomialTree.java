@@ -1,5 +1,9 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.logging.Logger;
+
 public abstract class AbstractBinomialTree {
     protected double S0;
     protected double K;
@@ -13,6 +17,7 @@ public abstract class AbstractBinomialTree {
     protected double discount;
     protected double U;
     protected double D;
+    private static Logger log = Logger.getLogger(AbstractBinomialTree.class.getName());
 
 
     public AbstractBinomialTree(double S0, double K, double sigma, double riskFreeRate, int N, double deltaT) {
@@ -100,9 +105,9 @@ public abstract class AbstractBinomialTree {
     }
 
     public double getFairPrice(String optionType, boolean[] strikeSchedule) {
-
         double[] St = new double[N+1];
-        double[] C = new double[N+1];
+        double[] prevC = new double[N+1];
+        double[] currentC = null;
 
         St[0] = S0 * Math.pow(D, N);
 
@@ -112,19 +117,39 @@ public abstract class AbstractBinomialTree {
 
         for ( int i = 1 ; i < N + 1; i++ ) {
             if(optionType.equals("put")){
-                C[i] = Math.max(K - St[i], 0);
+                prevC[i] = Math.max(K - St[i], 0);
             } else if(optionType.equals("call")) {
-                C[i] = Math.max(St[i] - K, 0);
+                prevC[i] = Math.max(St[i] - K, 0);
             }
         }
 
         for (int i = N ; i > 0 ; i--) {
-            for (int j = 0; j < i; j++) {
-                C[j] = discount * (probabilityUp * C[j + 1] + probabilityDown * C[j]);
+            St[0] = S0 * Math.pow(D, i);
+            currentC = new double[i];
+
+            for (int j = 1 ; j < i  ; j++) {
+                St[j] = St[j - 1] * U / D;
             }
+
+            for (int j = 0; j < i; j++) {
+                double tempPrice = discount * (probabilityUp * prevC[j + 1] + probabilityDown * prevC[j]);
+                double executeReword = 0;
+
+                if(strikeSchedule[i - 1] == false) {
+                    currentC[j] = tempPrice;
+                } else {
+                    if(optionType.equals("put")){
+                        executeReword = Math.max(K - St[i], 0);
+                    } else if(optionType.equals("call")) {
+                        executeReword = Math.max(St[i] - K, 0);
+                    }
+                    currentC[j] = Math.max(executeReword, tempPrice);
+                }
+            }
+            prevC = currentC;
         }
 
-        return C[0];
+        return currentC[0];
     }
 
 }
