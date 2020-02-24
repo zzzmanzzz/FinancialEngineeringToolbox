@@ -26,9 +26,11 @@ public class NormalizedGaussian {
         for (double i : ret) {
            stats.addValue(i);
         }
+        double mean = stats.getMean();
+        double stdDev = stats.getStandardDeviation();
 
         for(int i = 0 ; i < ret.length; i++ ) {
-            ret[i] = (ret[i] - stats.getMean()) / stats.getStandardDeviation();
+            ret[i] = (ret[i] - mean) / stdDev;
         }
         return ret;
     }
