@@ -1,6 +1,7 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
 
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
+import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +10,7 @@ class BinomialTreeTest {
 
 
     @Test
-    void getCRREuropeanCallFairPrice() {
+    void getCRREuropeanCallFairPrice() throws UndefinedParameterValueException {
         int N = 1000;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute , false);
@@ -19,7 +20,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRREuropeanPutFairPrice() {
+    void getCRREuropeanPutFairPrice() throws UndefinedParameterValueException {
         int N = 1000;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute , false);
@@ -29,7 +30,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getJREuropeanCallFairPrice() {
+    void getJREuropeanCallFairPrice() throws UndefinedParameterValueException {
         int N = 1000;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute , false);
@@ -39,7 +40,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getJREuropeanPutFairPrice() {
+    void getJREuropeanPutFairPrice() throws UndefinedParameterValueException {
         int N = 1000;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute , false);
@@ -49,7 +50,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanCRRCallFairPrice() {
+    void getCRRAmericanCRRCallFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
@@ -58,7 +59,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanCRRPutFairPrice() {
+    void getCRRAmericanCRRPutFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
@@ -67,7 +68,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanJRECallFairPrice() {
+    void getCRRAmericanJRECallFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
@@ -76,7 +77,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanJREPutFairPrice() {
+    void getCRRAmericanJREPutFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);

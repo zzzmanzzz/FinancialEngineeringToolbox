@@ -1,8 +1,7 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
 
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.logging.Logger;
+import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
+import org.concerto.FinancialEngineeringToolbox.Util.ExecutionReward;
 
 public abstract class AbstractBinomialTree {
     protected double S0;
@@ -17,8 +16,6 @@ public abstract class AbstractBinomialTree {
     protected double discount;
     protected double U;
     protected double D;
-    private static Logger log = Logger.getLogger(AbstractBinomialTree.class.getName());
-
 
     public AbstractBinomialTree(double S0, double K, double sigma, double riskFreeRate, int N, double deltaT) {
         this.S0 = S0;
@@ -104,7 +101,7 @@ public abstract class AbstractBinomialTree {
         return D;
     }
 
-    public double getFairPrice(String optionType, boolean[] strikeSchedule) {
+    public double getFairPrice(String optionType, boolean[] strikeSchedule) throws UndefinedParameterValueException {
         double[] St = new double[N+1];
         double[] prevC = new double[N+1];
         double[] currentC = null;
@@ -116,11 +113,7 @@ public abstract class AbstractBinomialTree {
         }
 
         for ( int i = 1 ; i < N + 1; i++ ) {
-            if(optionType.equals("put")){
-                prevC[i] = Math.max(K - St[i], 0);
-            } else if(optionType.equals("call")) {
-                prevC[i] = Math.max(St[i] - K, 0);
-            }
+            prevC[i]= ExecutionReward.execute(St[i], K, optionType);
         }
 
         for (int i = N ; i > 0 ; i--) {
@@ -138,11 +131,7 @@ public abstract class AbstractBinomialTree {
                 if(strikeSchedule[i - 1] == false) {
                     currentC[j] = tempPrice;
                 } else {
-                    if(optionType.equals("put")){
-                        executeReword = Math.max(K - St[i], 0);
-                    } else if(optionType.equals("call")) {
-                        executeReword = Math.max(St[i] - K, 0);
-                    }
+                    executeReword = ExecutionReward.execute(St[i], K, optionType);
                     currentC[j] = Math.max(executeReword, tempPrice);
                 }
             }

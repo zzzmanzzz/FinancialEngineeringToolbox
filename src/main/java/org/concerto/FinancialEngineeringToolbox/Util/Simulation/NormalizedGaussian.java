@@ -1,21 +1,18 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation;
 
 import org.apache.commons.math3.random.*;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 
 public class NormalizedGaussian {
     private UncorrelatedRandomVectorGenerator random;
-    private Mean m;
-    private StandardDeviation std;
+    static final private Mean m = new Mean();
+    static final private StandardDeviation std = new StandardDeviation();
 
     private void init(int dimension, int randomSeed) {
         NormalizedRandomGenerator nr = new GaussianRandomGenerator(new MersenneTwister(randomSeed));
         random = new UncorrelatedRandomVectorGenerator(dimension, nr);
-        m = new Mean();
-        std = new StandardDeviation();
     }
 
     public NormalizedGaussian(int dimension) {
