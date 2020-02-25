@@ -10,13 +10,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class GBMTest {
 
     @Test
-    void staticPriceSimulation() throws ParameterRangeErrorException {
+    void staticSimulate() throws ParameterRangeErrorException {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
         double T = 2.0;
         int times = 10000;
-        double[] priceT = GBM.staticPriceSimulation(S0, sigma, T, riskFreeRate, times);
+        double[] priceT = GBM.staticSimulate(S0, sigma, T, riskFreeRate, times);
         DescriptiveStatistics ds = new DescriptiveStatistics();
         for (double i : priceT) {
             ds.addValue(i);
@@ -28,17 +28,17 @@ class GBMTest {
     }
 
     @Test
-    void staticPriceSimulationTimesError() {
+    void staticSimulateTimesError() {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
         double T = 2.0;
         int times = -10000;
-        assertThrows(ParameterRangeErrorException.class, ()-> GBM.staticPriceSimulation(S0, sigma, T, riskFreeRate, times));
+        assertThrows(ParameterRangeErrorException.class, ()-> GBM.staticSimulate(S0, sigma, T, riskFreeRate, times));
     }
 
     @Test
-    void dynamicPriceSimulation() throws ParameterRangeErrorException {
+    void dynamicSimulate() throws ParameterRangeErrorException {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
@@ -46,7 +46,7 @@ class GBMTest {
         int times = 1000;
         double deltaT = 0.02; // 0.02 yr
         int steps = 50; //simulation steps
-        double[][] priceT = GBM.dynamicPriceSimulation(S0, sigma, T, riskFreeRate, times, deltaT, steps);
+        double[][] priceT = GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps);
         assertEquals(S0, priceT[0][0]);
 
         DescriptiveStatistics ds = new DescriptiveStatistics();
@@ -61,7 +61,7 @@ class GBMTest {
     }
 
     @Test
-    void dynamicPriceSimulationTimesError() {
+    void dynamicSimulateTimesError() {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
@@ -69,11 +69,11 @@ class GBMTest {
         int times = -1000;
         double deltaT = 0.02; // 0.02 yr
         int steps = 50; //simulation steps
-        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicPriceSimulation(S0, sigma, T, riskFreeRate, times, deltaT, steps));
+        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps));
     }
 
     @Test
-    void dynamicPriceSimulationStepsError() {
+    void dynamicSimulateStepsError() {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
@@ -81,11 +81,11 @@ class GBMTest {
         int times = 1000;
         double deltaT = 0.02; // 0.02 yr
         int steps = -50; //simulation steps
-        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicPriceSimulation(S0, sigma, T, riskFreeRate, times, deltaT, steps));
+        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps));
     }
 
     @Test
-    void dynamicPriceSimulationDeltaTError() {
+    void dynamicSimulateDeltaTError() {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
@@ -93,6 +93,6 @@ class GBMTest {
         int times = 1000;
         double deltaT = -0.02; // 0.02 yr
         int steps = 50; //simulation steps
-        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicPriceSimulation(S0, sigma, T, riskFreeRate, times, deltaT, steps));
+        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps));
     }
 }
