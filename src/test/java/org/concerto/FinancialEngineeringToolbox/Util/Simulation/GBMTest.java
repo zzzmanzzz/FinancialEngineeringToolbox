@@ -42,11 +42,10 @@ class GBMTest {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
-        double T = 2.0;
         int times = 1000;
         double deltaT = 0.02; // 0.02 yr
         int steps = 50; //simulation steps
-        double[][] priceT = GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps);
+        double[][] priceT = GBM.dynamicSimulate(S0, sigma, riskFreeRate, times, deltaT, steps);
         assertEquals(S0, priceT[0][0]);
 
         DescriptiveStatistics ds = new DescriptiveStatistics();
@@ -65,11 +64,10 @@ class GBMTest {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
-        double T = 2.0;
         int times = -1000;
         double deltaT = 0.02; // 0.02 yr
         int steps = 50; //simulation steps
-        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps));
+        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, riskFreeRate, times, deltaT, steps));
     }
 
     @Test
@@ -77,11 +75,10 @@ class GBMTest {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
-        double T = 2.0;
         int times = 1000;
         double deltaT = 0.02; // 0.02 yr
         int steps = -50; //simulation steps
-        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps));
+        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, riskFreeRate, times, deltaT, steps));
     }
 
     @Test
@@ -89,10 +86,9 @@ class GBMTest {
         double S0 = 100;
         double riskFreeRate = 0.05;
         double sigma = 0.25;
-        double T = 2.0;
         int times = 1000;
         double deltaT = -0.02; // 0.02 yr
         int steps = 50; //simulation steps
-        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, T, riskFreeRate, times, deltaT, steps));
+        assertThrows(ParameterRangeErrorException.class, ()->GBM.dynamicSimulate(S0, sigma, riskFreeRate, times, deltaT, steps));
     }
 }

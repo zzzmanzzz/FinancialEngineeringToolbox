@@ -26,7 +26,7 @@ public class GBM {
         return ret;
     }
 
-    public static double[][] dynamicSimulate(double S0, double sigma, double T, double riskFreeRate , int simulationNumber, double deltaT, int steps, int randomSeed) throws ParameterRangeErrorException {
+    public static double[][] dynamicSimulate(double S0, double sigma, double riskFreeRate , int simulationNumber, double deltaT, int steps, int randomSeed) throws ParameterRangeErrorException {
         if(simulationNumber <= 0) {
             String msg = String.format("simulationNumber(%d) should > 0", simulationNumber);
             throw new ParameterRangeErrorException(msg, null);
@@ -59,7 +59,7 @@ public class GBM {
         return ret;
     }
 
-    public static double[][] dynamicSimulate(double S0, double sigma, double T, double riskFreeRate , int simulationNumber, double deltaT, int steps) throws ParameterRangeErrorException {
-        return dynamicSimulate(S0, sigma, T, riskFreeRate , simulationNumber, deltaT, steps, Constant.RANDOMSEED);
+    public static double[][] dynamicSimulate(double S0, double sigma, double riskFreeRate , int simulationNumber, double deltaT, int steps) throws ParameterRangeErrorException {
+        return dynamicSimulate(S0, sigma, riskFreeRate , simulationNumber, deltaT, steps, Constant.RANDOMSEED);
     }
 }
