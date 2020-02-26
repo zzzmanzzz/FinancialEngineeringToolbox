@@ -34,11 +34,11 @@ class StochasticVolatilityTest {
             d.addValue(i);
         }
 
-        assertEquals(0.24279, d.getMean(), ConstantForTest.EPSLION);
+        assertEquals(0.24276, d.getMean(), ConstantForTest.EPSLION);
         assertEquals(simulateTime, d.getN(), ConstantForTest.EPSLION);
-        assertEquals(0.02019, d.getStandardDeviation(), ConstantForTest.EPSLION);
-        assertEquals(0.13492, d.getSkewness(), ConstantForTest.EPSLION);
-        assertEquals(0.02963, d.getKurtosis(), ConstantForTest.EPSLION);
+        assertEquals(0.02016, d.getStandardDeviation(), ConstantForTest.EPSLION);
+        assertEquals(0.13504, d.getSkewness(), ConstantForTest.EPSLION);
+        assertEquals(0.02968, d.getKurtosis(), ConstantForTest.EPSLION);
 
         d.clear();
 
@@ -46,11 +46,11 @@ class StochasticVolatilityTest {
             d.addValue(i);
         }
 
-        assertEquals(108.13978, d.getMean(), ConstantForTest.EPSLION);
+        assertEquals(108.15157, d.getMean(), ConstantForTest.EPSLION);
         assertEquals(simulateTime, d.getN(), ConstantForTest.EPSLION);
-        assertEquals(51.29415, d.getStandardDeviation(), ConstantForTest.EPSLION);
-        assertEquals(1.59808, d.getSkewness(), ConstantForTest.EPSLION);
-        assertEquals(4.93182, d.getKurtosis(), ConstantForTest.EPSLION);
+        assertEquals(51.33454, d.getStandardDeviation(), ConstantForTest.EPSLION);
+        assertEquals(1.59733, d.getSkewness(), ConstantForTest.EPSLION);
+        assertEquals(4.90452, d.getKurtosis(), ConstantForTest.EPSLION);
 
 
     }

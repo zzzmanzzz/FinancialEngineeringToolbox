@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CorrelatedGaussianVectorGeneratorTest {
 
     @Test
-    void nextRandomVector() {
+    void nextRandomVector() throws ParameterRangeErrorException {
         double[][] cov = {{1, 0.6}, {0.6, 1}};
         int N = 10000;
         double[][] vecs = new double[2][N];
@@ -40,5 +40,11 @@ class CorrelatedGaussianVectorGeneratorTest {
 
         assertEquals(0.6, ret, 1e-3);
 
+    }
+
+    @Test
+    void nextManyRandomVectorThrowsParameterRangeErrorException() {
+        double[][] cov = {{1}, {1}};
+        assertThrows(ParameterRangeErrorException.class, ()-> new CorrelatedGaussianVectorGenerator(cov, 123) );
     }
 }
