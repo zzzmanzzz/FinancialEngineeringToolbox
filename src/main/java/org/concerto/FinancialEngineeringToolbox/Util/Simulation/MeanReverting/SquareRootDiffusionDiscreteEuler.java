@@ -2,9 +2,18 @@ package org.concerto.FinancialEngineeringToolbox.Util.Simulation.MeanReverting;
 
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
-import org.concerto.FinancialEngineeringToolbox.Util.Simulation.NormalizedGaussian;
+import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.NormalizedGaussian;
 
 import java.util.Arrays;
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 public class SquareRootDiffusionDiscreteEuler {
     public static double[][] dynamicSimulate(double S0, double sigma, double kappa, double theta, double deltaT, int steps, int simulationNumber, int randomSeed) throws ParameterRangeErrorException {

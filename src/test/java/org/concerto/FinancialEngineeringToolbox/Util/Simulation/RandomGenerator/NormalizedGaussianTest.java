@@ -1,6 +1,7 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Simulation;
+package org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator;
 
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
+import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,14 +10,14 @@ class NormalizedGaussianTest {
     int size = 10000;
 
     @Test
-    void nextRandomVectorSizeIsCorrect() {
+    void nextRandomVectorSizeIsCorrect() throws ParameterRangeErrorException {
         NormalizedGaussian ng = new NormalizedGaussian(size);
         double[] random = ng.nextRandomVector();
         assertEquals(size, random.length);
     }
 
     @Test
-    void nextRandomVectorMeanIsCorrect() {
+    void nextRandomVectorMeanIsCorrect() throws ParameterRangeErrorException {
         NormalizedGaussian ng = new NormalizedGaussian(size);
         double[] random = ng.nextRandomVector();
         double sum = 0;
@@ -27,7 +28,7 @@ class NormalizedGaussianTest {
     }
 
     @Test
-    void nextRandomVectorStdIsCorrect() {
+    void nextRandomVectorStdIsCorrect() throws ParameterRangeErrorException {
         NormalizedGaussian ng = new NormalizedGaussian(size);
         double[] random = ng.nextRandomVector();
         double sum = 0;

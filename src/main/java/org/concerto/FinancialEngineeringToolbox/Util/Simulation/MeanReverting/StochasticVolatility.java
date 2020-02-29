@@ -2,7 +2,7 @@ package org.concerto.FinancialEngineeringToolbox.Util.Simulation.MeanReverting;
 
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
-import org.concerto.FinancialEngineeringToolbox.Util.Simulation.CorrelatedGaussianVectorGenerator;
+import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.CorrelatedGaussianVector;
 import org.concerto.FinancialEngineeringToolbox.Util.Simulation.Result;
 
 import java.util.Arrays;
@@ -36,7 +36,7 @@ public class StochasticVolatility {
 
         double[][] cov = {{1, rho}, {rho, 1}};
 
-        CorrelatedGaussianVectorGenerator CG = new CorrelatedGaussianVectorGenerator(cov, Constant.RANDOMSEED);
+        CorrelatedGaussianVector CG = new CorrelatedGaussianVector(cov, Constant.RANDOMSEED);
 
         double[][] indexLevel = new double[steps][simulationNumber];
         double[] indexLevelInit = new double[simulationNumber];

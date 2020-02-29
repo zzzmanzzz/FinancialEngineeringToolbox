@@ -1,7 +1,6 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.MeanReverting;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.junit.jupiter.api.Test;
 

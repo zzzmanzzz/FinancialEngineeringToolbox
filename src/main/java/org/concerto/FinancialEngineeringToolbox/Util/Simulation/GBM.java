@@ -2,6 +2,7 @@ package org.concerto.FinancialEngineeringToolbox.Util.Simulation;
 
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
+import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.NormalizedGaussian;
 
 import java.util.Arrays;
 
