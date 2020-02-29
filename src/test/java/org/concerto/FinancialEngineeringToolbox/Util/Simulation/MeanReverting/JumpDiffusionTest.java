@@ -1,23 +1,23 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.MeanReverting;
 
-import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class JumpDiffusionTest {
 
     @Test
-    void dynamicSimulate() throws ParameterRangeErrorException {
+    void dynamicSimulate() throws ParameterRangeErrorException, IOException {
         double S0 = 100;
         double sigma = 0.2;
         double lambda = 0.75;
@@ -42,7 +42,13 @@ class JumpDiffusionTest {
         double minDiff = differences.min().getAsDouble();
 
         double[] lastTime  = ret[times - 1];
-
+/*
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data", lastTime);
+        BufferedWriter writer = new BufferedWriter(new FileWriter("temp.json"));
+        writer.write(jsonObject.toString());
+        writer.close();
+*/
         assertEquals(S0, ret[0][0], ConstantForTest.EPSLION);
         assertEquals(-0.29804, minDiff, ConstantForTest.EPSLION);
         assertEquals(simulationNumber, lastTime.length);
