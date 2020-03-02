@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util;
+package org.concerto.FinancialEngineeringToolbox.Util.Risk;
 
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;

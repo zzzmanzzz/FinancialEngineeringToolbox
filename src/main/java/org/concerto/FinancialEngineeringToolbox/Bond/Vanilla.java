@@ -2,8 +2,8 @@ package org.concerto.FinancialEngineeringToolbox.Bond;
 
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.IndexOutOfRangeException;
-import org.concerto.FinancialEngineeringToolbox.Util.IRR;
-import org.concerto.FinancialEngineeringToolbox.Util.NPV;
+import org.concerto.FinancialEngineeringToolbox.Util.Returns.IRR;
+import org.concerto.FinancialEngineeringToolbox.Util.Returns.NPV;
 
 import java.util.HashMap;
 import java.util.Map;

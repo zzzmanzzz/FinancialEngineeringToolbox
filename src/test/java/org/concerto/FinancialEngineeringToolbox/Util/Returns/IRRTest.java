@@ -1,7 +1,8 @@
-package org.concerto.FinancialEngineeringToolbox.Util;
+package org.concerto.FinancialEngineeringToolbox.Util.Returns;
 
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
+import org.concerto.FinancialEngineeringToolbox.Util.Returns.IRR;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

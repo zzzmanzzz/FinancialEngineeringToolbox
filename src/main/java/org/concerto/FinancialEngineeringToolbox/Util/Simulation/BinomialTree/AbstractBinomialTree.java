@@ -1,7 +1,7 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
 
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
-import org.concerto.FinancialEngineeringToolbox.Util.ExecutionReward;
+import org.concerto.FinancialEngineeringToolbox.Util.Returns.ExecutionReward;
 
 public abstract class AbstractBinomialTree {
     protected double S0;

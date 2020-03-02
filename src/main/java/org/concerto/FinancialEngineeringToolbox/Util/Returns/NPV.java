@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util;
+package org.concerto.FinancialEngineeringToolbox.Util.Returns;
 
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.IndexOutOfRangeException;
