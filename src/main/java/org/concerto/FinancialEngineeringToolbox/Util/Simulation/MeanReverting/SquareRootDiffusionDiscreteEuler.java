@@ -5,7 +5,6 @@ import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorExc
 import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.NormalizedGaussian;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -42,12 +41,10 @@ public class SquareRootDiffusionDiscreteEuler {
 
         for(int i = 1 ; i < steps; i++) {
             double[] tmp = NG.nextRandomVector();
-            int finalI = i;
-            ret[i] = IntStream.range( 0,  simulationNumber).mapToDouble(
-                    j -> {
-                        double t = ret[finalI -1][j] + kappa * (theta - Math.max(ret[finalI -1][j], 0)) * deltaT + sigma * Math.sqrt(Math.max(ret[finalI -1][j], 0)) * Math.sqrt(deltaT) * tmp[j];
-                        return Math.max(t, 0);
-                    }).toArray();
+            for(int j = 0 ; j < simulationNumber; j++) {
+               double t = ret[i-1][j] + kappa * (theta - Math.max(ret[i-1][j], 0)) * deltaT + sigma * Math.sqrt(Math.max(ret[i-1][j], 0)) * Math.sqrt(deltaT) * tmp[j];
+               ret[i][j] = Math.max(t, 0);
+            }
         }
         return ret;
     }
