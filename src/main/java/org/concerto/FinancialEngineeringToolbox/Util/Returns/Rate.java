@@ -3,8 +3,6 @@ package org.concerto.FinancialEngineeringToolbox.Util.Returns;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 
-import java.util.stream.IntStream;
-
 public class  Rate {
 
     public static double getDiscount(double faceValue, double price) {
@@ -49,9 +47,12 @@ public class  Rate {
             throw new ParameterIsNullException(msg, null);
         }
 
-        return IntStream.range(1, data.length).mapToDouble(
-              i ->  data[i] / data[i-1] - 1
-        ).toArray();
+        double[] ret = new double[data.length - 1];
+
+        for(int i = 1 ; i < data.length ; i++) {
+            ret[i - 1] = data[i] / data[i - 1] - 1;
+        }
+        return ret;
     }
 
     public static double[] getLogReturn(double[] data) throws ParameterIsNullException {
@@ -60,8 +61,11 @@ public class  Rate {
             throw new ParameterIsNullException(msg, null);
         }
 
-        return IntStream.range(1, data.length).mapToDouble(
-                i ->  Math.log(data[i] / data[i - 1])
-        ).toArray();
+        double[] ret = new double[data.length - 1];
+
+        for(int i = 1 ; i < data.length ; i++) {
+            ret[i - 1] = Math.log(data[i] / data[i - 1]);
+        }
+        return ret;
     }
 }
