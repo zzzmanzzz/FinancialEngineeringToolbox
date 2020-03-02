@@ -51,9 +51,10 @@ public class GBM {
 
         for(int i = 1 ; i < steps; i++) {
             double[] tmp = NG.nextRandomVector();
-            for(int j = 0 ; j < simulationNumber; j++) {
-                ret[i][j] = ret[i-1][j] * Math.exp((riskFreeRate - 0.5 * sigma * sigma) * deltaT + sigma * tmp[j] * Math.sqrt(deltaT));
-            }
+            int finalI = i;
+            ret[i] = IntStream.range(0, simulationNumber).mapToDouble(
+                    j -> ret[finalI - 1][j] * Math.exp((riskFreeRate - 0.5 * sigma * sigma) * deltaT + sigma * tmp[j] * Math.sqrt(deltaT))
+            ).toArray();
         }
 
         return ret;

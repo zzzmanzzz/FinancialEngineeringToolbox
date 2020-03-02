@@ -7,6 +7,7 @@ import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.
 import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.NormalizedPoisson;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Merton’s Jump-Diffusion Model
@@ -48,10 +49,12 @@ public class JumpDiffusion {
             double[] g2 = NG.nextRandomVector();
             double[] p = NP.nextRandomVector();
 
-            for(int j = 0 ; j < simulationNumber; j++) {
-                double t = ret[i-1][j] * (Math.exp((riskFreeRate - rj - 0.5 * sigma * sigma) * deltaT + sigma * Math.sqrt(deltaT) * g1[j]) + (Math.exp(mu + delta * g2[j]) - 1) * p[j]);
-                ret[i][j] = Math.max(t, 0);
-            }
+            int finalI = i;
+            ret[i] = IntStream.range( 0, simulationNumber).mapToDouble(
+                j -> {
+                    double t = ret[finalI -1][j] * (Math.exp((riskFreeRate - rj - 0.5 * sigma * sigma) * deltaT + sigma * Math.sqrt(deltaT) * g1[j]) + (Math.exp(mu + delta * g2[j]) - 1) * p[j]);
+                    return Math.max(t, 0);
+                }).toArray();
         }
         return ret;
     }
