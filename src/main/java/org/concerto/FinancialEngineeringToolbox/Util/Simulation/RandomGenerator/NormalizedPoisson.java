@@ -7,8 +7,6 @@ import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 
-import java.util.stream.IntStream;
-
 public class NormalizedPoisson implements Generator {
     private IntegerDistribution poisson;
     private double mean;
@@ -35,13 +33,14 @@ public class NormalizedPoisson implements Generator {
 
     @Override
     public double[] nextRandomVector() {
-        double [] tmp = IntStream.range(0, dimension).mapToDouble(
-            i -> poisson.sample()
-        ).toArray();
-
-        double bias = m.evaluate(tmp, 0 , tmp.length) - this.mean;
-        return IntStream.range( 0, dimension).mapToDouble(
-            i -> tmp[i] - bias
-        ).toArray();
+        double [] ret = new double[dimension];
+        for(int i = 0 ; i < dimension ; i++) {
+            ret[i] = poisson.sample();
+        }
+        double bias = m.evaluate(ret, 0 , ret.length) - this.mean;
+        for(int i = 0 ; i < dimension ; i++) {
+            ret[i] = ret[i] - bias;
+        }
+        return ret;
     }
 }

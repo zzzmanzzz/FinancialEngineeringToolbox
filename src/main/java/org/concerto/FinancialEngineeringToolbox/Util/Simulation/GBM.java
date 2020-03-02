@@ -5,7 +5,6 @@ import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorExc
 import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.NormalizedGaussian;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 public class GBM {
 
@@ -19,11 +18,13 @@ public class GBM {
             throw new ParameterRangeErrorException(msg, null);
         }
         NormalizedGaussian NG = new NormalizedGaussian(simulationNumber, randomSeed);
+        double[] ret = new double[simulationNumber];
         double[] r = NG.nextRandomVector();
 
-        return IntStream.range(0, simulationNumber).parallel().mapToDouble(
-            i -> S0 * Math.exp((riskFreeRate - 0.5 * sigma * sigma) * T + sigma * Math.sqrt(T) * r[i])
-        ).toArray();
+        for(int i = 0 ; i < simulationNumber; i++ ) {
+            ret[i] = S0 * Math.exp((riskFreeRate - 0.5 * sigma * sigma) * T + sigma * Math.sqrt(T) * r[i]) ;
+        }
+        return ret;
     }
 
     public static double[][] dynamicSimulate(double S0, double sigma, double riskFreeRate , int simulationNumber, double deltaT, int steps, int randomSeed) throws ParameterRangeErrorException {
