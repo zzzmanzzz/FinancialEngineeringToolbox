@@ -2,6 +2,7 @@ package org.concerto.FinancialEngineeringToolbox.Util;
 
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
+import org.concerto.FinancialEngineeringToolbox.Util.Risk.VaR;
 import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.Generator;
 import org.concerto.FinancialEngineeringToolbox.Util.Simulation.RandomGenerator.NormalizedGaussian;
 import org.junit.jupiter.api.Test;

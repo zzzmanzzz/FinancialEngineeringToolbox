@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util;
+package org.concerto.FinancialEngineeringToolbox.Util.Risk;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
