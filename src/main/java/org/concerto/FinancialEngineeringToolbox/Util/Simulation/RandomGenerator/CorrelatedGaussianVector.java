@@ -9,6 +9,8 @@ import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 
+import java.util.stream.IntStream;
+
 public class CorrelatedGaussianVector {
     private CorrelatedRandomVectorGenerator RG;
     static final private Mean m = new Mean();
@@ -56,9 +58,10 @@ public class CorrelatedGaussianVector {
             double mean = m.evaluate(ret[i],0,ret[i].length);
             double stdDev = std.evaluate(ret[i], mean);
 
-            for(int j = 0 ; j < ret[i].length; j++ ) {
-                ret[i][j] = (ret[i][j] - mean) / stdDev;
-            }
+            int finalI = i;
+            ret[i] = IntStream.range(0 , ret[i].length).mapToDouble(
+                j -> ret[finalI][j] = (ret[finalI][j] - mean) / stdDev
+            ).toArray();
         }
 
         return ret;

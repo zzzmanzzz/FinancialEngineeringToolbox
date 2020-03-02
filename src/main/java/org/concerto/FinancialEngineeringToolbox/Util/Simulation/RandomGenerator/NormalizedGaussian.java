@@ -9,6 +9,11 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 
+import java.util.LinkedList;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
+
 public class NormalizedGaussian implements Generator {
     private UncorrelatedRandomVectorGenerator random;
     static final private Mean m = new Mean();
@@ -32,13 +37,12 @@ public class NormalizedGaussian implements Generator {
     }
 
     public double[] nextRandomVector() {
-        double[] ret = random.nextVector();
-        double mean = m.evaluate(ret, 0, ret.length);
-        double stdDev = std.evaluate(ret, mean);
+        double[] tmp = random.nextVector();
+        double mean = m.evaluate(tmp, 0, tmp.length);
+        double stdDev = std.evaluate(tmp, mean);
 
-        for(int i = 0 ; i < ret.length; i++ ) {
-            ret[i] = (ret[i] - mean) / stdDev;
-        }
-        return ret;
+        return IntStream.range(0, tmp.length).mapToDouble( i ->
+             (tmp[i] - mean) / stdDev
+        ).toArray();
     }
 }
