@@ -41,12 +41,7 @@ public class  Rate {
         return Math.pow((1 + nominalAnnualRate / frequency), frequency) - 1;
     }
 
-    public static double[] getCommonReturn(double[] data) throws ParameterIsNullException {
-        if(data == null) {
-            String msg = "Input array is null";
-            throw new ParameterIsNullException(msg, null);
-        }
-
+    public static double[] getCommonReturn(double[] data) {
         double[] ret = new double[data.length - 1];
 
         for(int i = 1 ; i < data.length ; i++) {
@@ -55,12 +50,7 @@ public class  Rate {
         return ret;
     }
 
-    public static double[] getLogReturn(double[] data) throws ParameterIsNullException {
-        if(data == null) {
-            String msg = "Input array is null";
-            throw new ParameterIsNullException(msg, null);
-        }
-
+    public static double[] getLogReturn(double[] data) {
         double[] ret = new double[data.length - 1];
 
         for(int i = 1 ; i < data.length ; i++) {

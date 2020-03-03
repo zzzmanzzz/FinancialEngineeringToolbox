@@ -4,6 +4,9 @@ import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
+
+import static org.concerto.FinancialEngineeringToolbox.Constant.OptionType.call;
+import static org.concerto.FinancialEngineeringToolbox.Constant.OptionType.put;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BinomialTreeTest {
@@ -16,7 +19,7 @@ class BinomialTreeTest {
         Arrays.fill(canExecute , false);
         canExecute[N] = true;
         CoxRossRubinstein crr = new CoxRossRubinstein(100, 110, 0.3, 0.05, N, 0.002221918);
-        assertEquals(18.350952 ,crr.getFairPrice("call", canExecute), ConstantForTest.EPSLION);
+        assertEquals(18.350952 ,crr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -26,7 +29,7 @@ class BinomialTreeTest {
         Arrays.fill(canExecute , false);
         canExecute[N] = true;
         CoxRossRubinstein crr = new CoxRossRubinstein(100, 110, 0.3, 0.05, N, 0.002221918);
-        assertEquals(16.784775 ,crr.getFairPrice("put", canExecute), ConstantForTest.EPSLION);
+        assertEquals(16.784775 ,crr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -36,7 +39,7 @@ class BinomialTreeTest {
         Arrays.fill(canExecute , false);
         canExecute[N] = true;
         JarrowRudd jr = new JarrowRudd(100, 110, 0.3, 0.05, N, 0.002221918);
-        assertEquals(18.343573,jr.getFairPrice("call", canExecute), ConstantForTest.EPSLION);
+        assertEquals(18.343573,jr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -46,7 +49,7 @@ class BinomialTreeTest {
         Arrays.fill(canExecute , false);
         canExecute[N] = true;
         JarrowRudd jr = new JarrowRudd(100, 110, 0.3, 0.05, N, 0.002221918);
-        assertEquals(16.777730,jr.getFairPrice("put", canExecute), ConstantForTest.EPSLION);
+        assertEquals(16.777730,jr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -55,7 +58,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         CoxRossRubinstein crr = new CoxRossRubinstein(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals( 3.46377 ,crr.getFairPrice("call", canExecute), ConstantForTest.EPSLION);
+        assertEquals( 3.46377 ,crr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -64,7 +67,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         CoxRossRubinstein crr = new CoxRossRubinstein(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals(0.35151 ,crr.getFairPrice("put", canExecute), ConstantForTest.EPSLION);
+        assertEquals(0.35151 ,crr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -73,7 +76,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         JarrowRudd jre = new JarrowRudd(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals( 3.46377 ,jre.getFairPrice("call", canExecute), ConstantForTest.EPSLION);
+        assertEquals( 3.46377 ,jre.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -82,7 +85,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         JarrowRudd jre = new JarrowRudd(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals(0.35154 ,jre.getFairPrice("put", canExecute), ConstantForTest.EPSLION);
+        assertEquals(0.35154 ,jre.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
 }

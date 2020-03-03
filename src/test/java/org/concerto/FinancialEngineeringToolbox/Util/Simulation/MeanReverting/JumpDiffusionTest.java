@@ -30,17 +30,13 @@ class JumpDiffusionTest {
 
         double[][] ret = JumpDiffusion.dynamicSimulate(S0, sigma, lambda, riskFreeRate, mu, delta, deltaT, times, simulationNumber);
 
-        List<Double> temp = new LinkedList<>();
-
         DoubleStream differences =
                 IntStream.range(0, times - 1)
-                        .mapToDouble(i -> {
-                            temp.add(ret[i][0]);
-                            return ret[i + 1][0] / ret[i][0] - 1;
-                        });
+                        .mapToDouble(i ->
+                             ret[i + 1][0] / ret[i][0] - 1
+                        );
 
         double minDiff = differences.min().getAsDouble();
-
         double[] lastTime  = ret[times - 1];
 /*
         JSONObject jsonObject = new JSONObject();
@@ -52,7 +48,5 @@ class JumpDiffusionTest {
         assertEquals(S0, ret[0][0], ConstantForTest.EPSLION);
         assertEquals(-0.29804, minDiff, ConstantForTest.EPSLION);
         assertEquals(simulationNumber, lastTime.length);
-        
-
     }
 }
