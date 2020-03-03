@@ -1,5 +1,6 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
 
+import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.concerto.FinancialEngineeringToolbox.Util.Returns.ExecutionReward;
 
@@ -101,7 +102,7 @@ public abstract class AbstractBinomialTree {
         return D;
     }
 
-    public double getFairPrice(String optionType, boolean[] strikeSchedule) throws UndefinedParameterValueException {
+    public double getFairPrice(Constant.OptionType optionType, boolean[] strikeSchedule) throws UndefinedParameterValueException {
         double[] St = new double[N+1];
         double[] prevC = new double[N+1];
         double[] currentC = null;
