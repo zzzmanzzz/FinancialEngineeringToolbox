@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
+package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -14,10 +14,10 @@ import org.concerto.FinancialEngineeringToolbox.Util.Returns.Rate;
 import java.util.Map;
 import java.util.function.Function;
 
-public class EfficientFrontier {
+public class EfficientFrontier extends AbstractPortfolioOptimization {
     static final private Mean m = new Mean();
 
-    public static Result getEfficientFrontier(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
+    public Result getEfficientFrontier(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
         Object[] tmpK = data.keySet().toArray();
         String[] keys = new String[tmpK.length];
 
@@ -45,20 +45,12 @@ public class EfficientFrontier {
         return optimize(keys, returns, riskFreeRate);
     }
 
-    private static Result optimize(String[] symbols, double[][] returns, double riskFreeRate) throws ParameterRangeErrorException {
-        RealMatrix r = new Array2DRowRealMatrix(getCovariance(returns));
-        double[] mean = new double[returns.length];
-        for(int i = 0 ; i < returns.length; i++) {
-            mean[i] = m.evaluate(returns[i], 0, returns[i].length);
-        }
-
+    protected Result optimize(String[] symbols, double[][] returns, double riskFreeRate) throws ParameterRangeErrorException {
+        double[] mean = getMeanReturn(returns);
         Function<double[], Double> WeightedSharpeRatio = (double[] weight) -> {
             RealMatrix w = new Array2DRowRealMatrix(weight);
-            double varP = w.transpose().multiply(r).multiply(w).getData()[0][0];
-            double weightMean = 0;
-            for(int i = 0 ; i < weight.length; i++) {
-                weightMean += weight[i] * mean[i];
-            }
+            double varP = getPortfolioVariance(getCovariance(returns), weight);
+            double weightMean = getWeightedReturn(weight, mean);
             return ((weightMean - riskFreeRate) / Math.sqrt(varP));
         };
 
@@ -89,42 +81,8 @@ public class EfficientFrontier {
             weightedReturns += mean[i] * bestWeight[i];
         }
 
-        return new Result(symbols, bestWeight, bestSharpeRatio, weightedReturns);
+        return new Result(symbols, bestWeight, bestSharpeRatio, weightedReturns, 0);
 
-    }
-
-    private static double[][] getCovariance(double[][] data) {
-        double[][] ret = new double[data.length][data.length];
-        Covariance covariance = new Covariance();
-
-        for (int i = 0 ; i < data.length; i++ ) {
-            ret[i][i] = 1;
-        }
-
-        for(int i = 0 ; i < data.length; i++ ) {
-            for( int j = i + 1 ; j < data.length; j++) {
-                ret[i][j] = covariance.covariance(data[i], data[j]);
-                ret[j][i] = ret[i][j];
-            }
-        }
-        return ret;
-    }
-
-    private static Function<double[], double[]> getReturnFunction(Constant.ReturnType type) throws UndefinedParameterValueException {
-        Function<double[], double[]> funcRef = Rate::getCommonReturn;
-
-        switch (type) {
-            case common:
-                funcRef = Rate::getCommonReturn;
-                break;
-            case log:
-                funcRef = Rate::getLogReturn;
-                break;
-            default:
-                throw new UndefinedParameterValueException("Unexpected value: " + type, null);
-        }
-
-        return funcRef;
     }
 
 }

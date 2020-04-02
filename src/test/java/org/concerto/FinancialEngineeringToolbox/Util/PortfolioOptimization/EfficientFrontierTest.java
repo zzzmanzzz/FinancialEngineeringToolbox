@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
+package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
 
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
@@ -27,8 +27,9 @@ class EfficientFrontierTest {
         data.put("ccc", ccc);
         data.put("ddd", ddd);
         data.put("eee", eee);
-        Result ret = EfficientFrontier.getEfficientFrontier(data, 0.01, Constant.ReturnType.common);
-        assertEquals(0.02354, ret.getSharpeRatio(), Constant.EPSILON);
+        EfficientFrontier ef = new EfficientFrontier();
+        Result ret = ef.getEfficientFrontier(data, 0.01, Constant.ReturnType.common);
+        assertEquals(0.24162, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(0.02855, ret.getWeightedReturns(), Constant.EPSILON);
 
         assertEquals(0.00986, ret.getWeight("aaa"), Constant.EPSILON);
@@ -52,8 +53,9 @@ class EfficientFrontierTest {
         data.put("ccc", ccc);
         data.put("ddd", ddd);
         data.put("eee", eee);
-        Result ret = EfficientFrontier.getEfficientFrontier(data, 0.01, Constant.ReturnType.log);
-        assertEquals(0.01891, ret.getSharpeRatio(), Constant.EPSILON);
+        EfficientFrontier ef = new EfficientFrontier();
+        Result ret = ef.getEfficientFrontier(data, 0.01, Constant.ReturnType.log);
+        assertEquals(0.19314, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(0.02490, ret.getWeightedReturns(), Constant.EPSILON);
 
         assertEquals(0.00986, ret.getWeight("aaa"), Constant.EPSILON);
