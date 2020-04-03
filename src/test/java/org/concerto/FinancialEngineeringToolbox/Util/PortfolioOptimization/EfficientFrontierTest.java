@@ -31,6 +31,7 @@ class EfficientFrontierTest {
         Result ret = ef.getEfficientFrontier(data, 0.01, Constant.ReturnType.common);
         assertEquals(0.24162, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(0.02855, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.00589, ret.getPortfolioVariance(), Constant.EPSILON);
 
         assertEquals(0.00986, ret.getWeight("aaa"), Constant.EPSILON);
         assertEquals(0.76799, ret.getWeight("bbb"), Constant.EPSILON);
@@ -57,6 +58,7 @@ class EfficientFrontierTest {
         Result ret = ef.getEfficientFrontier(data, 0.01, Constant.ReturnType.log);
         assertEquals(0.19314, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(0.02490, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.00595, ret.getPortfolioVariance(), Constant.EPSILON);
 
         assertEquals(0.00986, ret.getWeight("aaa"), Constant.EPSILON);
         assertEquals(0.76799, ret.getWeight("bbb"), Constant.EPSILON);

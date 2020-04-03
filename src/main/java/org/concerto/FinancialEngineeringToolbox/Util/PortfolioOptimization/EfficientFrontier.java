@@ -81,7 +81,9 @@ public class EfficientFrontier extends AbstractPortfolioOptimization {
             weightedReturns += mean[i] * bestWeight[i];
         }
 
-        return new Result(symbols, bestWeight, bestSharpeRatio, weightedReturns, 0);
+        double variance = Math.pow(((weightedReturns - riskFreeRate) / bestSharpeRatio), 2);
+
+        return new Result(symbols, bestWeight, bestSharpeRatio, weightedReturns, variance);
 
     }
 
