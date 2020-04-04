@@ -75,19 +75,21 @@ class BinomialTreeTest {
     @Test
     void getCRRAmericanCallFairPrice() throws UndefinedParameterValueException {
         int N = 3;
+        double deltaT = 0.25 / N;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
-        CoxRossRubinstein crr = new CoxRossRubinstein(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals( 3.46377 ,crr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+        CoxRossRubinstein crr = new CoxRossRubinstein(60, 60, 0.45, 0.1, N, deltaT);
+        assertEquals( 6.52161 ,crr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
     void getCRRAmericanPutFairPrice() throws UndefinedParameterValueException {
         int N = 3;
+        double deltaT = 0.25 / N;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
-        CoxRossRubinstein crr = new CoxRossRubinstein(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals(0.35151 ,crr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
+        CoxRossRubinstein crr = new CoxRossRubinstein(60, 60, 0.45, 0.1, N, deltaT);
+        assertEquals(5.16278 ,crr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -96,7 +98,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         JarrowRudd jre = new JarrowRudd(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals( 3.46377 ,jre.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+        assertEquals( 0.81933 ,jre.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -105,7 +107,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         JarrowRudd jre = new JarrowRudd(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals(0.35154 ,jre.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
+        assertEquals(0.68302 ,jre.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -114,7 +116,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         LeisenReimer lr = new LeisenReimer(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals( 3.17156 ,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+        assertEquals( 0.75940 ,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -123,6 +125,6 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         LeisenReimer lr = new LeisenReimer(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals(0.31618 ,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
+        assertEquals( 0.62287,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 }
