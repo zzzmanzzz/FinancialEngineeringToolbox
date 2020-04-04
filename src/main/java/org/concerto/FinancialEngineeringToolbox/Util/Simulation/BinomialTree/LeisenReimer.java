@@ -9,17 +9,17 @@ public class LeisenReimer extends AbstractBinomialTree {
 
     @Override
     protected void init() {
-        int n = N % 2 == 0 ? N : N + 1;
+        int odd = N % 2 == 0 ? N + 1 : N;
         double d1 = (Math.log(S0 / K) + (riskFreeRate + sigma * sigma / 2) * N * deltaT) / (sigma * Math.sqrt(N * deltaT));
         double d2 = d1 - sigma * Math.sqrt(N * deltaT);
-        double pbar = inversion(d1, n);
-        double p = inversion(d2, n);
+        double pbar = inversion(d1, odd);
+        double p = inversion(d2, odd);
 
         discount = Math.exp(-riskFreeRate * deltaT);
         probabilityUp = p;
         probabilityDown = 1 - p;
         U = 1 / discount * pbar / p;
-        D = ( 1 / discount - p * U ) / (1 - p);
+        D = ( ( 1 / discount ) - p * U ) / (1 - p) ;
     }
 
     private double inversion(double z, int n) {

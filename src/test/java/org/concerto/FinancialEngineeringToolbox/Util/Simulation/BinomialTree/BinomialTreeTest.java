@@ -59,7 +59,7 @@ class BinomialTreeTest {
         Arrays.fill(canExecute , false);
         canExecute[N] = true;
         LeisenReimer lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
-        assertEquals(18.33916,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+        assertEquals(18.33056,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -69,7 +69,7 @@ class BinomialTreeTest {
         Arrays.fill(canExecute , false);
         canExecute[N] = true;
         LeisenReimer lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
-        assertEquals(16.77298,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
+        assertEquals(16.76439,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -123,7 +123,7 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         LeisenReimer lr = new LeisenReimer(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals( 2.79780 ,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+        assertEquals( 3.17156 ,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
     }
 
     @Test
@@ -132,6 +132,6 @@ class BinomialTreeTest {
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
         LeisenReimer lr = new LeisenReimer(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals(0.27087 ,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
+        assertEquals(0.31618 ,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 }
