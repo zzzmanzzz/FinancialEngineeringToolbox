@@ -53,7 +53,27 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanCRRCallFairPrice() throws UndefinedParameterValueException {
+    void getLREuropeanCallFairPrice() throws UndefinedParameterValueException {
+        int N = 1000;
+        boolean[] canExecute = new boolean[N+1];
+        Arrays.fill(canExecute , false);
+        canExecute[N] = true;
+        LeisenReimer lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(18.33916,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getLREuropeanPutFairPrice() throws UndefinedParameterValueException {
+        int N = 1000;
+        boolean[] canExecute = new boolean[N+1];
+        Arrays.fill(canExecute , false);
+        canExecute[N] = true;
+        LeisenReimer lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(16.77298,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getCRRAmericanCallFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
@@ -62,7 +82,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanCRRPutFairPrice() throws UndefinedParameterValueException {
+    void getCRRAmericanPutFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
@@ -71,7 +91,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanJRECallFairPrice() throws UndefinedParameterValueException {
+    void getJREAmericanCallFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
@@ -80,7 +100,7 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getCRRAmericanJREPutFairPrice() throws UndefinedParameterValueException {
+    void getJREAmericanPutFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
         Arrays.fill(canExecute, true);
@@ -88,4 +108,30 @@ class BinomialTreeTest {
         assertEquals(0.35154 ,jre.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
     }
 
+    @Test
+    void getJREmericanCallFairPrice() throws UndefinedParameterValueException {
+        int N = 3;
+        boolean[] canExecute = new boolean[N+1];
+        Arrays.fill(canExecute, true);
+        JarrowRudd jre = new JarrowRudd(10, 10, 0.2, 0.02, N, 0.25);
+        assertEquals( 3.46377 ,jre.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getLRAmericanCallFairPrice() throws UndefinedParameterValueException {
+        int N = 3;
+        boolean[] canExecute = new boolean[N+1];
+        Arrays.fill(canExecute, true);
+        LeisenReimer lr = new LeisenReimer(10, 10, 0.2, 0.02, N, 0.25);
+        assertEquals( 2.79780 ,lr.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getLRAmericanPutFairPrice() throws UndefinedParameterValueException {
+        int N = 3;
+        boolean[] canExecute = new boolean[N+1];
+        Arrays.fill(canExecute, true);
+        LeisenReimer lr = new LeisenReimer(10, 10, 0.2, 0.02, N, 0.25);
+        assertEquals(0.27087 ,lr.getFairPrice(put, canExecute), ConstantForTest.EPSLION);
+    }
 }
