@@ -109,15 +109,6 @@ class BinomialTreeTest {
     }
 
     @Test
-    void getJREmericanCallFairPrice() throws UndefinedParameterValueException {
-        int N = 3;
-        boolean[] canExecute = new boolean[N+1];
-        Arrays.fill(canExecute, true);
-        JarrowRudd jre = new JarrowRudd(10, 10, 0.2, 0.02, N, 0.25);
-        assertEquals( 3.46377 ,jre.getFairPrice(call, canExecute), ConstantForTest.EPSLION);
-    }
-
-    @Test
     void getLRAmericanCallFairPrice() throws UndefinedParameterValueException {
         int N = 3;
         boolean[] canExecute = new boolean[N+1];
