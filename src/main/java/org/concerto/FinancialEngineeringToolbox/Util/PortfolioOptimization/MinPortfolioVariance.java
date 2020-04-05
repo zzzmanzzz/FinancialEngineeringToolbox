@@ -44,40 +44,34 @@ public class MinPortfolioVariance extends AbstractPortfolioOptimization {
     }
 
 
-    private double[][] initA(double[][] cov) {
+    private RealMatrix initA(double[][] cov) {
         int size = cov.length + 1;
-        double[][] ret = new double[size][size];
-        for(double[] a : ret) {
-            Arrays.fill(a, 1);
-        }
-        ret[size - 1][size - 1] = 0;
+        RealMatrix ret = new Array2DRowRealMatrix(size, size);
+        RealMatrix tmp = new Array2DRowRealMatrix(cov);
+        double[] one = new double[size];
+        Arrays.fill(one, 1);
+        one[one.length - 1] = 0;
 
-        for (int i = 0 ; i < cov.length; i++ ) {
-            ret[i][i] = cov[i][i] * 2;
-        }
+        ret.setSubMatrix(tmp.scalarMultiply(2).getData(), 0, 0);
+        ret.setColumn(size - 1, one);
+        ret.setRow(size - 1, one);
 
-        for (int i = 0 ; i < cov.length ; i++) {
-            for (int j = i + 1 ; j < cov[0].length ; j++ ) {
-                ret[i][j] = 2 * cov[i][j];
-                ret[j][i] = ret[i][j];
-            }
-        }
         return ret;
     }
 
-    private double[] initB(int size) {
+    private RealMatrix initB(int size) {
         double[] b = new double[size];
         Arrays.fill(b, 0);
         b[b.length - 1] = 1;
-        return b;
+        return new Array2DRowRealMatrix(b);
     }
 
     @Override
     protected Result optimize(String[] symbols, double[][] returns, double riskFreeRate) throws ParameterRangeErrorException {
         double[][] cov = getCovariance(returns);
         double[] mean = getMeanReturn(returns);
-        RealMatrix A = new Array2DRowRealMatrix(initA(cov));
-        RealMatrix b = new Array2DRowRealMatrix(initB(cov.length + 1));
+        RealMatrix A = initA(cov);
+        RealMatrix b = initB(cov.length + 1);
         double[] z = MatrixUtils.inverse(A).multiply(b).getColumn(0);
 
         double[] weight = Arrays.copyOfRange(z, 0, z.length - 1);
