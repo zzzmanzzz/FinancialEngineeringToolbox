@@ -15,7 +15,7 @@ public class Boyle extends AbstractTrinomialTree {
 
         double a0 = Math.exp(deltaT * (riskFreeRate - dividend) / 2);
         double a1 = Math.exp(sigma * Math.sqrt(deltaT / 2));
-        double denominator = getDenominator(a1);
+        double denominator = a1 - 1 / a1;
 
         probabilityUp = Math.pow((a0 - 1 / a1) / denominator, 2);
         probabilityDown = Math.pow((-a0 + a1 ) / denominator, 2);
@@ -23,7 +23,4 @@ public class Boyle extends AbstractTrinomialTree {
         discount = Math.exp(-riskFreeRate * deltaT);
     }
 
-    private double getDenominator(double a1) {
-        return a1 - 1 / a1;
-    }
 }
