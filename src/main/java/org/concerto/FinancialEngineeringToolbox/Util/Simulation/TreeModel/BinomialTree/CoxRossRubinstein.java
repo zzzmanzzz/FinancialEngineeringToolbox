@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
+package org.concerto.FinancialEngineeringToolbox.Util.Simulation.TreeModel.BinomialTree;
 public class CoxRossRubinstein extends AbstractBinomialTree {
 
     public CoxRossRubinstein(double S0, double K, double sigma, double riskFreeRate, int N, double deltaT) {

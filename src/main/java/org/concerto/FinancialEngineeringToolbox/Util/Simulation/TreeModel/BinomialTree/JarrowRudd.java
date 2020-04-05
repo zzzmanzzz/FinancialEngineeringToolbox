@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
+package org.concerto.FinancialEngineeringToolbox.Util.Simulation.TreeModel.BinomialTree;
 
 public class JarrowRudd extends AbstractBinomialTree {
     public JarrowRudd(double S0, double K, double sigma, double riskFreeRate, int N, double deltaT) {

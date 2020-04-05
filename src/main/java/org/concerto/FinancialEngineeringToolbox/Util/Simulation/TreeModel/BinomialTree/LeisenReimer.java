@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
+package org.concerto.FinancialEngineeringToolbox.Util.Simulation.TreeModel.BinomialTree;
 
 import org.concerto.FinancialEngineeringToolbox.Util.BlackScholes;
 
