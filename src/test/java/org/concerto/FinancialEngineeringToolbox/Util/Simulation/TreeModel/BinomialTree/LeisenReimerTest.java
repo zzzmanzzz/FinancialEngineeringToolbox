@@ -14,6 +14,41 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class LeisenReimerTest {
 
     @Test
+    void getDiscount() {
+        int N = 1000;
+        Tree lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.99988 ,lr.getDiscount(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getU() {
+        int N = 1000;
+        Tree lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(1.01432, lr.getU(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getD() {
+        int N = 1000;
+        Tree lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.98606, lr.getD(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getProbabilityUp() {
+        int N = 1000;
+        Tree lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.49703, lr.getProbabilityUp(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getProbabilityDown() {
+        int N = 1000;
+        Tree lr = new LeisenReimer(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.50297, lr.getProbabilityDown(), ConstantForTest.EPSLION);
+    }
+
+    @Test
     void getLREuropeanCallFairPrice() throws UndefinedParameterValueException {
         int N = 1000;
         boolean[] canExecute = new boolean[N+1];

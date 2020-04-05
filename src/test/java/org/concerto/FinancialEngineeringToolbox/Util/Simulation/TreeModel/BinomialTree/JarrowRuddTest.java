@@ -14,6 +14,41 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JarrowRuddTest {
 
     @Test
+    void getDiscount() {
+        int N = 1000;
+        Tree jr = new JarrowRudd(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.99988 ,jr.getDiscount(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getU() {
+        int N = 1000;
+        Tree jr = new JarrowRudd(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(1.01425, jr.getU(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getD() {
+        int N = 1000;
+        Tree jr = new JarrowRudd(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.98596, jr.getD(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getProbabilityUp() {
+        int N = 1000;
+        Tree jr = new JarrowRudd(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.5, jr.getProbabilityUp(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getProbabilityDown() {
+        int N = 1000;
+        Tree jr = new JarrowRudd(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.5, jr.getProbabilityDown(), ConstantForTest.EPSLION);
+    }
+
+    @Test
     void getJREuropeanCallFairPrice() throws UndefinedParameterValueException {
         int N = 1000;
         boolean[] canExecute = new boolean[N+1];

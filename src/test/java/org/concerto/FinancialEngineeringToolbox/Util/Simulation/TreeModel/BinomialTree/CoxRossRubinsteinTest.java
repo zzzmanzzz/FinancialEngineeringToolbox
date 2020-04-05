@@ -13,6 +13,40 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CoxRossRubinsteinTest {
 
+    @Test
+    void getDiscount() {
+        int N = 1000;
+        Tree crr = new CoxRossRubinstein(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.99988 ,crr.getDiscount(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getU() {
+        int N = 1000;
+        Tree crr = new CoxRossRubinstein(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(1.01424 ,crr.getU(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getD() {
+        int N = 1000;
+        Tree crr = new CoxRossRubinstein(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.98595 ,crr.getD(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getProbabilityUp() {
+        int N = 1000;
+        Tree crr = new CoxRossRubinstein(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.50039 ,crr.getProbabilityUp(), ConstantForTest.EPSLION);
+    }
+
+    @Test
+    void getProbabilityDown() {
+        int N = 1000;
+        Tree crr = new CoxRossRubinstein(100, 110, 0.3, 0.05, N, 0.002221918);
+        assertEquals(0.49961 ,crr.getProbabilityDown(), ConstantForTest.EPSLION);
+    }
 
     @Test
     void getCRREuropeanCallFairPrice() throws UndefinedParameterValueException {
