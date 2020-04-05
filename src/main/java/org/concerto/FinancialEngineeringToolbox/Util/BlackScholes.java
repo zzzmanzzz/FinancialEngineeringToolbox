@@ -2,7 +2,6 @@ package org.concerto.FinancialEngineeringToolbox.Util;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 
-import static java.lang.Math.*;
 
 public class BlackScholes {
     private double S;
@@ -98,53 +97,53 @@ public class BlackScholes {
     }
 
     public double d_1() {
-        return ( log( S / K ) + ( r - y + 0.5 * sigma * sigma ) * t ) / ( sigma * sqrt(t));
+        return ( Math.log( S / K ) + ( r - y + 0.5 * sigma * sigma ) * t ) / ( sigma * Math.sqrt(t));
     }
 
     public double d_2() {
-        return d_1 - sigma * sqrt(t);
+        return d_1 - sigma * Math.sqrt(t);
     }
 
     public double getCallPrice() {
-        return S * n.cumulativeProbability(d_1) * exp(-y * t) - K * n.cumulativeProbability(d_2) * exp(-r * t);
+        return S * n.cumulativeProbability(d_1) * Math.exp(-y * t) - K * n.cumulativeProbability(d_2) * Math.exp(-r * t);
     }
 
     public double getPutPrice() {
-        return -S * n.cumulativeProbability(-d_1) * exp(-y * t) + K * n.cumulativeProbability(-d_2) * exp(-r * t);
+        return -S * n.cumulativeProbability(-d_1) * Math.exp(-y * t) + K * n.cumulativeProbability(-d_2) * Math.exp(-r * t);
     }
 
     public double getCallDelta() {
-        return exp(-y * t) * n.cumulativeProbability(d_1);
+        return Math.exp(-y * t) * n.cumulativeProbability(d_1);
     }
 
     public double getPutDelta() {
-        return exp(-y * t) * n.cumulativeProbability(-d_1);
+        return Math.exp(-y * t) * n.cumulativeProbability(-d_1);
     }
 
     public double getGamma() {
-        return (exp(-(y * t )) * n.density(d_1)) / (sqrt(t) * S * sigma );
+        return (Math.exp(-(y * t )) * n.density(d_1)) / (Math.sqrt(t) * S * sigma );
     }
 
     public double getCallRho() {
-        return K * t * exp(-r * t) * n.cumulativeProbability(d_2);
+        return K * t * Math.exp(-r * t) * n.cumulativeProbability(d_2);
     }
 
     public double getPutRho() {
-        return -K * t * exp(-r * t) * n.cumulativeProbability(-d_2);
+        return -K * t * Math.exp(-r * t) * n.cumulativeProbability(-d_2);
     }
 
     public double getVega() {
-        return (S * exp(-y * t) * sqrt(t) / sqrt(2 * PI)) * exp(-d_1 * d_1 / 2);
+        return (S * Math.exp(-y * t) * Math.sqrt(t) / Math.sqrt(2 * Math.PI)) * Math.exp(-d_1 * d_1 / 2);
     }
 
     public double getCallTheta() {
-        double A = (-exp(-y * t) * n.density(d_1) * S * sigma ) / (2 * sqrt(t));
-        return (A - r * K * exp(-r * t) * n.cumulativeProbability(d_2) + y * S * exp(-y * t) * n.cumulativeProbability(d_1)) / tradingDays;
+        double A = (-Math.exp(-y * t) * n.density(d_1) * S * sigma ) / (2 * Math.sqrt(t));
+        return (A - r * K * Math.exp(-r * t) * n.cumulativeProbability(d_2) + y * S * Math.exp(-y * t) * n.cumulativeProbability(d_1)) / tradingDays;
     }
 
     public double getPutTheta() {
-        double A = (-exp(-y * t) * n.density(-d_1) * S * sigma ) / (2 * sqrt(t));
-        return (A + r * K * exp(-r * t)* n.cumulativeProbability(-d_2) - y * S * exp(-y * t) * n.cumulativeProbability(-d_1)) / tradingDays;
+        double A = (-Math.exp(-y * t) * n.density(-d_1) * S * sigma ) / (2 * Math.sqrt(t));
+        return (A + r * K * Math.exp(-r * t)* n.cumulativeProbability(-d_2) - y * S * Math.exp(-y * t) * n.cumulativeProbability(-d_1)) / tradingDays;
     }
 
 }

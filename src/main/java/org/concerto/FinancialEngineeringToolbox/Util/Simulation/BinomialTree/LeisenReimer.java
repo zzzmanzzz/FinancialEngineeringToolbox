@@ -1,5 +1,7 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Simulation.BinomialTree;
 
+import org.concerto.FinancialEngineeringToolbox.Util.BlackScholes;
+
 public class LeisenReimer extends AbstractBinomialTree {
 
     public LeisenReimer(double S0, double K, double sigma, double riskFreeRate, int N, double deltaT) {
@@ -10,11 +12,12 @@ public class LeisenReimer extends AbstractBinomialTree {
     @Override
     protected void init() {
         int odd = N % 2 == 0 ? N + 1 : N;
-        double d1 = (Math.log(S0 / K) + (riskFreeRate + sigma * sigma / 2) * N * deltaT) / (sigma * Math.sqrt(N * deltaT));
-        double d2 = d1 - sigma * Math.sqrt(N * deltaT);
+        double T = deltaT * N;
+        BlackScholes b = new BlackScholes(S0, K, sigma, riskFreeRate, T, 0);
+        double d1 = b.d_1();
+        double d2 = b.d_2();
         double pbar = inversion(d1, odd);
         double p = inversion(d2, odd);
-
         discount = Math.exp(-riskFreeRate * deltaT);
         probabilityUp = p;
         probabilityDown = 1 - p;
