@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Sequence;
+package org.concerto.FinancialEngineeringToolbox.Util.Statistics;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.random.MersenneTwister;
