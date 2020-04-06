@@ -58,7 +58,7 @@ public class GJRGARCH {
         double[] epslion = Arrays.stream(data).map(i -> i - mu).toArray();
 
         for(int i = 1 ; i < epslion.length ; i++) {
-            double indicator = epslion[i-1] < 0 ? 0 : 1;
+            double indicator = epslion[i-1] < 0 ? 1 : 0;
             sigma2[i] = (omega + alpha * Math.pow(epslion[i-1], 2)
                     + gamma * Math.pow(epslion[i-1], 2) * indicator + beta * sigma2[i-1]);
         }
