@@ -8,19 +8,18 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.concerto.FinancialEngineeringToolbox.Constant;
+import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Util.Statistics.Profile;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 public class GJRGARCH {
-    private static Logger logger = Logger.getLogger(GJRGARCH.class.getName());
+    //private static Logger logger = Logger.getLogger(GJRGARCH.class.getName());
 
     private double[] data;
     private double[] sigma2;
     private double variance;
-    private Profile p;
 
     public double[] getData() {
         return data;
@@ -33,7 +32,7 @@ public class GJRGARCH {
 
     GJRGARCH(double[] data) {
         this.data = data;
-        p = new Profile(data);
+        Profile p = new Profile(data);
         variance = Math.pow(p.getStdDev(), 2);
     }
 
@@ -44,14 +43,12 @@ public class GJRGARCH {
      * @param alpha The parameter &alpha; of the GJR GARCH model
      * @param gamma The parameter &gamma; of the GJR GARCH model
      * @param beta The parameter &beta; of the GJR GARCH model
+     * @param sideEffectLogliks output for logliks
+     *
      * @return double log likelihood
      */
-    private double logLikelihood(double mu, double omega, double alpha, double gamma, double beta) {
+    private double logLikelihood(double mu, double omega, double alpha, double gamma, double beta, double[] sideEffectLogliks) {
 
-        double constrain = 1 - alpha - gamma / 2 - beta;
-        if(constrain < 0) {
-            return -Double.MAX_VALUE;
-        }
 
         sigma2 = new double[data.length];
         sigma2[0] = variance;
@@ -69,13 +66,14 @@ public class GJRGARCH {
            logliks[i] = -0.5 * (Math.log(2 * Math.PI) + Math.log(sigma2[i]) + Math.pow(epslion[i], 2) / sigma2[i]);
         }
 
+        sideEffectLogliks = logliks;
         return Arrays.stream(logliks).sum();
     }
 
     private CMAESOptimizer getOptimizer() {
         boolean isActiveCMA = true;
         int diagonalOnly = 0;
-        int checkFeasableCount = 0;
+        int checkFeasibleCount = 0;
         boolean generateStatistics = false;
         RandomGenerator rg = new MersenneTwister(Constant.RANDOMSEED);
         SimpleValueChecker svc = new SimpleValueChecker(1e-6, 1e-10);
@@ -85,7 +83,7 @@ public class GJRGARCH {
                 Constant.EPSILON,
                 isActiveCMA,
                 diagonalOnly,
-                checkFeasableCount,
+                checkFeasibleCount,
                 rg,
                 generateStatistics,
                 svc);
@@ -94,6 +92,7 @@ public class GJRGARCH {
     private MultivariateFunction getObjFunction() {
         class Obj implements MultivariateFunction, Serializable {
 
+
             @Override
             public double value(double[] variables) {
                 final double mu	= variables[0];
@@ -101,37 +100,52 @@ public class GJRGARCH {
                 final double alpha = variables[2];
                 final double gamma = variables[3];
                 final double beta = variables[4];
-                return logLikelihood(mu, omega,alpha, gamma, beta);
+
+                double constrain = 1 - alpha - gamma / 2 - beta;
+
+                if(constrain < 0) {
+                    return -Double.MAX_VALUE;
+                }
+
+                double[] dummy = null;
+                return logLikelihood(mu, omega,alpha, gamma, beta, dummy);
             }
         }
 
         return new Obj();
     }
 
-    public double[] findParameter() {
+    public double[] fit(double[] upperBond, double[] lowerBond, double[] initialGuess) throws DimensionMismatchException {
+        final int size = 5;// 5 parameters
+        if(upperBond.length != size) {
+            throw new DimensionMismatchException("upperBond length should be " + size, null);
+        }
+        if(lowerBond.length != size) {
+            throw new DimensionMismatchException("lowerBond length should be " + size, null);
+        }
+        if(initialGuess.length != size) {
+            throw new DimensionMismatchException("initialGuess length should be " + size, null);
+        }
+
         CMAESOptimizer optimizer = getOptimizer();
 
-        int size = 5;// 5 parameters
 
         // mu, omega, alpha,  gamma,  beta
         double[] s = new double[size];
-        double[] low = new double[]{-10 * p.getMean(), Double.MIN_VALUE, 0.000001, 0.000001, 0.000001};
-        double[] up = new double[]{10 * p.getMean(), 2 * Math.pow(p.getStdDev(), 2), 1.0, 1.0, 1.0};
-        double[] initG = new double[]{p.getMean(), 0.1 * Math.pow(p.getStdDev(), 2), 0.0051, 0.005, 0.005};
 
-        for(int i = 0 ; i < s.length ; i++ ) {
-            s[i] = ( up[i] - low[i] ) / 10000;
+        for(int i = 0 ; i < size ; i++ ) {
+            s[i] = ( upperBond[i] - lowerBond[i] ) / 10000;
         }
 
 
         OptimizationData sigma = new CMAESOptimizer.Sigma(s);
         OptimizationData popSize = new CMAESOptimizer.PopulationSize((int) (4 + Math.floor(3 * Math.log(size))));
-        SimpleBounds bounds = new SimpleBounds(low, up);
+        SimpleBounds bounds = new SimpleBounds(lowerBond, upperBond);
         MaxEval maxEval = new MaxEval(Constant.MAXTRY);
 
         PointValuePair solution =
                 optimizer.optimize(
-                        new InitialGuess(initG),
+                        new InitialGuess(initialGuess),
                         new ObjectiveFunction(getObjFunction()),
                         GoalType.MAXIMIZE,
                         bounds,
@@ -139,7 +153,7 @@ public class GJRGARCH {
                         popSize,
                         maxEval
                 );
-        logger.info(solution.getValue()+"");
+        //logger.info(solution.getValue()+"");
         return solution.getPoint();
     }
 }
