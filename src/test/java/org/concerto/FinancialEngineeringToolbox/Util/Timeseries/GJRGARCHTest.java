@@ -45,15 +45,15 @@ class GJRGARCHTest {
         double[] initG = new double[]{p.getMean(), 0.1 * Math.pow(p.getStdDev(), 2), 0.03, 0.09, 0.9};
 
         GJRGARCH g = new GJRGARCH(data);
-        double[] ans = g.fit(up, low, initG);
-        //logger.info(Arrays.toString(ans));
+        g.fit(up, low, initG);
+        double predict = g.predict(Math.pow(p.getStdDev(), 2), data[data.length - 1] - g.getMu());
 
-
-        assertEquals(0.034439, ans[0], ConstantForTest.EPSLION); // mu
-        assertEquals(0.017989, ans[1], ConstantForTest.EPSLION); // omega
-        assertEquals(0.032059, ans[2], ConstantForTest.EPSLION); // alpha
-        assertEquals(0.094136, ans[3], ConstantForTest.EPSLION); // gamma
-        assertEquals(0.903523, ans[4], ConstantForTest.EPSLION); // beta
+        assertEquals(0.034439, g.getMu(), ConstantForTest.EPSLION);
+        assertEquals(0.017989, g.getOmega(), ConstantForTest.EPSLION);
+        assertEquals(0.032059, g.getAlpha(), ConstantForTest.EPSLION);
+        assertEquals(0.094136, g.getGamma(), ConstantForTest.EPSLION);
+        assertEquals(0.903523, g.getBeta(), ConstantForTest.EPSLION);
+        assertEquals(1.174846, predict, ConstantForTest.EPSLION);
 
 
 /*

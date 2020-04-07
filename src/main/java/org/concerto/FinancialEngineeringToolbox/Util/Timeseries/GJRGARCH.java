@@ -18,22 +18,43 @@ public class GJRGARCH {
     //private static Logger logger = Logger.getLogger(GJRGARCH.class.getName());
 
     private double[] data;
-    private double[] sigma2;
     private double variance;
+    private double mu;
+    private double omega;
+    private double alpha;
+    private double gamma;
+    private double beta;
 
-    public double[] getData() {
-        return data;
+    public double getMu() {
+        return mu;
     }
 
-    public double[] getSigma2() {
-        return sigma2;
+    public double getOmega() {
+        return omega;
     }
 
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public double getGamma() {
+        return gamma;
+    }
+
+    public double getBeta() {
+        return beta;
+    }
 
     GJRGARCH(double[] data) {
         this.data = data;
         Profile p = new Profile(data);
         variance = Math.pow(p.getStdDev(), 2);
+    }
+
+    private double GJRG(double omega, double alpha, double gamma, double beta, double epsilon, double sigma2) {
+        double indicator = epsilon < 0 ? 1 : 0;
+        return omega + alpha * Math.pow(epsilon, 2)
+                + gamma * Math.pow(epsilon, 2) * indicator + beta * sigma2;
     }
 
     /**
@@ -49,21 +70,19 @@ public class GJRGARCH {
      */
     private double logLikelihood(double mu, double omega, double alpha, double gamma, double beta, double[] sideEffectLogliks) {
 
-
-        sigma2 = new double[data.length];
+        int size = data.length;
+        double[] sigma2 = new double[size];
         sigma2[0] = variance;
-        double[] epslion = Arrays.stream(data).map(i -> i - mu).toArray();
 
-        for(int i = 1 ; i < epslion.length ; i++) {
-            double indicator = epslion[i-1] < 0 ? 1 : 0;
-            sigma2[i] = (omega + alpha * Math.pow(epslion[i-1], 2)
-                    + gamma * Math.pow(epslion[i-1], 2) * indicator + beta * sigma2[i-1]);
+        double[] epsilon = Arrays.stream(data).map(i -> i - mu).toArray();
+
+        for(int i = 1 ; i < size ; i++) {
+            sigma2[i] = GJRG(omega, alpha, gamma, beta, epsilon[i-1], sigma2[i-1]);
         }
 
-
-        double[] logliks = new double[sigma2.length];
-        for (int i = 0 ; i < sigma2.length ; i++ ) {
-           logliks[i] = -0.5 * (Math.log(2 * Math.PI) + Math.log(sigma2[i]) + Math.pow(epslion[i], 2) / sigma2[i]);
+        double[] logliks = new double[size];
+        for (int i = 0 ; i < size ; i++ ) {
+           logliks[i] = -0.5 * (Math.log(2 * Math.PI) + Math.log(sigma2[i]) + Math.pow(epsilon[i], 2) / sigma2[i]);
         }
 
         sideEffectLogliks = logliks;
@@ -92,7 +111,6 @@ public class GJRGARCH {
     private MultivariateFunction getObjFunction() {
         class Obj implements MultivariateFunction, Serializable {
 
-
             @Override
             public double value(double[] variables) {
                 final double mu	= variables[0];
@@ -115,7 +133,7 @@ public class GJRGARCH {
         return new Obj();
     }
 
-    public double[] fit(double[] upperBond, double[] lowerBond, double[] initialGuess) throws DimensionMismatchException {
+    public void fit(double[] upperBond, double[] lowerBond, double[] initialGuess) throws DimensionMismatchException {
         final int size = 5;// 5 parameters
         if(upperBond.length != size) {
             throw new DimensionMismatchException("upperBond length should be " + size, null);
@@ -129,7 +147,6 @@ public class GJRGARCH {
 
         CMAESOptimizer optimizer = getOptimizer();
 
-
         // mu, omega, alpha,  gamma,  beta
         double[] s = new double[size];
 
@@ -138,7 +155,7 @@ public class GJRGARCH {
         }
 
 
-        OptimizationData sigma = new CMAESOptimizer.Sigma(s);
+        OptimizationData delta = new CMAESOptimizer.Sigma(s);
         OptimizationData popSize = new CMAESOptimizer.PopulationSize((int) (4 + Math.floor(3 * Math.log(size))));
         SimpleBounds bounds = new SimpleBounds(lowerBond, upperBond);
         MaxEval maxEval = new MaxEval(Constant.MAXTRY);
@@ -149,11 +166,20 @@ public class GJRGARCH {
                         new ObjectiveFunction(getObjFunction()),
                         GoalType.MAXIMIZE,
                         bounds,
-                        sigma,
+                        delta,
                         popSize,
                         maxEval
                 );
-        //logger.info(solution.getValue()+"");
-        return solution.getPoint();
+
+        double[] ret =  solution.getPoint();
+        mu = ret[0];
+        omega = ret[1];
+        alpha = ret[2];
+        gamma = ret[3];
+        beta = ret[4];
+    }
+
+    public double predict(double variance, double epsilon) {
+        return GJRG(omega, alpha, gamma, beta, epsilon, variance);
     }
 }
