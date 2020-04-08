@@ -4,8 +4,6 @@ import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.EfficientFrontier;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -24,22 +22,23 @@ class EfficientFrontierTest {
         double[] ccc = {101.340942, 99.961349, 109.457817, 109.348846, 113.192604, 118.150047, 118.568169, 118.558212, 118.309326, 114.489998, 107.680000, 115.879997, 113.389999};
         double[] ddd = {54.015625, 45.145321, 47.298336, 46.420021, 35.123363, 38.055256, 35.614479, 37.542408, 44.693581, 39.892681, 36.292011, 37.619999, 35.134998};
         double[] eee = {86.892097, 76.316238, 81.796585, 85.348206, 83.830330, 93.416389, 89.069824, 92.988693, 101.02969, 96.033562, 89.132698, 92.680000, 91.540001};
+        double riskFreeRate = 0.01 / 12; //monthly
         data.put("aaa", aaa);
         data.put("bbb", bbb);
         data.put("ccc", ccc);
         data.put("ddd", ddd);
         data.put("eee", eee);
         EfficientFrontier ef = new EfficientFrontier();
-        Result ret = ef.getEfficientFrontier(data, 0.01, Constant.ReturnType.common);
-        assertEquals(0.24162, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.02855, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.00589, ret.getPortfolioVariance(), Constant.EPSILON);
+        Result ret = ef.getEfficientFrontier(data, riskFreeRate, Constant.ReturnType.common);
+        assertEquals(0.36207, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.02732, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.00535, ret.getPortfolioVariance(), Constant.EPSILON);
 
-        assertEquals(0.00986, ret.getWeight("aaa"), Constant.EPSILON);
-        assertEquals(0.76799, ret.getWeight("bbb"), Constant.EPSILON);
-        assertEquals(0.16765, ret.getWeight("ccc"), Constant.EPSILON);
-        assertEquals(0.03147, ret.getWeight("ddd"), Constant.EPSILON);
-        assertEquals(0.02301, ret.getWeight("eee"), Constant.EPSILON);
+        assertEquals(0.01294, ret.getWeight("aaa"), Constant.EPSILON);
+        assertEquals(0.70749, ret.getWeight("bbb"), Constant.EPSILON);
+        assertEquals(0.21998, ret.getWeight("ccc"), Constant.EPSILON);
+        assertEquals(0.02096, ret.getWeight("ddd"), Constant.EPSILON);
+        assertEquals(0.03861, ret.getWeight("eee"), Constant.EPSILON);
     }
 
     @Test
@@ -51,22 +50,23 @@ class EfficientFrontierTest {
         double[] ccc = {101.340942, 99.961349, 109.457817, 109.348846, 113.192604, 118.150047, 118.568169, 118.558212, 118.309326, 114.489998, 107.680000, 115.879997, 113.389999};
         double[] ddd = {54.015625, 45.145321, 47.298336, 46.420021, 35.123363, 38.055256, 35.614479, 37.542408, 44.693581, 39.892681, 36.292011, 37.619999, 35.134998};
         double[] eee = {86.892097, 76.316238, 81.796585, 85.348206, 83.830330, 93.416389, 89.069824, 92.988693, 101.02969, 96.033562, 89.132698, 92.680000, 91.540001};
+        double riskFreeRate = 0.01 / 12; // monthly
         data.put("aaa", aaa);
         data.put("bbb", bbb);
         data.put("ccc", ccc);
         data.put("ddd", ddd);
         data.put("eee", eee);
         EfficientFrontier ef = new EfficientFrontier();
-        Result ret = ef.getEfficientFrontier(data, 0.01, Constant.ReturnType.log);
-        assertEquals(0.19314, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.02490, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.00595, ret.getPortfolioVariance(), Constant.EPSILON);
+        Result ret = ef.getEfficientFrontier(data, riskFreeRate, Constant.ReturnType.log);
+        assertEquals(0.31417, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.02391, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.00539, ret.getPortfolioVariance(), Constant.EPSILON);
 
-        assertEquals(0.00986, ret.getWeight("aaa"), Constant.EPSILON);
-        assertEquals(0.76799, ret.getWeight("bbb"), Constant.EPSILON);
-        assertEquals(0.16765, ret.getWeight("ccc"), Constant.EPSILON);
-        assertEquals(0.03147, ret.getWeight("ddd"), Constant.EPSILON);
-        assertEquals(0.02301, ret.getWeight("eee"), Constant.EPSILON);
+        assertEquals(0.01294, ret.getWeight("aaa"), Constant.EPSILON);
+        assertEquals(0.70749, ret.getWeight("bbb"), Constant.EPSILON);
+        assertEquals(0.21998, ret.getWeight("ccc"), Constant.EPSILON);
+        assertEquals(0.02096, ret.getWeight("ddd"), Constant.EPSILON);
+        assertEquals(0.03861, ret.getWeight("eee"), Constant.EPSILON);
     }
 
 }
