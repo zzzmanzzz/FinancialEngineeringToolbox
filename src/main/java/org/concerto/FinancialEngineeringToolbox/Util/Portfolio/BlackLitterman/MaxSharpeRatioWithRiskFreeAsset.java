@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -7,13 +7,14 @@ import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
 
-public class MinPortfolioVariance extends AbstractPortfolioOptimization {
+public class MaxSharpeRatioWithRiskFreeAsset extends org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz.MinPortfolioVariance {
 
     public Result geOptimizeResult(Map<String, double[]> data, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
         Object[] tmpK = data.keySet().toArray();
@@ -39,48 +40,17 @@ public class MinPortfolioVariance extends AbstractPortfolioOptimization {
             double[] tmp = data.get(keys[i]);
             returns[i] = funcRef.apply(tmp);
         }
-
-        return optimize(keys, returns, 0);
-    }
-
-
-    private RealMatrix initA(double[][] cov) {
-        int size = cov.length + 1;
-        RealMatrix ret = new Array2DRowRealMatrix(size, size);
-        RealMatrix tmp = new Array2DRowRealMatrix(cov);
-        double[] one = new double[size];
-        Arrays.fill(one, 1);
-        one[one.length - 1] = 0;
-
-        ret.setSubMatrix(tmp.scalarMultiply(2).getData(), 0, 0);
-        ret.setColumn(size - 1, one);
-        ret.setRow(size - 1, one);
-
-        return ret;
-    }
-
-    private RealMatrix initB(int size) {
-        double[] b = new double[size];
-        Arrays.fill(b, 0);
-        b[b.length - 1] = 1;
-        return new Array2DRowRealMatrix(b);
-    }
-
-    @Override
-    protected Result optimize(String[] symbols, double[][] returns, double riskFreeRate) throws ParameterRangeErrorException {
-        double[][] cov = getCovariance(returns);
-        double[] mean = getMeanReturn(returns);
-        RealMatrix A = initA(cov);
-        RealMatrix b = initB(cov.length + 1);
-        double[] z = MatrixUtils.inverse(A).multiply(b).getColumn(0);
-
-        double[] weight = Arrays.copyOfRange(z, 0, z.length - 1);
-
+/*
+        double[][] cov = BlackLitterman.getBLCovariance(getCovariance(returns));
+        double[] mean = BlackLitterman.getBLMeanReturn(getMeanReturn(returns));
+        double[] weight =  optimize(mean, cov, 0);
         double weightedReturn = getWeightedReturn(weight, mean);
         double portfolioVariance = getPortfolioVariance(cov, weight);
-        double sharpeRatio = (weightedReturn- riskFreeRate) / Math.sqrt(portfolioVariance);
-        Result ret = new Result(symbols, weight, sharpeRatio, weightedReturn, portfolioVariance);
+        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, 0);
+        return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
 
-        return ret;
+ */
+        return  null;
     }
+
 }

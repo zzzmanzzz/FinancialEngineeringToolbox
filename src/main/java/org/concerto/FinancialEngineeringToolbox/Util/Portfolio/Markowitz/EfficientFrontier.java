@@ -1,20 +1,20 @@
-package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.random.SobolSequenceGenerator;
-import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
-import org.concerto.FinancialEngineeringToolbox.Util.Returns.Rate;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.PortfolioOptimization;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 
 import java.util.Map;
 import java.util.function.Function;
 
-public class EfficientFrontier extends AbstractPortfolioOptimization {
+public class EfficientFrontier extends PortfolioOptimization {
     static final private Mean m = new Mean();
 
     public Result getEfficientFrontier(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
@@ -41,23 +41,32 @@ public class EfficientFrontier extends AbstractPortfolioOptimization {
             double[] tmp = data.get(keys[i]);
             returns[i] = funcRef.apply(tmp);
         }
+        double[] mean = getMeanReturn(returns);
+        double[][] cov = getCovariance(returns);
 
-        return optimize(keys, returns, riskFreeRate);
+        double[] bestWeight = optimize(mean, cov, riskFreeRate);
+
+        double weightedReturns = 0;
+
+        for(int i = 0 ; i < mean.length; i++) {
+            weightedReturns += mean[i] * bestWeight[i];
+        }
+
+        double bestSharpeRatio = getWeightedSharpeRatio(bestWeight, mean, cov, riskFreeRate);
+        double variance = Math.pow(((weightedReturns - riskFreeRate) / bestSharpeRatio), 2);
+        return new Result(keys, bestWeight, bestSharpeRatio, weightedReturns, variance);
     }
 
-    protected Result optimize(String[] symbols, double[][] returns, double riskFreeRate) throws ParameterRangeErrorException {
-        double[] mean = getMeanReturn(returns);
-        Function<double[], Double> WeightedSharpeRatio = (double[] weight) -> {
-            RealMatrix w = new Array2DRowRealMatrix(weight);
-            double varP = getPortfolioVariance(getCovariance(returns), weight);
-            double weightMean = getWeightedReturn(weight, mean);
-            return ((weightMean - riskFreeRate) / Math.sqrt(varP));
-        };
+
+
+
+    @Override
+    protected double[] optimize(double[] mean, double[][] covariance, double riskFreeRate) throws ParameterRangeErrorException {
 
         double[] bestWeight = null;
         double bestSharpeRatio = 0;
 
-        SobolSequenceGenerator g = new SobolSequenceGenerator(returns.length);
+        SobolSequenceGenerator g = new SobolSequenceGenerator(mean.length);
         for(int i = 0 ; i < Constant.MAXTRY ; i++) {
             double[] w = g.nextVector();
             double sum = 0;
@@ -69,22 +78,16 @@ public class EfficientFrontier extends AbstractPortfolioOptimization {
                 w[j] /= sum;
             }
 
-            double tmp = WeightedSharpeRatio.apply(w);
+            double tmp = getWeightedSharpeRatio(w, mean, covariance, riskFreeRate);
             if(tmp > bestSharpeRatio) {
                 bestSharpeRatio = tmp;
                 bestWeight = w;
             }
         }
 
-        double weightedReturns = 0;
-        for(int i = 0 ; i < mean.length; i++) {
-            weightedReturns += mean[i] * bestWeight[i];
-        }
-
-        double variance = Math.pow(((weightedReturns - riskFreeRate) / bestSharpeRatio), 2);
-
-        return new Result(symbols, bestWeight, bestSharpeRatio, weightedReturns, variance);
+        return bestWeight;
 
     }
+
 
 }

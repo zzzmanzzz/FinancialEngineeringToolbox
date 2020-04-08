@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -11,10 +11,10 @@ import org.concerto.FinancialEngineeringToolbox.Util.Returns.Rate;
 
 import java.util.function.Function;
 
-public abstract class AbstractPortfolioOptimization {
+public abstract class PortfolioOptimization {
     static final private Mean m = new Mean();
 
-    abstract protected Result optimize(String[] symbols, double[][] returns, double riskFreeRate) throws ParameterRangeErrorException;
+    abstract protected double[] optimize(double[] meanReturns, double[][] covariance, double riskFreeRate) throws ParameterRangeErrorException;
 
     final protected double getWeightedReturn(double[] weight, double[] returns) {
         double ret = 0;
@@ -30,7 +30,7 @@ public abstract class AbstractPortfolioOptimization {
         return w.transpose().multiply(r).multiply(w).getData()[0][0];
     }
 
-    final protected double[] getMeanReturn(double[][] returns) {
+    protected double[] getMeanReturn(double[][] returns) {
         double[] mean = new double[returns.length];
         for(int i = 0 ; i < returns.length; i++) {
             mean[i] = m.evaluate(returns[i], 0, returns[i].length);
@@ -38,7 +38,7 @@ public abstract class AbstractPortfolioOptimization {
         return mean;
     }
 
-    final protected double[][] getCovariance(double[][] data) {
+    protected double[][] getCovariance(double[][] data) {
         double[][] ret = new double[data.length][data.length];
         Covariance covariance = new Covariance();
 
@@ -53,6 +53,12 @@ public abstract class AbstractPortfolioOptimization {
             }
         }
         return ret;
+    }
+
+    public double getWeightedSharpeRatio(double[] weight, double mean[], double[][] cov, double riskFreeRate) {
+        double varP = getPortfolioVariance(cov, weight);
+        double weightMean = getWeightedReturn(weight, mean);
+        return ((weightMean - riskFreeRate) / Math.sqrt(varP));
     }
 
     final protected Function<double[], double[]> getReturnFunction(Constant.ReturnType type) throws UndefinedParameterValueException {

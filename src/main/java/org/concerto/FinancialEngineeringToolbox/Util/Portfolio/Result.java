@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import java.util.HashMap;
 import java.util.Map;

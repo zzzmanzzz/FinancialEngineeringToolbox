@@ -1,9 +1,11 @@
-package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz;
 
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz.EfficientFrontier;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

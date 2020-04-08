@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.PortfolioOptimization;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -7,15 +7,17 @@ import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.PortfolioOptimization;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
-public class MinPortfolioVarianceWithTargetReturn extends AbstractPortfolioOptimization {
+public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization {
     private double targetReturn;
 
-    public  Result geOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
+    public Result geOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException {
         this.targetReturn = targetReturn;
 
         Object[] tmpK = data.keySet().toArray();
@@ -27,7 +29,7 @@ public class MinPortfolioVarianceWithTargetReturn extends AbstractPortfolioOptim
 
 
         for(Object k : keys) {
-            if(data.get(k) == null) {
+            if(null == data.get(k)) {
                 String msg = String.format("key(%s) has null value", k);
                 throw new ParameterIsNullException(msg, null);
             }
@@ -42,10 +44,17 @@ public class MinPortfolioVarianceWithTargetReturn extends AbstractPortfolioOptim
             returns[i] = funcRef.apply(tmp);
         }
 
-        return optimize(keys, returns, 0);
+        double[][] cov = getCovariance(returns);
+        double[] mean = getMeanReturn(returns);
+        double[] weight = optimize(mean, cov, 0);
+
+        double weightedReturn = getWeightedReturn(weight, mean);
+        double portfolioVariance = getPortfolioVariance(cov, weight);
+        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, 0);
+        return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
     }
 
-    private RealMatrix initA(double[][] cov, double[] meanReturn) {
+    protected RealMatrix initA(double[][] cov, double[] meanReturn) {
         int size = cov.length + 2;
         RealMatrix ret = new Array2DRowRealMatrix(size, size);
         RealMatrix tmp = new Array2DRowRealMatrix(cov);
@@ -67,7 +76,7 @@ public class MinPortfolioVarianceWithTargetReturn extends AbstractPortfolioOptim
         return ret;
     }
 
-    private RealMatrix initB(int size) {
+    protected RealMatrix initB(int size) {
         double[] tmp = new double[size];
         Arrays.fill(tmp, 0);
         tmp[size - 2] = targetReturn;
@@ -76,19 +85,12 @@ public class MinPortfolioVarianceWithTargetReturn extends AbstractPortfolioOptim
     }
 
     @Override
-    protected Result optimize(String[] symbols, double[][] returns, double riskFreeRate) throws ParameterRangeErrorException {
-        double[][] cov = getCovariance(returns);
-        double[] mean = getMeanReturn(returns);
+    protected double[] optimize(double[] mean, double[][] cov, double riskFreeRate) {
         RealMatrix A = initA(cov, mean);
         RealMatrix B = initB(cov.length + 2);
         double[] w = MatrixUtils.inverse(A).multiply(B).getColumn(0);
-        double[] weight = Arrays.copyOfRange(w, 0, w.length - 2);
-
-        double weightedReturn = getWeightedReturn(weight, mean);
-        double portfolioVariance = getPortfolioVariance(cov, weight);
-        double sharpeRatio = (weightedReturn- riskFreeRate) / Math.sqrt(portfolioVariance);
-        Result ret = new Result(symbols, weight, sharpeRatio, weightedReturn, portfolioVariance);
-
-        return ret;
+        return Arrays.copyOfRange(w, 0, w.length - 2);
     }
+
+
 }
