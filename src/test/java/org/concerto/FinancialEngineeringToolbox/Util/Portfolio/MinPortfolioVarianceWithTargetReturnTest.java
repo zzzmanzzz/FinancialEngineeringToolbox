@@ -31,7 +31,7 @@ class MinPortfolioVarianceWithTargetReturnTest {
         data.put("ddd", ddd);
         data.put("eee", eee);
         MinPortfolioVarianceWithTargetReturn mpv = new MinPortfolioVarianceWithTargetReturn();
-        Result ret = mpv.geOptimizeResult(data, targetReturn, Constant.ReturnType.common, Constant.PortfolioType.Markowitz);
+        Result ret = mpv.getMarkowitzOptimizeResult(data, targetReturn, Constant.ReturnType.common);
 
         assertEquals(0.69448, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(targetReturn, ret.getWeightedReturns(), Constant.EPSILON);

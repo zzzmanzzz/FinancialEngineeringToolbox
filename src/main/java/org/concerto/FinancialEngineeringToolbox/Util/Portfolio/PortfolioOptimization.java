@@ -5,16 +5,16 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.concerto.FinancialEngineeringToolbox.Constant;
+import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.concerto.FinancialEngineeringToolbox.Util.Returns.Rate;
 
+import java.util.Map;
 import java.util.function.Function;
 
 public abstract class PortfolioOptimization {
     static final private Mean m = new Mean();
-
-    abstract protected double[] optimize(double[] meanReturns, double[][] covariance, double riskFreeRate) throws ParameterRangeErrorException;
 
     final protected double getWeightedReturn(double[] weight, double[] returns) {
         double ret = 0;

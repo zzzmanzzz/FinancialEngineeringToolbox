@@ -31,7 +31,7 @@ class MaxSharpeRatioWithRiskFreeAssetTest {
         data.put("ddd", ddd);
         data.put("eee", eee);
         MaxSharpeRatioWithRiskFreeAsset mpv = new MaxSharpeRatioWithRiskFreeAsset();
-        Result ret = mpv.geOptimizeResult(data, riskFreeRate, Constant.ReturnType.common, Constant.PortfolioType.Markowitz);
+        Result ret = mpv.getMarkowitzOptimizeResult(data, riskFreeRate, Constant.ReturnType.common);
 
         assertEquals(-1.21834, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(-0.06614, ret.getWeightedReturns(), Constant.EPSILON);

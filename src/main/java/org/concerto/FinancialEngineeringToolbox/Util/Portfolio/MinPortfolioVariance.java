@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 public class MinPortfolioVariance extends PortfolioOptimization {
 
-    public Result geOptimizeResult(Map<String, double[]> data, Constant.ReturnType type, Constant.PortfolioType portfolioType) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
+    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException {
         Object[] tmpK = data.keySet().toArray();
         String[] keys = new String[tmpK.length];
 
@@ -74,7 +74,6 @@ public class MinPortfolioVariance extends PortfolioOptimization {
         return new Array2DRowRealMatrix(b);
     }
 
-    @Override
     protected double[] optimize(double[] mean, double[][] cov, double riskFreeRate) {
         RealMatrix A = initA(cov);
         RealMatrix b = initB(cov.length + 1);

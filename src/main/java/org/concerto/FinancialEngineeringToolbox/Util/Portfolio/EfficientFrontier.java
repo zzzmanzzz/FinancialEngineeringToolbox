@@ -57,9 +57,6 @@ public class EfficientFrontier extends PortfolioOptimization {
     }
 
 
-
-
-    @Override
     protected double[] optimize(double[] mean, double[][] covariance, double riskFreeRate) throws ParameterRangeErrorException {
 
         double[] bestWeight = null;

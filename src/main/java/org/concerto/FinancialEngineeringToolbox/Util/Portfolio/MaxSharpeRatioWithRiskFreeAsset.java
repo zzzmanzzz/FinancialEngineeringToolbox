@@ -16,7 +16,8 @@ import java.util.function.Function;
 
 public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
-   final public Result geOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, Constant.PortfolioType portfolioType) throws ParameterIsNullException, UndefinedParameterValueException {
+
+    public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException {
 
         Object[] tmpK = data.keySet().toArray();
         String[] keys = new String[tmpK.length];
@@ -24,7 +25,6 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
         for(int i = 0 ; i < keys.length;i++ ) {
             keys[i] = (String) tmpK[i];
         }
-
 
         for(Object k : keys) {
             if(null == data.get(k)) {
@@ -35,7 +35,6 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
         Function<double[], double[]> funcRef = getReturnFunction(type);
         double[][] returns = new double[keys.length][];
-
 
         for(int i = 0 ; i < keys.length ; i++) {
             double[] tmp = data.get(keys[i]);
@@ -62,7 +61,6 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
         return ret;
     }
 
-    @Override
     protected double[] optimize(double[] mean, double[][] cov, double riskFreeRate) {
         RealMatrix A = initA(cov);
         RealMatrix B = initB(mean, riskFreeRate);
@@ -74,6 +72,5 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
         }
         return weight;
     }
-
 
 }
