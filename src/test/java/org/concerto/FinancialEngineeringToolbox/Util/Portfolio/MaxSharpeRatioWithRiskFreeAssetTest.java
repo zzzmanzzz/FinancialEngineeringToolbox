@@ -1,10 +1,10 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz.MinPortfolioVariance;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.MaxSharpeRatioWithRiskFreeAsset;
 import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +13,11 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MinPortfolioVarianceTest {
+class MaxSharpeRatioWithRiskFreeAssetTest {
 
     @Test
     void geOptimizeResult() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException {
+        double riskFreeRate = 0.01;
         Map<String, double[]> data = new HashMap<>();
         //Amazon, Apple, Walmart, HP, NIKE
         double[] aaa = {1926.520020, 1775.069946, 1893.630005, 1866.780029, 1776.290039, 1735.910034, 1776.660034, 1800.800049, 1847.839966, 2008.719971, 1883.750000, 1953.949951, 1918.439941};
@@ -29,17 +30,17 @@ class MinPortfolioVarianceTest {
         data.put("ccc", ccc);
         data.put("ddd", ddd);
         data.put("eee", eee);
-        MinPortfolioVariance mpv = new MinPortfolioVariance();
-        Result ret = mpv.geOptimizeResult(data, Constant.ReturnType.common);
+        MaxSharpeRatioWithRiskFreeAsset mpv = new MaxSharpeRatioWithRiskFreeAsset();
+        Result ret = mpv.geOptimizeResult(data, riskFreeRate, Constant.ReturnType.common, Constant.PortfolioType.Markowitz);
 
-        assertEquals(-0.46953, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(-0.01301, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.00076, ret.getPortfolioVariance(), Constant.EPSILON);
+        assertEquals(-1.21834, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(-0.06614, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.00390, ret.getPortfolioVariance(), Constant.EPSILON);
 
-        assertEquals(0.81916, ret.getWeight("aaa"), Constant.EPSILON);
-        assertEquals(-0.59488, ret.getWeight("bbb"), Constant.EPSILON);
-        assertEquals(0.46835, ret.getWeight("ccc"), Constant.EPSILON);
-        assertEquals(-0.02195, ret.getWeight("ddd"), Constant.EPSILON);
-        assertEquals(0.32932, ret.getWeight("eee"), Constant.EPSILON);
+        assertEquals(1.49205, ret.getWeight("aaa"), Constant.EPSILON);
+        assertEquals(-1.64880, ret.getWeight("bbb"), Constant.EPSILON);
+        assertEquals(0.46819, ret.getWeight("ccc"), Constant.EPSILON);
+        assertEquals(0.50164, ret.getWeight("ddd"), Constant.EPSILON);
+        assertEquals(0.18691, ret.getWeight("eee"), Constant.EPSILON);
     }
 }

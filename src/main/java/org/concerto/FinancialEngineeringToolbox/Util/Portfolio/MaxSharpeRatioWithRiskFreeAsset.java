@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -7,16 +7,17 @@ import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.PortfolioOptimization;
 import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
+public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
-public class MaxSharpeRatioWithRiskFreeAsset extends org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz.MinPortfolioVariance {
+   final public Result geOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, Constant.PortfolioType portfolioType) throws ParameterIsNullException, UndefinedParameterValueException {
 
-    public Result geOptimizeResult(Map<String, double[]> data, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
         Object[] tmpK = data.keySet().toArray();
         String[] keys = new String[tmpK.length];
 
@@ -26,7 +27,7 @@ public class MaxSharpeRatioWithRiskFreeAsset extends org.concerto.FinancialEngin
 
 
         for(Object k : keys) {
-            if(data.get(k) == null) {
+            if(null == data.get(k)) {
                 String msg = String.format("key(%s) has null value", k);
                 throw new ParameterIsNullException(msg, null);
             }
@@ -40,17 +41,39 @@ public class MaxSharpeRatioWithRiskFreeAsset extends org.concerto.FinancialEngin
             double[] tmp = data.get(keys[i]);
             returns[i] = funcRef.apply(tmp);
         }
-/*
-        double[][] cov = BlackLitterman.getBLCovariance(getCovariance(returns));
-        double[] mean = BlackLitterman.getBLMeanReturn(getMeanReturn(returns));
-        double[] weight =  optimize(mean, cov, 0);
+
+        double[][] cov = getCovariance(returns);
+        double[] mean = getMeanReturn(returns);
+        double[] weight = optimize(mean, cov, riskFreeRate);
+
         double weightedReturn = getWeightedReturn(weight, mean);
         double portfolioVariance = getPortfolioVariance(cov, weight);
-        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, 0);
+        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, riskFreeRate);
         return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
-
- */
-        return  null;
     }
+
+    protected RealMatrix initA(double[][] cov) {
+        return new Array2DRowRealMatrix(cov);
+    }
+
+    protected RealMatrix initB(double[] mean, double riskFreeRate) {
+        RealMatrix ret = new Array2DRowRealMatrix(mean);
+        ret.scalarAdd(-riskFreeRate);
+        return ret;
+    }
+
+    @Override
+    protected double[] optimize(double[] mean, double[][] cov, double riskFreeRate) {
+        RealMatrix A = initA(cov);
+        RealMatrix B = initB(mean, riskFreeRate);
+        double[] w = MatrixUtils.inverse(A).multiply(B).getColumn(0);
+        double sum = Arrays.stream(w).sum();
+        double[] weight = new double[mean.length];
+        for(int i = 0 ; i < weight.length ; i++ ) {
+            weight[i] = w[i] / sum;
+        }
+        return weight;
+    }
+
 
 }

@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 
 public class BlackLitterman {

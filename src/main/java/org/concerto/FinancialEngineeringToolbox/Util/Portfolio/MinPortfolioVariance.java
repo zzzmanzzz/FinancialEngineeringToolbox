@@ -1,4 +1,4 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -14,10 +14,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
-public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
-    public Result geOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException {
+public class MinPortfolioVariance extends PortfolioOptimization {
 
+    public Result geOptimizeResult(Map<String, double[]> data, Constant.ReturnType type, Constant.PortfolioType portfolioType) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
         Object[] tmpK = data.keySet().toArray();
         String[] keys = new String[tmpK.length];
 
@@ -27,7 +27,7 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
 
         for(Object k : keys) {
-            if(null == data.get(k)) {
+            if(data.get(k) == null) {
                 String msg = String.format("key(%s) has null value", k);
                 throw new ParameterIsNullException(msg, null);
             }
@@ -44,36 +44,42 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
         double[][] cov = getCovariance(returns);
         double[] mean = getMeanReturn(returns);
-        double[] weight = optimize(mean, cov, riskFreeRate);
-
+        double[] weight =  optimize(mean, cov, 0);
         double weightedReturn = getWeightedReturn(weight, mean);
         double portfolioVariance = getPortfolioVariance(cov, weight);
-        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, riskFreeRate);
+        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, 0);
         return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
     }
 
+
     protected RealMatrix initA(double[][] cov) {
-        return new Array2DRowRealMatrix(cov);
+        int size = cov.length + 1;
+        RealMatrix ret = new Array2DRowRealMatrix(size, size);
+        RealMatrix tmp = new Array2DRowRealMatrix(cov);
+        double[] one = new double[size];
+        Arrays.fill(one, 1);
+        one[one.length - 1] = 0;
+
+        ret.setSubMatrix(tmp.scalarMultiply(2).getData(), 0, 0);
+        ret.setColumn(size - 1, one);
+        ret.setRow(size - 1, one);
+
+        return ret;
     }
 
-    protected RealMatrix initB(double[] mean, double riskFreeRate) {
-        RealMatrix ret = new Array2DRowRealMatrix(mean);
-        ret.scalarAdd(-riskFreeRate);
-        return ret;
+    protected RealMatrix initB(int size) {
+        double[] b = new double[size];
+        Arrays.fill(b, 0);
+        b[b.length - 1] = 1;
+        return new Array2DRowRealMatrix(b);
     }
 
     @Override
     protected double[] optimize(double[] mean, double[][] cov, double riskFreeRate) {
         RealMatrix A = initA(cov);
-        RealMatrix B = initB(mean, riskFreeRate);
-        double[] w = MatrixUtils.inverse(A).multiply(B).getColumn(0);
-        double sum = Arrays.stream(w).sum();
-        double[] weight = new double[mean.length];
-        for(int i = 0 ; i < weight.length ; i++ ) {
-            weight[i] = w[i] / sum;
-        }
-        return weight;
+        RealMatrix b = initB(cov.length + 1);
+        double[] z = MatrixUtils.inverse(A).multiply(b).getColumn(0);
+        return Arrays.copyOfRange(z, 0, z.length - 1);
     }
-
 
 }

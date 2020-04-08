@@ -1,10 +1,10 @@
-package org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz;
+package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Markowitz.MinPortfolioVarianceWithTargetReturn;
+import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.MinPortfolioVarianceWithTargetReturn;
 import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ class MinPortfolioVarianceWithTargetReturnTest {
         data.put("ddd", ddd);
         data.put("eee", eee);
         MinPortfolioVarianceWithTargetReturn mpv = new MinPortfolioVarianceWithTargetReturn();
-        Result ret = mpv.geOptimizeResult(data, targetReturn, Constant.ReturnType.common);
+        Result ret = mpv.geOptimizeResult(data, targetReturn, Constant.ReturnType.common, Constant.PortfolioType.Markowitz);
 
         assertEquals(0.69448, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(targetReturn, ret.getWeightedReturns(), Constant.EPSILON);
