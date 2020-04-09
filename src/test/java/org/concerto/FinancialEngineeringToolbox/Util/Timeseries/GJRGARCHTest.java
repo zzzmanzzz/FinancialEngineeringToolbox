@@ -5,6 +5,7 @@ import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchExcep
 import org.concerto.FinancialEngineeringToolbox.Util.Statistics.Profile;
 import org.json.JSONArray;
 import org.json.JSONTokener;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -18,11 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GJRGARCHTest {
-    private static Logger logger = Logger.getLogger(GJRGARCH.class.getName());
+    private static Logger logger = Logger.getLogger(GJRGARCHTest.class.getName());
 
 
+    @BeforeAll
     @Test
-    public void testReadFile(){
+    public static void testReadFile(){
         File file = new File("src/test/resources/FTSERETURN.json");
         assertTrue(file.exists());
     }
