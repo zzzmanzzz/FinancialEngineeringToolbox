@@ -41,6 +41,7 @@ public class MinPortfolioVariance extends PortfolioOptimization {
             double[] tmp = data.get(keys[i]);
             returns[i] = funcRef.apply(tmp);
         }
+        returns = dropna(returns);
 
         double[][] cov = getCovariance(returns);
         double[] mean = getMeanReturn(returns);

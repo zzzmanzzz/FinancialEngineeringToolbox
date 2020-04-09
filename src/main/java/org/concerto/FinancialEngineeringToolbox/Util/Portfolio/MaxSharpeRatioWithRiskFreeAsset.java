@@ -41,6 +41,8 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
             returns[i] = funcRef.apply(tmp);
         }
 
+        returns = dropna(returns);
+
         double[][] cov = getCovariance(returns);
         double[] mean = getMeanReturn(returns);
         double[] weight = optimize(mean, cov, riskFreeRate);

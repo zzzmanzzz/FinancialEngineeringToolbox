@@ -31,11 +31,13 @@ public class EfficientFrontier extends PortfolioOptimization {
         Function<double[], double[]> funcRef = getReturnFunction(type);
         double[][] returns = new double[keys.length][];
 
-
         for(int i = 0 ; i < keys.length ; i++) {
             double[] tmp = data.get(keys[i]);
             returns[i] = funcRef.apply(tmp);
         }
+
+        returns = dropna(returns);
+
         double[] mean = getMeanReturn(returns);
         double[][] cov = getCovariance(returns);
 

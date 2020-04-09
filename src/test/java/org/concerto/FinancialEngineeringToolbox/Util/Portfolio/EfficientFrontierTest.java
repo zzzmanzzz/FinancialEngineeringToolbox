@@ -16,8 +16,8 @@ class EfficientFrontierTest extends LoadData {
         double riskFreeRate = 0.01 / ConstantForTest.TRADINGDAYS;
         EfficientFrontier ef = new EfficientFrontier();
         Result ret = ef.getEfficientFrontier(data, riskFreeRate, Constant.ReturnType.common);
-        assertEquals(0.10181, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.00089, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.07893, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.00077, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.00008, ret.getPortfolioVariance(), Constant.EPSILON);
 
     }
@@ -28,8 +28,8 @@ class EfficientFrontierTest extends LoadData {
         EfficientFrontier ef = new EfficientFrontier();
         Result ret = ef.getEfficientFrontier(data, riskFreeRate, Constant.ReturnType.log);
 
-        assertEquals(0.08718, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.00077, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.06441, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.00064, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.00008, ret.getPortfolioVariance(), Constant.EPSILON);
 
     }

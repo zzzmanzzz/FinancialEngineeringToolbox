@@ -10,7 +10,7 @@ import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorExc
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.concerto.FinancialEngineeringToolbox.Util.Returns.Rate;
 
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class PortfolioOptimization {
@@ -75,5 +75,30 @@ public abstract class PortfolioOptimization {
                 throw new UndefinedParameterValueException("Unexpected value: " + type, null);
         }
         return funcRef;
+    }
+
+    final protected double[][] dropna(double[][] in) {
+        Set<Long> skipLine = new HashSet<>();
+
+        for (int i = 0 ; i < in.length ; i++) {
+            for (int j = 0; j < in[i].length ; j++) {
+                if (Double.isNaN(in[i][j])) {
+                    skipLine.add(new Long(j));
+                }
+            }
+        }
+
+       double[][] ret = new double[in.length][];
+
+       for (int i = 0 ; i < in.length; i++) {
+            List<Double> tmp = new LinkedList<>();
+           for(int j = 0 ; j < in[i].length ; j++ ) {
+               if(!skipLine.contains(new Long(j))) {
+                   tmp.add(in[i][j]);
+               }
+           }
+           ret[i] = tmp.stream().mapToDouble(Double::doubleValue).toArray();
+        }
+        return ret;
     }
 }

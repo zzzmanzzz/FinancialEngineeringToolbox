@@ -16,13 +16,13 @@ class MaxSharpeRatioWithRiskFreeAssetTest extends LoadData {
         MaxSharpeRatioWithRiskFreeAsset mpv = new MaxSharpeRatioWithRiskFreeAsset();
         Result ret = mpv.getMarkowitzOptimizeResult(data, riskFreeRate, Constant.ReturnType.common);
 
-        assertEquals(0.33638, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.01404, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.00173, ret.getPortfolioVariance(), Constant.EPSILON);
+        assertEquals(0.17241, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.00530, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.00093, ret.getPortfolioVariance(), Constant.EPSILON);
 
-        assertEquals(-0.44096, ret.getWeight("AAPL"), Constant.EPSILON);
-        assertEquals(-1.14401, ret.getWeight("GOOG"), Constant.EPSILON);
-        assertEquals(0.87049, ret.getWeight("AMZN"), Constant.EPSILON);
+        assertEquals(-0.04282, ret.getWeight("AAPL"), Constant.EPSILON);
+        assertEquals(-0.55014, ret.getWeight("GOOG"), Constant.EPSILON);
+        assertEquals(0.91848, ret.getWeight("AMZN"), Constant.EPSILON);
        // assertEquals(0.50164, ret.getWeight("ddd"), Constant.EPSILON);
        // assertEquals(0.18691, ret.getWeight("eee"), Constant.EPSILON);
     }

@@ -45,10 +45,6 @@ public class  Rate {
         double[] ret = new double[data.length - 1];
 
         for(int i = 1 ; i < data.length ; i++) {
-            if(Double.compare(0.0, data[i - 1])>= 0) {
-                ret[i - 1] = 0;
-                continue;
-            }
             ret[i - 1] = data[i] / data[i - 1] - 1;
         }
         return ret;
@@ -58,10 +54,6 @@ public class  Rate {
         double[] ret = new double[data.length - 1];
 
         for(int i = 1 ; i < data.length ; i++) {
-            if(Double.compare(0.0, data[i - 1])>= 0) {
-                ret[i - 1] = 0;
-                continue;
-            }
             ret[i - 1] = Math.log(data[i] / data[i - 1]);
         }
         return ret;

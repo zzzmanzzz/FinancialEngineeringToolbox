@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LoadData {
     protected static Map<String, double[]> data;
@@ -32,17 +29,25 @@ public class LoadData {
         data = new HashMap<>();
 
         for (CSVRecord csvRecord : csvParser) {
-            for(int i = 1 ; i < symbles.size(); i++) {
+            for (int i = 1; i < symbles.size(); i++) {
                 String s = symbles.get(i);
-                if(!csv.containsKey(s)) {
+                if (!csv.containsKey(s)) {
                     csv.put(s, new LinkedList<Double>());
                 }
                 String n = csvRecord.get(s);
-                double num = n.isEmpty() ? 0 : Double.valueOf(n);
+                double num = 0;
+                if( n.isEmpty() || n.equals("") ) {
+                    num = Double.NaN;
+                } else {
+                    num =Double.valueOf(n);
+                }
                 csv.get(s).add(num);
             }
         }
+
         reader.close();
-        csv.forEach((K, V) -> data.put(K, V.subList(6875, V.size()).stream().mapToDouble(Double::doubleValue).toArray()));
+
+        csv.forEach((K, V) ->
+               data.put(K, V.stream().mapToDouble(Double::doubleValue).toArray()));
     }
 }
