@@ -44,18 +44,18 @@ class GJRGARCHTest {
 
         double[] low = new double[]{-10 * p.getMean(), Double.MIN_VALUE, 0.0, 0.0, 0.0};
         double[] up = new double[]{10 * p.getMean(), 2 * Math.pow(p.getStdDev(), 2), 1.0, 1.0, 1.0};
-        double[] initG = new double[]{p.getMean(), 0.1 * Math.pow(p.getStdDev(), 2), 0.03, 0.09, 0.9};
+        double[] initG = new double[]{p.getMean(), 0.1 * Math.pow(p.getStdDev(), 2), 0.44, 0.44, 0.44};
 
         GJRGARCH g = new GJRGARCH(data);
         g.fit(up, low, initG);
         double predict = g.predict(Math.pow(p.getStdDev(), 2), data[data.length - 1] - g.getMu());
 
-        assertEquals(0.034439, g.getMu(), ConstantForTest.EPSLION);
-        assertEquals(0.017989, g.getOmega(), ConstantForTest.EPSLION);
-        assertEquals(0.032059, g.getAlpha(), ConstantForTest.EPSLION);
-        assertEquals(0.094136, g.getGamma(), ConstantForTest.EPSLION);
-        assertEquals(0.903523, g.getBeta(), ConstantForTest.EPSLION);
-        assertEquals(1.174846, predict, ConstantForTest.EPSLION);
+        assertEquals(0.031253, g.getMu(), ConstantForTest.EPSLION);
+        assertEquals(0.017630, g.getOmega(), ConstantForTest.EPSLION);
+        assertEquals(0.030200, g.getAlpha(), ConstantForTest.EPSLION);
+        assertEquals(0.093758, g.getGamma(), ConstantForTest.EPSLION);
+        assertEquals(0.905874, g.getBeta(), ConstantForTest.EPSLION);
+        assertEquals(1.177300, predict, ConstantForTest.EPSLION);
 
 
 /*

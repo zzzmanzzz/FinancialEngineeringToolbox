@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EfficientFrontierTest extends LoadData {
 
     @Test
-    void getMaxSharpeRatioCommon() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException {
+    void getMaxSharpeRatio() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException {
         double riskFreeRate = 0.02;
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[] upper = new double[data.size()];
@@ -26,10 +26,10 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(init, .05);
 
         Result ret = ef.getMaxSharpeRatio(upper, lower, init,Constant.ReturnType.common);
-        assertEquals(1.42066, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.22292, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.02040, ret.getPortfolioVariance(), Constant.EPSILON);
-        String weight = "{BABA=0.0, GOOG=0.0, AAPL=0.015070977025357825, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.06123834001250623, SHLD=0.0, PFE=0.12707264785394531, T=0.1917118359483994, UAA=0.0, MA=0.14656058248947235, SBUX=0.049180638344572265, XOM=0.0, AMD=0.018660486353501468, BBY=0.07336363802514242, FB=0.007229341870841818, AMZN=0.2146699609887241, GE=0.0, WMT=0.09524155108753682}";
+        assertEquals(1.38803, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.25364, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.02833, ret.getPortfolioVariance(), Constant.EPSILON);
+        String weight = "{BABA=0.09966908708161216, GOOG=0.03146261470066362, AAPL=0.08080255938467251, RRC=0.0, BAC=0.09625549869286933, GM=0.0, JPM=0.05254608419043133, SHLD=0.0, PFE=0.009849943319180791, T=0.05923064436933963, UAA=0.0, MA=0.11948530106048595, SBUX=0.06253882044265284, XOM=0.0, AMD=0.06643267428400618, BBY=0.02740594256114517, FB=0.09773323467082043, AMZN=0.1455115124585157, GE=0.0, WMT=0.05107608278360444}";
         assertEquals(weight, ret.getData().toString());
     }
 
@@ -45,10 +45,10 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(init, 0.05);
 
         Result ret = ef.getMinVariance(upper, lower, init, Constant.ReturnType.common);
-        assertEquals(0.55564, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.08795, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.55476, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.08785, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.01496, ret.getPortfolioVariance(), Constant.EPSILON);
-        String weight = "{BABA=0.02730660475814947, GOOG=0.00787007386508332, AAPL=0.030814730296388353, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.0, SHLD=0.0, PFE=0.1933923392929262, T=0.28726615207835865, UAA=0.0, MA=0.0, SBUX=0.11614851634180658, XOM=0.1253077819604376, AMD=0.0, BBY=0.015387669114923314, FB=0.010011490950475701, AMZN=0.013046615327733881, GE=0.03352001708618105, WMT=0.13992800892753585}";
+        String weight = "{BABA=0.027543276088354992, GOOG=0.007943429286408548, AAPL=0.030434738500801275, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.0, SHLD=0.0, PFE=0.19284943871407487, T=0.28800039780774406, UAA=0.0, MA=0.0, SBUX=0.11666452829227382, XOM=0.12521028462813966, AMD=0.0, BBY=0.015154098622321222, FB=0.010479900523676396, AMZN=0.012468145691380168, GE=0.03330332659329855, WMT=0.1399484352515264}";
         assertEquals(weight, ret.getData().toString());
     }
 
@@ -65,10 +65,10 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(init, .05);
 
         Result ret = ef.getMinVarianceWithTargetReturn(upper, lower, init, targetReturn, Constant.ReturnType.common);
-        assertEquals(1.68719, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(1.68196, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(targetReturn, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.04060, ret.getPortfolioVariance(), Constant.EPSILON);
-        String weight = "{BABA=0.0, GOOG=0.0, AAPL=0.0, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.11305832565293564, SHLD=0.0, PFE=0.0, T=0.0, UAA=0.0, MA=0.22227557005430515, SBUX=0.0, XOM=0.0, AMD=0.05536274833283162, BBY=0.1389125645715793, FB=1.4507995507690612E-4, AMZN=0.47024571143327143, GE=0.0, WMT=0.0}";
+        assertEquals(0.04086, ret.getPortfolioVariance(), Constant.EPSILON);
+        String weight = "{BABA=0.002914354411220618, GOOG=0.0, AAPL=0.0, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.08407050284225125, SHLD=0.0, PFE=0.0, T=0.0, UAA=0.0, MA=0.1966086955408023, SBUX=0.0, XOM=0.0, AMD=0.05829342920634812, BBY=0.14759522295615427, FB=0.028109728423992862, AMZN=0.4714336739886135, GE=0.0, WMT=0.010974392630617008}";
         assertEquals(weight, ret.getData().toString());
     }
 }

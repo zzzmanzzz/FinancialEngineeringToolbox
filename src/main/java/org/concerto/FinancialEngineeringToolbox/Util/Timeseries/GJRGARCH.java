@@ -151,7 +151,7 @@ public class GJRGARCH {
         double[] s = new double[size];
 
         for(int i = 0 ; i < size ; i++ ) {
-            s[i] = ( upperBound[i] - lowerBound[i] ) / 10000;
+            s[i] = ( upperBound[i] - lowerBound[i] ) / 3;
         }
 
 

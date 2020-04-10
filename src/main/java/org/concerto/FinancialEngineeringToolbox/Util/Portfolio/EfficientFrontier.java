@@ -6,7 +6,6 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
@@ -14,22 +13,20 @@ import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorExc
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 public class EfficientFrontier extends PortfolioOptimization {
-    static final private Mean m = new Mean();
-    public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance};
+    public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance}
 
-    private Map<String, double[]> data;
+    final private Map<String, double[]> data;
     private double[] mean;
     private double[][] cov;
-    private double riskFreeRate;
-    private String[] symbols;
+    final private double riskFreeRate;
+    final private String[] symbols;
     private double targetReturn;
-    private int frequency;
+    final private int frequency;
 
     EfficientFrontier(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
         this.data = data;
@@ -92,8 +89,8 @@ public class EfficientFrontier extends PortfolioOptimization {
             @Override
             public double value(double[] weight) {
                 weight = normalizeWeight(weight);
+                //Use log due to poor optimize result
                 return Math.log(getWeightedSharpeRatio(weight, mean, cov, riskFreeRate));
-                //return getWeightedReturn(weight, mean) - 11.2 * getPortfolioVariance(cov, weight);
             }
         }
 
@@ -133,7 +130,7 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     protected CMAESOptimizer getOptimizer() {
         boolean isActiveCMA = true;
-        int diagonalOnly = 0;
+        int diagonalOnly = 1;
         int checkFeasibleCount = 0;
         boolean generateStatistics = false;
         RandomGenerator rg = new MersenneTwister(Constant.RANDOMSEED);
@@ -169,7 +166,7 @@ public class EfficientFrontier extends PortfolioOptimization {
         double[] s = new double[size];
 
         for(int i = 0 ; i < size ; i++ ) {
-            s[i] = ( upperBound[i] - lowerBound[i] ) / 10000;
+            s[i] = ( upperBound[i] - lowerBound[i] ) / 3;
         }
 
 
