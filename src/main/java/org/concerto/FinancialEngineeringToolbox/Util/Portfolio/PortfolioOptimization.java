@@ -30,25 +30,25 @@ public abstract class PortfolioOptimization {
         return w.transpose().multiply(r).multiply(w).getData()[0][0];
     }
 
-    protected double[] getMeanReturn(double[][] returns) {
+    protected double[] getMeanReturn(double[][] returns, int frequency) {
         double[] mean = new double[returns.length];
         for(int i = 0 ; i < returns.length; i++) {
-            mean[i] = m.evaluate(returns[i], 0, returns[i].length);
+            mean[i] = m.evaluate(returns[i], 0, returns[i].length) * frequency;
         }
         return mean;
     }
 
-    protected double[][] getCovariance(double[][] data) {
+    protected double[][] getCovariance(double[][] data, int frequency) {
         double[][] ret = new double[data.length][data.length];
         Covariance covariance = new Covariance();
 
         for (int i = 0 ; i < data.length; i++ ) {
-            ret[i][i] = covariance.covariance(data[i], data[i]);
+            ret[i][i] = covariance.covariance(data[i], data[i]) * frequency;
         }
 
         for(int i = 0 ; i < data.length; i++ ) {
             for( int j = i + 1 ; j < data.length; j++) {
-                ret[i][j] = covariance.covariance(data[i], data[j]);
+                ret[i][j] = covariance.covariance(data[i], data[j]) * frequency;
                 ret[j][i] = ret[i][j];
             }
         }
@@ -77,6 +77,7 @@ public abstract class PortfolioOptimization {
         return funcRef;
     }
 
+
     final protected double[][] dropna(double[][] in) {
         Set<Long> skipLine = new HashSet<>();
 
@@ -100,5 +101,10 @@ public abstract class PortfolioOptimization {
            ret[i] = tmp.stream().mapToDouble(Double::doubleValue).toArray();
         }
         return ret;
+    }
+
+    protected double[] normalizeWeight(double[] w) {
+        double sum = Arrays.stream(w).sum();
+        return Arrays.stream(w).map(e -> e / sum).toArray();
     }
 }

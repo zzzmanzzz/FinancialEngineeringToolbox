@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization {
     private double targetReturn;
 
-   final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException {
+   final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
         this.targetReturn = targetReturn;
 
         Object[] tmpK = data.keySet().toArray();
@@ -44,8 +44,8 @@ public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization 
         }
        returns = dropna(returns);
 
-        double[][] cov = getCovariance(returns);
-        double[] mean = getMeanReturn(returns);
+        double[][] cov = getCovariance(returns, frequency);
+        double[] mean = getMeanReturn(returns, frequency);
         double[] weight = optimize(mean, cov, 0);
 
         double weightedReturn = getWeightedReturn(weight, mean);

@@ -1,86 +1,194 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
-import org.apache.commons.math3.random.SobolSequenceGenerator;
+import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.optim.*;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.concerto.FinancialEngineeringToolbox.Constant;
+import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 public class EfficientFrontier extends PortfolioOptimization {
     static final private Mean m = new Mean();
+    public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance};
 
-    public Result getEfficientFrontier(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, ParameterRangeErrorException {
-        Object[] tmpK = data.keySet().toArray();
-        String[] keys = new String[tmpK.length];
+    private Map<String, double[]> data;
+    private double[] mean;
+    private double[][] cov;
+    private double riskFreeRate;
+    private String[] symbols;
+    private double targetReturn;
+    private int frequency;
 
-        for(int i = 0 ; i < keys.length;i++ ) {
-            keys[i] = (String) tmpK[i];
-        }
+    EfficientFrontier(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
+        this.data = data;
+        this.frequency = frequency;
+        Set<String> keys = data.keySet();
+        symbols = keys.toArray(new String[keys.size()]);
+        this.riskFreeRate = riskFreeRate;
 
-        for(Object k : keys) {
-            if(data.get(k) == null) {
-                String msg = String.format("key(%s) has null value", k);
+        for(String s : symbols) {
+            if(data.get(s) == null) {
+                String msg = String.format("key(%s) has null value", s);
                 throw new ParameterIsNullException(msg, null);
             }
         }
+    }
 
+    private void init(Constant.ReturnType type) throws UndefinedParameterValueException {
         Function<double[], double[]> funcRef = getReturnFunction(type);
-        double[][] returns = new double[keys.length][];
+        double[][] returns = new double[symbols.length][];
 
-        for(int i = 0 ; i < keys.length ; i++) {
-            double[] tmp = data.get(keys[i]);
+        for(int i = 0 ; i < symbols.length ; i++) {
+            double[] tmp = data.get(symbols[i]);
             returns[i] = funcRef.apply(tmp);
         }
 
         returns = dropna(returns);
 
-        double[] mean = getMeanReturn(returns);
-        double[][] cov = getCovariance(returns);
+        mean = getMeanReturn(returns, frequency);
+        cov = getCovariance(returns, frequency);
+    }
 
-        double[] bestWeight = optimize(mean, cov, riskFreeRate);
-
-        double weightedReturns = 0;
-
-        for(int i = 0 ; i < mean.length; i++) {
-            weightedReturns += mean[i] * bestWeight[i];
-        }
-
+    private Result getResult(double[] bestWeight) {
+        double weightedReturns = getWeightedReturn(bestWeight, mean);
         double bestSharpeRatio = getWeightedSharpeRatio(bestWeight, mean, cov, riskFreeRate);
         double variance = Math.pow(((weightedReturns - riskFreeRate) / bestSharpeRatio), 2);
-        return new Result(keys, bestWeight, bestSharpeRatio, weightedReturns, variance);
+        return new Result(symbols, bestWeight, bestSharpeRatio, weightedReturns, variance);
+    }
+
+    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
+        init(type);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+        return getResult(bestWeight);
+    }
+
+    public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
+        init(type);
+        this.targetReturn = targetReturn;
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess,getObjectiveFunction(ObjectiveFunction.MinVarianceWithTargetReturn), GoalType.MINIMIZE);
+        return getResult(bestWeight);
+    }
+
+    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess,Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
+        init(type);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
+        return getResult(bestWeight);
+    }
+
+    private MultivariateFunction getObjectiveFunction(ObjectiveFunction obj) throws UndefinedParameterValueException {
+        class MaxSharpeRatio implements MultivariateFunction, Serializable {
+            @Override
+            public double value(double[] weight) {
+                weight = normalizeWeight(weight);
+                return getWeightedSharpeRatio(weight, mean, cov, riskFreeRate);
+            }
+        }
+
+        class MinVarianceWithTargetReturn implements MultivariateFunction, Serializable {
+            @Override
+            public double value(double[] weight) {
+                weight = normalizeWeight(weight);
+                //  Alternative barrier method
+                return getPortfolioVariance(cov, weight) + Math.abs(targetReturn - getWeightedReturn(weight, mean));
+            }
+        }
+
+        class MinVariance implements MultivariateFunction, Serializable {
+            @Override
+            public double value(double[] weight) {
+                weight = normalizeWeight(weight);
+                return getPortfolioVariance(cov, weight);
+            }
+        }
+
+        MultivariateFunction ret;
+        switch (obj) {
+            case MinVariance:
+                ret = new MinVariance();
+                break;
+            case MaxSharpeRatio:
+                ret = new MaxSharpeRatio();
+                break;
+            case MinVarianceWithTargetReturn:
+                ret = new MinVarianceWithTargetReturn();
+                break;
+            default:
+                throw new UndefinedParameterValueException("Unexpected value: " + obj, null);
+        }
+        return ret;
+    }
+
+    protected CMAESOptimizer getOptimizer() {
+        boolean isActiveCMA = true;
+        int diagonalOnly = 0;
+        int checkFeasibleCount = 0;
+        boolean generateStatistics = false;
+        RandomGenerator rg = new MersenneTwister(Constant.RANDOMSEED);
+        SimpleValueChecker svc = new SimpleValueChecker(1e-8, 1e-15);
+
+        return new CMAESOptimizer(
+                Constant.MAXTRY,
+                Constant.EPSILON,
+                isActiveCMA,
+                diagonalOnly,
+                checkFeasibleCount,
+                rg,
+                generateStatistics,
+                svc);
     }
 
 
-    protected double[] optimize(double[] mean, double[][] covariance, double riskFreeRate) throws ParameterRangeErrorException {
+    protected double[] optimize(double[] upperBound, double[] lowerBound, double[] initGuess, MultivariateFunction fun, GoalType goal) throws ParameterRangeErrorException, DimensionMismatchException {
 
-        double[] bestWeight = null;
-        double bestSharpeRatio = 0;
-
-        SobolSequenceGenerator g = new SobolSequenceGenerator(mean.length);
-        for(int i = 0 ; i < Constant.MAXTRY ; i++) {
-            double[] w = g.nextVector();
-            double sum = 0;
-            for (int j = 0 ; j < w.length; j++) {
-                sum += w[j];
-            }
-
-            for (int j = 0 ; j < w.length; j++) {
-                w[j] /= sum;
-            }
-
-            double tmp = getWeightedSharpeRatio(w, mean, covariance, riskFreeRate);
-            if(tmp > bestSharpeRatio) {
-                bestSharpeRatio = tmp;
-                bestWeight = w;
-            }
+        final int size = symbols.length;
+        if(upperBound.length != size) {
+            throw new DimensionMismatchException("upperBond length should be " + size, null);
+        }
+        if(lowerBound.length != size) {
+            throw new DimensionMismatchException("lowerBond length should be " + size, null);
+        }
+        if(initGuess.length != size) {
+            throw new DimensionMismatchException("initialGuess length should be " + size, null);
         }
 
-        return bestWeight;
+        CMAESOptimizer optimizer = getOptimizer();
 
+        double[] s = new double[size];
+
+        for(int i = 0 ; i < size ; i++ ) {
+            s[i] = ( upperBound[i] - lowerBound[i] ) / 10000;
+        }
+
+
+        OptimizationData delta = new CMAESOptimizer.Sigma(s);
+        OptimizationData popSize = new CMAESOptimizer.PopulationSize((int) (4 + Math.floor(3 * Math.log(size))));
+        SimpleBounds bounds = new SimpleBounds(lowerBound, upperBound);
+        MaxEval maxEval = new MaxEval(Constant.MAXTRY);
+
+        PointValuePair solution =
+                optimizer.optimize(
+                        new InitialGuess(initGuess),
+                        new org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction(fun),
+                        goal,
+                        bounds,
+                        delta,
+                        popSize,
+                        maxEval
+                );
+
+        return normalizeWeight(solution.getPoint());
     }
 
 

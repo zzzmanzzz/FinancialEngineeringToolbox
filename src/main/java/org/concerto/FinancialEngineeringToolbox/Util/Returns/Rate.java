@@ -58,4 +58,5 @@ public class  Rate {
         }
         return ret;
     }
+
 }

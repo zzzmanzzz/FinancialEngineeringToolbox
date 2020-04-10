@@ -5,10 +5,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.PortfolioOptimization;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -17,7 +14,7 @@ import java.util.function.Function;
 public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
 
-    public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException {
+    public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
 
         Object[] tmpK = data.keySet().toArray();
         String[] keys = new String[tmpK.length];
@@ -43,8 +40,8 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
         returns = dropna(returns);
 
-        double[][] cov = getCovariance(returns);
-        double[] mean = getMeanReturn(returns);
+        double[][] cov = getCovariance(returns, frequency);
+        double[] mean = getMeanReturn(returns, frequency);
         double[] weight = optimize(mean, cov, riskFreeRate);
 
         double weightedReturn = getWeightedReturn(weight, mean);

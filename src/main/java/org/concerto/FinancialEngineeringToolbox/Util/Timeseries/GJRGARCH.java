@@ -133,12 +133,12 @@ public class GJRGARCH {
         return new Obj();
     }
 
-    public void fit(double[] upperBond, double[] lowerBond, double[] initialGuess) throws DimensionMismatchException {
+    public void fit(double[] upperBound, double[] lowerBound, double[] initialGuess) throws DimensionMismatchException {
         final int size = 5;// 5 parameters
-        if(upperBond.length != size) {
+        if(upperBound.length != size) {
             throw new DimensionMismatchException("upperBond length should be " + size, null);
         }
-        if(lowerBond.length != size) {
+        if(lowerBound.length != size) {
             throw new DimensionMismatchException("lowerBond length should be " + size, null);
         }
         if(initialGuess.length != size) {
@@ -151,13 +151,13 @@ public class GJRGARCH {
         double[] s = new double[size];
 
         for(int i = 0 ; i < size ; i++ ) {
-            s[i] = ( upperBond[i] - lowerBond[i] ) / 10000;
+            s[i] = ( upperBound[i] - lowerBound[i] ) / 10000;
         }
 
 
         OptimizationData delta = new CMAESOptimizer.Sigma(s);
         OptimizationData popSize = new CMAESOptimizer.PopulationSize((int) (4 + Math.floor(3 * Math.log(size))));
-        SimpleBounds bounds = new SimpleBounds(lowerBond, upperBond);
+        SimpleBounds bounds = new SimpleBounds(lowerBound, upperBound);
         MaxEval maxEval = new MaxEval(Constant.MAXTRY);
 
         PointValuePair solution =

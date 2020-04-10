@@ -28,6 +28,10 @@ public class Result {
         this.portfolioVariance = portfolioVariance;
     }
 
+    public Map<String, Double> getData() {
+        return data;
+    }
+
     public double getWeight(String symbol) {
         return data.get(symbol);
     }

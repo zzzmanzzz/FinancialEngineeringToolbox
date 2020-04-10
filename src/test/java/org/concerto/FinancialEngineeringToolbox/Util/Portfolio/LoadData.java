@@ -10,8 +10,10 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class LoadData {
+    protected static Logger logger = Logger.getLogger(LoadData.class.getName());
     protected static Map<String, double[]> data;
     protected static List<String> symbles;
 
