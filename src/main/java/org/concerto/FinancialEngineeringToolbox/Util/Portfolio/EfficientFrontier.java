@@ -92,7 +92,8 @@ public class EfficientFrontier extends PortfolioOptimization {
             @Override
             public double value(double[] weight) {
                 weight = normalizeWeight(weight);
-                return getWeightedSharpeRatio(weight, mean, cov, riskFreeRate);
+                return Math.log(getWeightedSharpeRatio(weight, mean, cov, riskFreeRate));
+                //return getWeightedReturn(weight, mean) - 11.2 * getPortfolioVariance(cov, weight);
             }
         }
 
