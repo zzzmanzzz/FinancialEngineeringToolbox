@@ -5,8 +5,6 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.concerto.FinancialEngineeringToolbox.Constant;
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.concerto.FinancialEngineeringToolbox.Util.Returns.Rate;
 
@@ -55,14 +53,14 @@ public abstract class PortfolioOptimization {
         return ret;
     }
 
-    public double getWeightedSharpeRatio(double[] weight, double mean[], double[][] cov, double riskFreeRate) {
+    public double getWeightedSharpeRatio(double[] weight, double[] mean, double[][] cov, double riskFreeRate) {
         double varP = getPortfolioVariance(cov, weight);
         double weightMean = getWeightedReturn(weight, mean);
         return ((weightMean - riskFreeRate) / Math.sqrt(varP));
     }
 
     final protected Function<double[], double[]> getReturnFunction(Constant.ReturnType type) throws UndefinedParameterValueException {
-        Function<double[], double[]> funcRef = Rate::getCommonReturn;
+        Function<double[], double[]> funcRef;
 
         switch (type) {
             case common:
@@ -81,9 +79,9 @@ public abstract class PortfolioOptimization {
     final protected double[][] dropna(double[][] in) {
         Set<Long> skipLine = new HashSet<>();
 
-        for (int i = 0 ; i < in.length ; i++) {
-            for (int j = 0; j < in[i].length ; j++) {
-                if (Double.isNaN(in[i][j])) {
+        for (double[] doubles : in) {
+            for (int j = 0; j < doubles.length; j++) {
+                if (Double.isNaN(doubles[j])) {
                     skipLine.add(new Long(j));
                 }
             }

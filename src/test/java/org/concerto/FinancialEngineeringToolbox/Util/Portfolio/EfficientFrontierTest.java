@@ -26,10 +26,10 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(init, .05);
 
         Result ret = ef.getMaxSharpeRatio(upper, lower, init,Constant.ReturnType.common);
-        assertEquals(1.38803, ret.getSharpeRatio(), Constant.EPSILON);
-        assertEquals(0.25364, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.02833, ret.getPortfolioVariance(), Constant.EPSILON);
-        String weight = "{BABA=0.09966908708161216, GOOG=0.03146261470066362, AAPL=0.08080255938467251, RRC=0.0, BAC=0.09625549869286933, GM=0.0, JPM=0.05254608419043133, SHLD=0.0, PFE=0.009849943319180791, T=0.05923064436933963, UAA=0.0, MA=0.11948530106048595, SBUX=0.06253882044265284, XOM=0.0, AMD=0.06643267428400618, BBY=0.02740594256114517, FB=0.09773323467082043, AMZN=0.1455115124585157, GE=0.0, WMT=0.05107608278360444}";
+        assertEquals(1.68267, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.37785, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.04522, ret.getPortfolioVariance(), Constant.EPSILON);
+        String weight = "{BABA=0.0, GOOG=0.0, AAPL=0.0, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.018296759540783587, SHLD=0.0, PFE=0.0, T=0.0, UAA=0.0, MA=0.20810585766566053, SBUX=0.0, XOM=0.0, AMD=0.06003060255283929, BBY=0.17140414669348014, FB=0.00369096371318913, AMZN=0.5349258223210048, GE=0.0, WMT=0.003545847513042567}";
         assertEquals(weight, ret.getData().toString());
     }
 

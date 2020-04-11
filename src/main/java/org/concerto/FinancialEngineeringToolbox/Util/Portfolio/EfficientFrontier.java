@@ -65,10 +65,31 @@ public class EfficientFrontier extends PortfolioOptimization {
         return new Result(symbols, bestWeight, bestSharpeRatio, weightedReturns, variance);
     }
 
+    /**
+     * [!!!WORKAROUND] Due to poor result of CMAESOptimizer in maximizing Sharpe ratio, use brute force to find it.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param type
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     *
+     * TODO: Try Gradient method to optimize
+     */
     public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         init(type);
-        double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
-        return getResult(bestWeight);
+        Result max = getMinVariance(upperBound, lowerBound, initGuess, type);
+        double minReturn = max.getWeightedReturns();
+        for( int i = 1 ; i < 100 ; i++ ) {
+            Result tmp = getMinVarianceWithTargetReturn(upperBound,lowerBound,initGuess,minReturn + i * 0.01, type);
+            if(tmp.getSharpeRatio() > max.getSharpeRatio()) {
+                max = tmp;
+            }
+        }
+        //double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+        return max;
     }
 
     public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
@@ -89,8 +110,7 @@ public class EfficientFrontier extends PortfolioOptimization {
             @Override
             public double value(double[] weight) {
                 weight = normalizeWeight(weight);
-                //Use log due to poor optimize result
-                return Math.log(getWeightedSharpeRatio(weight, mean, cov, riskFreeRate));
+                return getWeightedSharpeRatio(weight, mean, cov, riskFreeRate);
             }
         }
 
