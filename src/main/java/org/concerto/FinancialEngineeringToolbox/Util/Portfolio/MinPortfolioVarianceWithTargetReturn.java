@@ -5,10 +5,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.PortfolioOptimization;
-import org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -17,7 +14,11 @@ import java.util.function.Function;
 public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization {
     private double targetReturn;
 
-   final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
+    MinPortfolioVarianceWithTargetReturn() {
+        super();
+    }
+
+    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
         this.targetReturn = targetReturn;
 
         Object[] tmpK = data.keySet().toArray();

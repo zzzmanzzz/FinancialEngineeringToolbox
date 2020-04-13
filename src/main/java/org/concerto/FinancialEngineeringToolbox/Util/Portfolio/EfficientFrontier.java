@@ -6,42 +6,24 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.stat.correlation.Covariance;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 
-import java.io.Serializable;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 public class EfficientFrontier extends PortfolioOptimization {
     public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance}
 
-    final private Map<String, double[]> data;
-    private double[] mean;
-    private double[][] cov;
-    final private double riskFreeRate;
-    final private String[] symbols;
-    private double targetReturn;
-    final private int frequency;
 
     EfficientFrontier(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
-        this.data = data;
-        this.frequency = frequency;
-        Set<String> keys = data.keySet();
-        symbols = keys.toArray(new String[keys.size()]);
-        this.riskFreeRate = riskFreeRate;
-
-        for(String s : symbols) {
-            if(data.get(s) == null) {
-                String msg = String.format("key(%s) has null value", s);
-                throw new ParameterIsNullException(msg, null);
-            }
-        }
+        super(data, riskFreeRate, frequency);
     }
+
 
     private void init(Constant.ReturnType type) throws UndefinedParameterValueException {
         Function<double[], double[]> funcRef = getReturnFunction(type);
@@ -105,48 +87,7 @@ public class EfficientFrontier extends PortfolioOptimization {
         return getResult(bestWeight);
     }
 
-    private MultivariateFunction getObjectiveFunction(ObjectiveFunction obj) throws UndefinedParameterValueException {
-        class MaxSharpeRatio implements MultivariateFunction, Serializable {
-            @Override
-            public double value(double[] weight) {
-                weight = normalizeWeight(weight);
-                return getWeightedSharpeRatio(weight, mean, cov, riskFreeRate);
-            }
-        }
 
-        class MinVarianceWithTargetReturn implements MultivariateFunction, Serializable {
-            @Override
-            public double value(double[] weight) {
-                weight = normalizeWeight(weight);
-                //  Alternative barrier method
-                return getPortfolioVariance(cov, weight) + Math.abs(targetReturn - getWeightedReturn(weight, mean));
-            }
-        }
-
-        class MinVariance implements MultivariateFunction, Serializable {
-            @Override
-            public double value(double[] weight) {
-                weight = normalizeWeight(weight);
-                return getPortfolioVariance(cov, weight);
-            }
-        }
-
-        MultivariateFunction ret;
-        switch (obj) {
-            case MinVariance:
-                ret = new MinVariance();
-                break;
-            case MaxSharpeRatio:
-                ret = new MaxSharpeRatio();
-                break;
-            case MinVarianceWithTargetReturn:
-                ret = new MinVarianceWithTargetReturn();
-                break;
-            default:
-                throw new UndefinedParameterValueException("Unexpected value: " + obj, null);
-        }
-        return ret;
-    }
 
     protected CMAESOptimizer getOptimizer() {
         boolean isActiveCMA = true;

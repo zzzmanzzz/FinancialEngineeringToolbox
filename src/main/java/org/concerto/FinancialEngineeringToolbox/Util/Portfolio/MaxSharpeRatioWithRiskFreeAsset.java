@@ -14,6 +14,10 @@ import java.util.function.Function;
 public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
 
+    MaxSharpeRatioWithRiskFreeAsset() {
+        super();
+    }
+
     public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
 
         Object[] tmpK = data.keySet().toArray();
