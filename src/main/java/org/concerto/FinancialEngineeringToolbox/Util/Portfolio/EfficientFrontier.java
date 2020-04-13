@@ -6,7 +6,6 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.stat.correlation.Covariance;
 import org.concerto.FinancialEngineeringToolbox.Constant;
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
@@ -19,11 +18,9 @@ import java.util.function.Function;
 public class EfficientFrontier extends PortfolioOptimization {
     public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance}
 
-
     EfficientFrontier(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
         super(data, riskFreeRate, frequency);
     }
-
 
     private void init(Constant.ReturnType type) throws UndefinedParameterValueException {
         Function<double[], double[]> funcRef = getReturnFunction(type);
@@ -49,16 +46,15 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * [!!!WORKAROUND] Due to poor result of CMAESOptimizer in maximizing Sharpe ratio, use brute force to find it.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
-     * @param type
+     * @param upperBound weight upper bound
+     * @param lowerBound weight lower bound
+     * @param initGuess initial guess value
+     * @param type log return or percentage return, return period should correspond to risk free rate and frequency
      * @return
      * @throws UndefinedParameterValueException
      * @throws ParameterRangeErrorException
      * @throws DimensionMismatchException
      *
-     * TODO: Try Gradient method to optimize
      */
     public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         init(type);
@@ -108,7 +104,6 @@ public class EfficientFrontier extends PortfolioOptimization {
                 svc);
     }
 
-
     protected double[] optimize(double[] upperBound, double[] lowerBound, double[] initGuess, MultivariateFunction fun, GoalType goal) throws ParameterRangeErrorException, DimensionMismatchException {
 
         final int size = symbols.length;
@@ -129,7 +124,6 @@ public class EfficientFrontier extends PortfolioOptimization {
         for(int i = 0 ; i < size ; i++ ) {
             s[i] = ( upperBound[i] - lowerBound[i] ) / 3;
         }
-
 
         OptimizationData delta = new CMAESOptimizer.Sigma(s);
         OptimizationData popSize = new CMAESOptimizer.PopulationSize((int) (4 + Math.floor(3 * Math.log(size))));

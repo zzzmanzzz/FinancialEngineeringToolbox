@@ -85,13 +85,10 @@ public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization 
         return new Array2DRowRealMatrix(tmp);
     }
 
-
     protected double[] optimize(double[] mean, double[][] cov, double riskFreeRate) {
         RealMatrix A = initA(cov, mean);
         RealMatrix B = initB(cov.length + 2);
         double[] w = MatrixUtils.inverse(A).multiply(B).getColumn(0);
         return Arrays.copyOfRange(w, 0, w.length - 2);
     }
-
-
 }
