@@ -23,14 +23,21 @@ public class BlackLitterman {
                 .scalarAdd(riskFreeRate / frequency).getColumn(0);
     }
 
-    static public double[] getBLMeanReturn(double[] priorReturns, double[][] covariance, double[] P, double[][] Q, double tau) {
+    static public double[][] getOmega(double[][] covariance, double[] P, double tau) {
+        RealMatrix sigma = new Array2DRowRealMatrix(covariance);
+        RealMatrix p = new Array2DRowRealMatrix(P);
+        RealMatrix Omega = p.transpose().multiply(sigma).multiply(p).scalarMultiply(tau);
+        return Omega.getData();
+    }
+
+    static public double[] getBLMeanReturn(double[] priorReturns, double[][] covariance, double[] P, double[][] Q, double[][] Omega, double tau) {
         RealMatrix pi = new Array2DRowRealMatrix(priorReturns);
         RealMatrix p = new Array2DRowRealMatrix(P);
         RealMatrix q = new Array2DRowRealMatrix(Q);
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
 
         RealMatrix invTauSigma = MatrixUtils.inverse(sigma.scalarMultiply(tau));
-        RealMatrix invOmega = MatrixUtils.inverse(p.transpose().multiply(sigma).multiply(p).scalarMultiply(tau));
+        RealMatrix invOmega = MatrixUtils.inverse(new Array2DRowRealMatrix(Omega));
         RealMatrix PtOmegaInv = p.transpose().multiply(invOmega);
 
         RealMatrix left = MatrixUtils.inverse( invOmega.add(PtOmegaInv.multiply(p)));
@@ -38,12 +45,12 @@ public class BlackLitterman {
         return left.multiply(right).getColumn(0);
     }
 
-    static public double[][] getBLCovariance(double[][] covariance, double[] P, double tau) {
+    static public double[][] getBLCovariance(double[][] covariance, double[] P, double[][] Omega, double tau) {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
         RealMatrix p = new Array2DRowRealMatrix(P);
 
         RealMatrix invTauSigma = MatrixUtils.inverse(sigma.scalarMultiply(tau));
-        RealMatrix invOmega = MatrixUtils.inverse(p.transpose().multiply(sigma).multiply(p).scalarMultiply(tau));
+        RealMatrix invOmega = MatrixUtils.inverse(new Array2DRowRealMatrix(Omega));
         RealMatrix PtOmegaInv = p.transpose().multiply(invOmega);
 
         return sigma.add(MatrixUtils.inverse(invTauSigma.add(PtOmegaInv.multiply(p)))).getData();
