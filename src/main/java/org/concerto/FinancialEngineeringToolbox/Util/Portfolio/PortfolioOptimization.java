@@ -41,6 +41,7 @@ public abstract class PortfolioOptimization {
             }
         }
     }
+
     final protected double[] getMeanReturn(double[][] returns, int frequency) {
         double[] mean = new double[returns.length];
         for(int i = 0 ; i < returns.length; i++) {

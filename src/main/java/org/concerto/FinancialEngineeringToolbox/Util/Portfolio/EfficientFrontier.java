@@ -1,5 +1,7 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
+import java.util.Arrays;
+import java.util.logging.Logger;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
@@ -7,6 +9,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.concerto.FinancialEngineeringToolbox.Constant;
+import org.concerto.FinancialEngineeringToolbox.Constant.ReturnType;
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
@@ -16,10 +19,23 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class EfficientFrontier extends PortfolioOptimization {
+    protected static Logger logger = Logger.getLogger(EfficientFrontier.class.getName());
+
     public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance}
 
     EfficientFrontier(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
         super(data, riskFreeRate, frequency);
+    }
+
+    public double[] getMean(Constant.ReturnType type) throws UndefinedParameterValueException {
+        init(type);
+        return mean;
+    }
+
+    public double[][] getCovariance(Constant.ReturnType type)
+        throws UndefinedParameterValueException {
+        init(type);
+        return cov;
     }
 
     private void init(Constant.ReturnType type) throws UndefinedParameterValueException {
