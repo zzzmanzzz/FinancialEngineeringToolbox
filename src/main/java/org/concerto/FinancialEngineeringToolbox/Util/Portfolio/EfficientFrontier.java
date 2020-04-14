@@ -63,7 +63,6 @@ public class EfficientFrontier extends PortfolioOptimization {
     }
 
     /**
-     * [!!!WORKAROUND] Due to poor result of CMAESOptimizer in maximizing Sharpe ratio, use brute force to find it.
      * @param upperBound weight upper bound
      * @param lowerBound weight lower bound
      * @param initGuess initial guess value
