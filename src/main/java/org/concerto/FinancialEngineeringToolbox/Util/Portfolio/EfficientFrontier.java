@@ -1,6 +1,5 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
-import java.util.Arrays;
 import java.util.logging.Logger;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
@@ -8,11 +7,11 @@ import org.apache.commons.math3.optim.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunctionGradient;
 import org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.concerto.FinancialEngineeringToolbox.Constant;
-import org.concerto.FinancialEngineeringToolbox.Constant.ReturnType;
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
@@ -77,19 +76,8 @@ public class EfficientFrontier extends PortfolioOptimization {
      */
     public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         init(type);
-
-        Result max = getMinVariance(upperBound, lowerBound, initGuess, type);
-        double minReturn = max.getWeightedReturns();
-        for( int i = 1 ; i < 100 ; i++ ) {
-            Result tmp = getMinVarianceWithTargetReturn(upperBound,lowerBound,initGuess,minReturn + i * 0.01, type);
-            if(tmp.getSharpeRatio() > max.getSharpeRatio()) {
-                max = tmp;
-            }
-        }
-
-       // double[] bestWeight = anotherOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), getObjectiveFunctionGradient(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
-       // return getResult(bestWeight);
-        return max;
+        double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+        return getResult(bestWeight);
     }
 
     public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
@@ -111,6 +99,11 @@ public class EfficientFrontier extends PortfolioOptimization {
             new SimpleValueChecker(1e-8, 1e-15));
     }
 
+    protected BOBYQAOptimizer getBOBYQAOptimizer(int dim) {
+        final int numIterpolationPoints = 2 * dim + 1;
+        return new BOBYQAOptimizer(numIterpolationPoints);
+    }
+
 
     protected CMAESOptimizer getCMAESOptimizer() {
         boolean isActiveCMA = true;
@@ -129,6 +122,20 @@ public class EfficientFrontier extends PortfolioOptimization {
                 rg,
                 generateStatistics,
                 svc);
+    }
+
+    protected double[] BOBYQAOptimize(double[] upperBound, double[] lowerBound, double[] initGuess, MultivariateFunction fun, GoalType goal) {
+        BOBYQAOptimizer optimizer = getBOBYQAOptimizer(initGuess.length);
+        MaxEval maxEval = new MaxEval(Constant.MAXTRY);
+        SimpleBounds bounds = new SimpleBounds(lowerBound, upperBound);
+        PointValuePair solution = optimizer.optimize(
+            new InitialGuess(initGuess),
+            new org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction(fun),
+            goal,
+            bounds,
+            maxEval
+        );
+        return normalizeWeight(solution.getPoint());
     }
 
     protected double[] optimize(double[] initGuess, MultivariateFunction fun, MultivariateVectorFunction gfun, GoalType goal) throws DimensionMismatchException {
