@@ -26,6 +26,14 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(init, .05);
 
         Result ret = ef.getMaxSharpeRatio(upper, lower, init,Constant.ReturnType.common);
+        /*
+        assertEquals(1.68267, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.37785, ret.getWeightedReturns(), Constant.EPSILON);
+        assertEquals(0.04522, ret.getPortfolioVariance(), Constant.EPSILON);
+        String weight = "{BABA=0.0, GOOG=0.0, AAPL=0.0, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.018296759540783587, SHLD=0.0, PFE=0.0, T=0.0, UAA=0.0, MA=0.20810585766566053, SBUX=0.0, XOM=0.0, AMD=0.06003060255283929, BBY=0.17140414669348014, FB=0.00369096371318913, AMZN=0.5349258223210048, GE=0.0, WMT=0.003545847513042567}";
+        assertEquals(weight, ret.getData().toString());
+
+         */
         assertEquals(1.68267, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(0.37785, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.04522, ret.getPortfolioVariance(), Constant.EPSILON);

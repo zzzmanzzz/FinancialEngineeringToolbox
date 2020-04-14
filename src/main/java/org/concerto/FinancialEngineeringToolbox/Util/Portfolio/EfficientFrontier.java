@@ -3,8 +3,11 @@ package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.optim.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunctionGradient;
+import org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -74,6 +77,7 @@ public class EfficientFrontier extends PortfolioOptimization {
      */
     public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         init(type);
+
         Result max = getMinVariance(upperBound, lowerBound, initGuess, type);
         double minReturn = max.getWeightedReturns();
         for( int i = 1 ; i < 100 ; i++ ) {
@@ -82,7 +86,9 @@ public class EfficientFrontier extends PortfolioOptimization {
                 max = tmp;
             }
         }
-        //double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+
+       // double[] bestWeight = anotherOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), getObjectiveFunctionGradient(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+       // return getResult(bestWeight);
         return max;
     }
 
@@ -99,9 +105,14 @@ public class EfficientFrontier extends PortfolioOptimization {
         return getResult(bestWeight);
     }
 
+    protected NonLinearConjugateGradientOptimizer getAnotherOptimizer() {
+        return new NonLinearConjugateGradientOptimizer(
+                NonLinearConjugateGradientOptimizer.Formula.POLAK_RIBIERE,
+            new SimpleValueChecker(1e-8, 1e-15));
+    }
 
 
-    protected CMAESOptimizer getOptimizer() {
+    protected CMAESOptimizer getCMAESOptimizer() {
         boolean isActiveCMA = true;
         int diagonalOnly = 1;
         int checkFeasibleCount = 0;
@@ -120,6 +131,27 @@ public class EfficientFrontier extends PortfolioOptimization {
                 svc);
     }
 
+    protected double[] optimize(double[] initGuess, MultivariateFunction fun, MultivariateVectorFunction gfun, GoalType goal) throws DimensionMismatchException {
+        final int size = symbols.length;
+        if(initGuess.length != size) {
+            throw new DimensionMismatchException("initialGuess length should be " + size, null);
+        }
+
+        NonLinearConjugateGradientOptimizer optimizer = getAnotherOptimizer();
+        MaxEval maxEval = new MaxEval(Constant.MAXTRY);
+
+        PointValuePair solution =
+            optimizer.optimize(
+                maxEval,
+                new InitialGuess(initGuess),
+                new org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction(fun),
+                new ObjectiveFunctionGradient(gfun),
+                goal
+            );
+
+        return normalizeWeight(solution.getPoint());
+    }
+
     protected double[] optimize(double[] upperBound, double[] lowerBound, double[] initGuess, MultivariateFunction fun, GoalType goal) throws ParameterRangeErrorException, DimensionMismatchException {
 
         final int size = symbols.length;
@@ -133,7 +165,7 @@ public class EfficientFrontier extends PortfolioOptimization {
             throw new DimensionMismatchException("initialGuess length should be " + size, null);
         }
 
-        CMAESOptimizer optimizer = getOptimizer();
+        CMAESOptimizer optimizer = getCMAESOptimizer();
 
         double[] s = new double[size];
 

@@ -1,6 +1,7 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
@@ -81,8 +82,6 @@ public abstract class PortfolioOptimization {
         return w.transpose().multiply(r).multiply(w).getData()[0][0];
     }
 
-
-
     public double getWeightedSharpeRatio(double[] weight, double[] mean, double[][] cov, double riskFreeRate) {
         double varP = getPortfolioVariance(cov, weight);
         double weightMean = getWeightedReturn(weight, mean);
@@ -104,7 +103,6 @@ public abstract class PortfolioOptimization {
         }
         return funcRef;
     }
-
 
     final protected double[][] dropna(double[][] in) {
         Set<Long> skipLine = new HashSet<>();
@@ -174,8 +172,68 @@ public abstract class PortfolioOptimization {
         return ret;
     }
 
+    protected MultivariateVectorFunction getObjectiveFunctionGradient(EfficientFrontier.ObjectiveFunction obj) throws UndefinedParameterValueException {
+        class MaxSharpeRatio implements MultivariateVectorFunction, Serializable {
+            @Override
+            public double[] value(double[] weight) {
+                weight = normalizeWeight(weight);
+                RealMatrix mcov = new Array2DRowRealMatrix(cov);
+                RealMatrix m = new Array2DRowRealMatrix(mean);
+                RealMatrix w = new Array2DRowRealMatrix(weight);
+
+                double wcov = getPortfolioVariance(cov, weight);
+                double riskPremium = getWeightedReturn(weight, mean) - riskFreeRate;
+                RealMatrix right = mcov.multiply(w).scalarMultiply(riskPremium);
+                RealMatrix ret = m.scalarMultiply(wcov).add(right.scalarMultiply(-1)).scalarMultiply(Math.pow(wcov, -2));
+                return ret.getColumn(0);
+            }
+        }
+
+        class MinVarianceWithTargetReturn implements MultivariateVectorFunction, Serializable {
+            @Override
+            public double[] value(double[] weight) {
+                weight = normalizeWeight(weight);
+                RealMatrix mcov = new Array2DRowRealMatrix(cov);
+                RealMatrix m = new Array2DRowRealMatrix(mean);
+                RealMatrix w = new Array2DRowRealMatrix(weight);
+                double delta = targetReturn - getWeightedReturn(weight, mean);
+                double[] ret;
+                int sign = Double.compare(delta, 0.0) > 0 ?  -1 : 1;
+                ret = mcov.multiply(w).add(m.scalarMultiply(sign)).getColumn(0);
+
+                return ret;
+            }
+        }
+
+        class MinVariance implements MultivariateVectorFunction, Serializable {
+            @Override
+            public double[] value(double[] weight) {
+                weight = normalizeWeight(weight);
+                RealMatrix mcov = new Array2DRowRealMatrix(cov);
+                RealMatrix w = new Array2DRowRealMatrix(weight);
+                return mcov.multiply(w.transpose()).getColumn(0);
+            }
+        }
+
+        MultivariateVectorFunction ret;
+        switch (obj) {
+            case MinVariance:
+                ret = new MinVariance();
+                break;
+            case MaxSharpeRatio:
+                ret = new MaxSharpeRatio();
+                break;
+            case MinVarianceWithTargetReturn:
+                ret = new MinVarianceWithTargetReturn();
+                break;
+            default:
+                throw new UndefinedParameterValueException("Unexpected value: " + obj, null);
+        }
+        return ret;
+    }
+
     protected double[] normalizeWeight(double[] w) {
-        double sum = Arrays.stream(w).sum();
-        return Arrays.stream(w).map(e -> e / sum).toArray();
+        double sum = Arrays.stream(w).map(Math::abs).sum();
+        return Arrays.stream(w).map(e -> Math.abs(e) / sum).toArray();
     }
 }
