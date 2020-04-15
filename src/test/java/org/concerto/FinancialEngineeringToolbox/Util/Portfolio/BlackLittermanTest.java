@@ -26,6 +26,10 @@ class BlackLittermanTest extends LoadData {
     }
 
     @Test
+    void getMarketImpliedRiskAversion() {
+    }
+
+    @Test
     void getPriorReturnTest() {
 
     }
@@ -42,18 +46,27 @@ class BlackLittermanTest extends LoadData {
              {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
         };
         double[] P = {0.2, 0.1, 0.05};
+        double[] marketCap = {533e9, 927e9, 1.19e12, 1e9, 301e9, 51e9, 422e9, 0, 212e9, 61e9, 78e9, 288e9, 102e9, 295e9, 43e9, 22e9, 574e9, 867e9, 96e9, 339e9};
         double tau = 0.05;
         double riskFreeRate = 0.02;
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(0.03, 0.01, riskFreeRate, ConstantForTest.TRADINGDAYS);
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
-        double[] mean = ef.getMean(ReturnType.common);
+        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
         double[][] Omega = BlackLitterman.getOmega(cov, Q, tau);
-        double[] BLReturn = getBLMeanReturn( mean, cov, P, Q, Omega, tau);
-        double[] expect = {0.08872, 0.11509, 0.08952, -0.37762, 0.12434, -0.04421, 0.14694, -0.39056, 0.06006, 0.05891, -0.03564, 0.18341, 0.11103, -0.05166, 0.32400, 0.23177, 0.17332, 0.32931, -0.18812, 0.05331};
+        double[] BLReturn = getBLMeanReturn( priorReturn, cov, P, Q, Omega, tau);
+        double[] expect = {0.01405, 0.06204, 0.04355, -0.01097, 0.01316, -0.07023, 0.01264, -0.02958, 0.01234, 0.00827, 0.01949, 0.03031, 0.02234, 0.01218, 0.00748, -0.00355, 0.05322, 0.07043, 0.00378, 0.01106};
+
         assertArrayEquals(expect, BLReturn, ConstantForTest.EPSLION);
     }
 
     @Test
     void getBLCovariance() {
+    }
+
+
+
+    @Test
+    void testGetBLCovariance() {
     }
 }
