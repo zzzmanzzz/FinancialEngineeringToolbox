@@ -13,7 +13,7 @@ public class BlackLitterman {
 
 
     static public double getMarketImpliedRiskAversion(double marketMeanReturn, double marketVariance, double riskFreeRate, int frequency) {
-        return (marketMeanReturn - riskFreeRate / frequency) / marketVariance;
+        return (marketMeanReturn * frequency - riskFreeRate) / (marketVariance * frequency);
     }
 
     static public double[] getPriorReturns(double[][] covariance, double riskAversion, double riskFreeRate, double[] marketCap, int frequency) {
@@ -22,7 +22,7 @@ public class BlackLitterman {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
         return sigma.multiply(new Array2DRowRealMatrix(marketCapWeight))
                 .scalarMultiply(riskAversion)
-                .scalarAdd(riskFreeRate / frequency).getColumn(0);
+                .scalarAdd(riskFreeRate).getColumn(0);
     }
 
     static public double[][] getOmega(double[][] covariance, double[][] Q, double tau) {
