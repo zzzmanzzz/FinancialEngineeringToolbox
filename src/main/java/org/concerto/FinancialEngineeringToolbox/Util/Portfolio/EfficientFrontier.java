@@ -63,17 +63,16 @@ public class EfficientFrontier extends PortfolioOptimization {
     }
 
     /**
+     * Get optimized portfolio weight at max Sharpe ratio
+     *
      * @param upperBound weight upper bound
      * @param lowerBound weight lower bound
      * @param initGuess initial guess value
      * @param type log return or percentage return, return period should correspond to risk free rate and frequency
-     * @return
-     * @throws UndefinedParameterValueException
-     * @throws ParameterRangeErrorException
-     * @throws DimensionMismatchException
-     *
+     * @return @See org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result
+     * @throws UndefinedParameterValueException ReturnType is not common or log
      */
-    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
+    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException {
         init(type);
         double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
         return getResult(bestWeight);
