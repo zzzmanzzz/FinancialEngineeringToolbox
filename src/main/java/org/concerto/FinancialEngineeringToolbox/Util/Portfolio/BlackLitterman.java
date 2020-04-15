@@ -49,14 +49,14 @@ public class BlackLitterman {
         return left.multiply(right).getColumn(0);
     }
 
-    static public double[][] getBLCovariance(double[][] covariance, double[] P, double[][] Omega, double tau) {
+    static public double[][] getBLCovariance(double[][] covariance, double[][] Q, double[][] Omega, double tau) {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
-        RealMatrix p = new Array2DRowRealMatrix(P);
+        RealMatrix q = new Array2DRowRealMatrix(Q);
 
         RealMatrix invTauSigma = MatrixUtils.inverse(sigma.scalarMultiply(tau));
         RealMatrix invOmega = MatrixUtils.inverse(new Array2DRowRealMatrix(Omega));
-        RealMatrix PtOmegaInv = p.transpose().multiply(invOmega);
+        RealMatrix QtOmegaInv = q.transpose().multiply(invOmega);
 
-        return sigma.add(MatrixUtils.inverse(invTauSigma.add(PtOmegaInv.multiply(p)))).getData();
+        return sigma.add(MatrixUtils.inverse(invTauSigma.add(QtOmegaInv.multiply(q)))).getData();
     }
 }

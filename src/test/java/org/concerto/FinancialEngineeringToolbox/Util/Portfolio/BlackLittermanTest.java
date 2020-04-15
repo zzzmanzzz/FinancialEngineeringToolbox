@@ -70,7 +70,22 @@ class BlackLittermanTest extends LoadData {
     }
 
     @Test
-    void getBLCovariance() {
+    void getBLCovariance() throws ParameterIsNullException, UndefinedParameterValueException {
+        //BABA, GOOG, AAPL, RRC, BAC, GM, JPM, SHLD, PFE, T, UAA, MA, SBUX, XOM, AMD, BBY, FB, AMZN, GE, WMT";
+        //GM drop 20%
+        //GOOG outperforms BABA by 10%
+        //AMZN and AAPL will outperform T and UAA 5%
+        double[][] Q = {
+            {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
+        };
+        double[] P = {0.2, 0.1, 0.05};
+        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double[][] cov = ef.getCovariance(ReturnType.common);
+        double[][] Omega = BlackLitterman.getOmega(cov, Q, tau);
+        double[][] BLcov = BlackLitterman.getBLCovariance(cov, Q, Omega, tau);
+        //logger.info(Arrays.deepToString(BLcov));
     }
 
 }
