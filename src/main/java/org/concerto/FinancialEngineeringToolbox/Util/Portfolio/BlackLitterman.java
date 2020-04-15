@@ -7,6 +7,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.Arrays;
+import org.apache.commons.math3.linear.SingularMatrixException;
 
 public class BlackLitterman {
     protected static Logger logger = Logger.getLogger(BlackLitterman.class.getName());
@@ -32,31 +33,58 @@ public class BlackLitterman {
             .multiply(sigma)
             .multiply(q.transpose())
             .scalarMultiply(tau);
-        return Omega.getData();
+        double[][] ret = new double[Omega.getRowDimension()][Omega.getColumnDimension()];
+        for(int i = 0 ; i < ret.length ; i++ ) {
+            ret[i][i] = Omega.getEntry(i, i);
+        }
+        return ret;
     }
 
+
+    /**
+     * Thomas Idzorek (2004)
+     * Meucci (2008)
+     * @param priorReturns
+     * @param covariance
+     * @param P
+     * @param Q
+     * @param tau
+     * @return
+     */
     static public double[] getBLMeanReturn(double[] priorReturns, double[][] covariance, double[] P, double[][] Q, double[][] Omega, double tau) {
         RealMatrix pi = new Array2DRowRealMatrix(priorReturns);
         RealMatrix p = new Array2DRowRealMatrix(P);
         RealMatrix q = new Array2DRowRealMatrix(Q);
+        RealMatrix omega = new Array2DRowRealMatrix(Omega);
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
 
-        RealMatrix invTauSigma = MatrixUtils.inverse(sigma.scalarMultiply(tau));
-        RealMatrix invOmega = MatrixUtils.inverse(new Array2DRowRealMatrix(Omega));
-        RealMatrix QtOmegaInv = q.transpose().multiply(invOmega);
-        RealMatrix left = MatrixUtils.inverse( invTauSigma.add(QtOmegaInv.multiply(q)));
-        RealMatrix right = invTauSigma.multiply(pi).add(QtOmegaInv.multiply(p));
-        return left.multiply(right).getColumn(0);
+        RealMatrix tauSigmaQ = sigma.scalarMultiply(tau).multiply(q.transpose());
+        RealMatrix invQtauSigmaQplusOmega = MatrixUtils.inverse(q.multiply(tauSigmaQ).add(omega));
+
+        RealMatrix left = tauSigmaQ.multiply(invQtauSigmaQplusOmega);
+        RealMatrix right = p.add(q.multiply(pi).scalarMultiply(-1));
+        return pi.add(left.multiply(right)).getColumn(0);
     }
 
+    /**
+     * Meucci (2008)
+     * @param covariance
+     * @param Q
+     * @param Omega
+     * @param tau
+     * @return
+     */
     static public double[][] getBLCovariance(double[][] covariance, double[][] Q, double[][] Omega, double tau) {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
         RealMatrix q = new Array2DRowRealMatrix(Q);
+        RealMatrix omega = new Array2DRowRealMatrix(Omega);
 
-        RealMatrix invTauSigma = MatrixUtils.inverse(sigma.scalarMultiply(tau));
-        RealMatrix invOmega = MatrixUtils.inverse(new Array2DRowRealMatrix(Omega));
-        RealMatrix QtOmegaInv = q.transpose().multiply(invOmega);
+        RealMatrix tauSigmaQ = sigma.scalarMultiply(tau).multiply(q.transpose());
+        RealMatrix invQtauSigmaQplusOmega = MatrixUtils.inverse(q.multiply(tauSigmaQ).add(omega));
 
-        return sigma.add(MatrixUtils.inverse(invTauSigma.add(QtOmegaInv.multiply(q)))).getData();
+        RealMatrix left = sigma.scalarMultiply(1 + tau);
+        RealMatrix right = tauSigmaQ.scalarMultiply(tau).multiply(invQtauSigmaQplusOmega).multiply(q).multiply(sigma);
+
+        return left.add(right.scalarMultiply(-1)).getData();
     }
 }

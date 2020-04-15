@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.concerto.FinancialEngineeringToolbox.Constant.ReturnType;
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
@@ -64,8 +66,10 @@ class BlackLittermanTest extends LoadData {
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
         double[][] Omega = BlackLitterman.getOmega(cov, Q, tau);
+
         double[] BLReturn = getBLMeanReturn( priorReturn, cov, P, Q, Omega, tau);
-        double[] expect = {0.02276, 0.07096, 0.05315, 0.00056, 0.02128, -0.06332, 0.02228, -0.01973, 0.02610, 0.02342, 0.02575, 0.04088, 0.03443, 0.025398, 0.01403, 0.00809, 0.06183, 0.07852, 0.01604, 0.02579};
+        double[] expect = {0.02160, 0.07264, 0.05494, -0.00068, 0.02099, -0.06406, 0.02196, -0.02237, 0.02598, 0.02267, 0.02001, 0.04138, 0.03471, 0.02514, 0.01384, 0.00729, 0.06273, 0.08145, 0.01540, 0.02552};
+        //logger.info(Arrays.toString(BLReturn));
         assertArrayEquals(expect, BLReturn, ConstantForTest.EPSLION);
     }
 
@@ -85,7 +89,26 @@ class BlackLittermanTest extends LoadData {
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[][] Omega = BlackLitterman.getOmega(cov, Q, tau);
         double[][] BLcov = BlackLitterman.getBLCovariance(cov, Q, Omega, tau);
-        //logger.info(Arrays.deepToString(BLcov));
+        assertEquals(true, MatrixUtils.isSymmetric(new Array2DRowRealMatrix(BLcov), ConstantForTest.EPSLION));
+    }
+
+    @Test
+    void NoUncertainty() throws ParameterIsNullException, UndefinedParameterValueException {
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double[][] cov = ef.getCovariance(ReturnType.common);
+        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
+        double[][] Q = {
+            {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
+        };
+        double[] P = {0.2, 0.1, 0.05};
+        double[][] Omega = new double[P.length][P.length];
+        double[] BLReturn = getBLMeanReturn( priorReturn, cov, P, Q, Omega, tau);
+
+        //logger.info(Arrays.toString(BLReturn));
+
     }
 
 }
