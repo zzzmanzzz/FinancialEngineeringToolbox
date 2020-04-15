@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>FinancialEngineeringToolbox</artifactId>
-    <version>0.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>
@@ -26,6 +26,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>
