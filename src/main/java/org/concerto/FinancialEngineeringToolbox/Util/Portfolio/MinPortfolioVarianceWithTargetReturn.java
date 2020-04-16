@@ -18,7 +18,7 @@ public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization 
         super();
     }
 
-    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
+    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
         this.targetReturn = targetReturn;
 
         Object[] tmpK = data.keySet().toArray();
@@ -47,11 +47,11 @@ public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization 
 
         double[][] cov = getCovariance(returns, frequency);
         double[] mean = getMeanReturn(returns, frequency);
-        double[] weight = optimize(mean, cov, 0);
+        double[] weight = optimize(mean, cov);
 
         double weightedReturn = getWeightedReturn(weight, mean);
         double portfolioVariance = getPortfolioVariance(cov, weight);
-        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, 0);
+        double sharpeRatio = getWeightedSharpeRatio(weight, mean, cov, riskFreeRate);
         return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
     }
 
@@ -85,7 +85,7 @@ public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization 
         return new Array2DRowRealMatrix(tmp);
     }
 
-    protected double[] optimize(double[] mean, double[][] cov, double riskFreeRate) {
+    protected double[] optimize(double[] mean, double[][] cov) {
         RealMatrix A = initA(cov, mean);
         RealMatrix B = initB(cov.length + 2);
         double[] w = MatrixUtils.inverse(A).multiply(B).getColumn(0);

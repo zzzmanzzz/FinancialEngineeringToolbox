@@ -1,16 +1,12 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
-
-import java.util.logging.Logger;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.Arrays;
-import org.apache.commons.math3.linear.SingularMatrixException;
 
 public class BlackLitterman {
-    protected static Logger logger = Logger.getLogger(BlackLitterman.class.getName());
 
     /**
      * Get risk aversion
@@ -74,7 +70,7 @@ public class BlackLitterman {
     }
 
     /**
-     * 
+     *
      * Meucci, A. ”The Black-Litterman Approach: Original Model and Extensions”, Bloomberg Alpha Research & Education Paper, No. 1 (2008)
      * @param covariance
      * @param Q
