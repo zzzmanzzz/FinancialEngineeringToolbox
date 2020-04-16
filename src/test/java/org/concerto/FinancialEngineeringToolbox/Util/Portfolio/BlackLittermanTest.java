@@ -121,8 +121,7 @@ class BlackLittermanTest extends LoadData {
         //GOOG outperforms BABA by 10%
         assertEquals(0.1, BLReturn[1] - BLReturn[0], ConstantForTest.EPSLION);
         //AMZN and AAPL will outperform T and UAA 5%
-        assertEquals(0.05489, BLReturn[2] - BLReturn[10], ConstantForTest.EPSLION);
-        assertEquals(0.04510, BLReturn[17] - BLReturn[9], ConstantForTest.EPSLION);
+        assertEquals(0.1, BLReturn[2] - BLReturn[10] + BLReturn[17] - BLReturn[9], ConstantForTest.EPSLION);
     }
 
 }
