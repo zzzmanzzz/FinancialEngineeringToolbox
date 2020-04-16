@@ -19,8 +19,8 @@ class BlackLittermanTest extends LoadData {
     final static double[] marketCap = {533e9, 927e9, 1.19e12, 1e9, 301e9, 51e9, 422e9, 0, 212e9, 61e9, 78e9, 288e9, 102e9, 295e9, 43e9, 22e9, 574e9, 867e9, 96e9, 339e9};
     final static double tau = 0.05;
     final static double riskFreeRate = 0.02;
-    final static double marketReturn = 0.10845 / ConstantForTest.TRADINGDAYS;
-    final static double makertVariance = 0.03294 / ConstantForTest.TRADINGDAYS;
+    final static double marketReturn = 0.10845;
+    final static double makertVariance = 0.03294;
 
     @Test
     void getOmega() throws ParameterIsNullException, UndefinedParameterValueException {
@@ -34,14 +34,14 @@ class BlackLittermanTest extends LoadData {
 
     @Test
     void getMarketImpliedRiskAversion() {
-        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate);
         assertEquals(2.68518, riskAversion, ConstantForTest.EPSLION);
     }
 
     @Test
     void getPriorReturnTest() throws UndefinedParameterValueException, ParameterIsNullException {
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
-        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate);
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
         double[] expect = {0.10361, 0.10000, 0.09580, 0.06722, 0.09228, 0.073358, 0.08320, 0.06864, 0.05879, 0.04820, 0.09590, 0.08430, 0.07178, 0.06229, 0.10629, 0.06710, 0.10196, 0.11329, 0.06459, 0.052570};
@@ -61,7 +61,7 @@ class BlackLittermanTest extends LoadData {
         };
         double[] P = {0.2, 0.1, 0.05};
 
-        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate);
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
@@ -105,7 +105,7 @@ class BlackLittermanTest extends LoadData {
         };
 
         double[] P = {0.2, 0.1, 0.05};
-        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate);
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);

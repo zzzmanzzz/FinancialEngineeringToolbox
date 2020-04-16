@@ -12,9 +12,16 @@ import org.apache.commons.math3.linear.SingularMatrixException;
 public class BlackLitterman {
     protected static Logger logger = Logger.getLogger(BlackLitterman.class.getName());
 
-
-    static public double getMarketImpliedRiskAversion(double marketMeanReturn, double marketVariance, double riskFreeRate, int frequency) {
-        return (marketMeanReturn * frequency - riskFreeRate) / (marketVariance * frequency);
+    /**
+     * Get risk aversion
+     * Three rates should be in the same period and correspond to the frequency of portfolio returns.
+     * @param marketMeanReturn market returns
+     * @param marketVariance Variance of market returns
+     * @param riskFreeRate Risk free rate
+     * @return risk aversion
+     */
+    static public double getMarketImpliedRiskAversion(double marketMeanReturn, double marketVariance, double riskFreeRate) {
+        return (marketMeanReturn - riskFreeRate) / (marketVariance);
     }
 
     static public double[] getPriorReturns(double[][] covariance, double riskAversion, double riskFreeRate, double[] marketCap, int frequency) {
@@ -42,8 +49,8 @@ public class BlackLitterman {
 
 
     /**
-     * Thomas Idzorek (2004)
-     * Meucci (2008)
+     *
+     * Meucci, A. ”The Black-Litterman Approach: Original Model and Extensions”, Bloomberg Alpha Research & Education Paper, No. 1 (2008)
      * @param priorReturns
      * @param covariance
      * @param P
@@ -67,7 +74,8 @@ public class BlackLitterman {
     }
 
     /**
-     * Meucci (2008)
+     * 
+     * Meucci, A. ”The Black-Litterman Approach: Original Model and Extensions”, Bloomberg Alpha Research & Education Paper, No. 1 (2008)
      * @param covariance
      * @param Q
      * @param Omega
