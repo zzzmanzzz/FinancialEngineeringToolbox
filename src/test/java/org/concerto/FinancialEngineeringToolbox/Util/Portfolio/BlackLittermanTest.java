@@ -94,21 +94,31 @@ class BlackLittermanTest extends LoadData {
 
     @Test
     void NoUncertainty() throws ParameterIsNullException, UndefinedParameterValueException {
-        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate, ConstantForTest.TRADINGDAYS);
-        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
-        double[][] cov = ef.getCovariance(ReturnType.common);
-        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
+        //BABA, GOOG, AAPL, RRC, BAC, GM, JPM, SHLD, PFE, T, UAA, MA, SBUX, XOM, AMD, BBY, FB, AMZN, GE, WMT";
+        //GM drop 20%
+        //GOOG outperforms BABA by 10%
+        //AMZN and AAPL will outperform T and UAA 5%
         double[][] Q = {
             {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
         };
+
         double[] P = {0.2, 0.1, 0.05};
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn, makertVariance, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double[][] cov = ef.getCovariance(ReturnType.common);
+        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
+        //Zero diagonal matrix, uncertainty = 0
         double[][] Omega = new double[P.length][P.length];
         double[] BLReturn = getBLMeanReturn( priorReturn, cov, P, Q, Omega, tau);
-
-        //logger.info(Arrays.toString(BLReturn));
-
+        //GM drop 20%
+        assertEquals(-0.2, BLReturn[5], ConstantForTest.EPSLION);
+        //GOOG outperforms BABA by 10%
+        assertEquals(0.1, BLReturn[1] - BLReturn[0], ConstantForTest.EPSLION);
+        //AMZN and AAPL will outperform T and UAA 5%
+        assertEquals(0.05489, BLReturn[2] - BLReturn[10], ConstantForTest.EPSLION);
+        assertEquals(0.04510, BLReturn[17] - BLReturn[9], ConstantForTest.EPSLION);
     }
 
 }
