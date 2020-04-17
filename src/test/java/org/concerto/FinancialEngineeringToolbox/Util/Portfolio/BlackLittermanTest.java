@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman.getBLMeanReturn;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class BlackLittermanTest extends LoadData {
@@ -127,8 +126,7 @@ class BlackLittermanTest extends LoadData {
         assertEquals(0.1, BLReturn[2] - BLReturn[10] + BLReturn[17] - BLReturn[9], ConstantForTest.EPSLION);
     }
 
-    @Test
-    void parsePSuccess() throws DimensionMismatchException {
+    Map<String, double[]> generateP() {
         String[] symbles = {"BABA", "GOOG", "AAPL", "RRC", "BAC", "GM", "JPM", "SHLD", "PFE", "T", "UAA", "MA", "SBUX", "XOM", "AMD", "BBY", "FB", "AMZN", "GE", "WMT"};
         double[][] P = {
                 {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -143,15 +141,36 @@ class BlackLittermanTest extends LoadData {
             }
             p.put(symbles[i], tmp);
         }
-        double[][] res = BlackLitterman.parseP(p, data);
+        return p;
+    }
+
+    @Test
+    void parsePSuccess() throws DimensionMismatchException {
+        double[][] P = {
+                {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
+        };
+        double[] Q = {0.2, 0.1, 0.05};
+        Map<String, double[]>  p = generateP();
+        double[][] res = BlackLitterman.parseP(p, Q, data);
         assertEquals(Arrays.deepToString(P), Arrays.deepToString(res));
     }
 
     @Test
     void parsePDataAndPMismatch() {
+        Map<String, double[]> p = generateP();
+        double[] Q = {0.2, 0.1, 0.05};
+        p.remove("GM");
+        assertThrows(DimensionMismatchException.class, ()->BlackLitterman.parseP(p, Q, data));
     }
 
     @Test
     void parsePInnerArraySizeMismatch() {
+        double[] Q = {0.2, 0.1, 0.05};
+        Map<String, double[]> p = generateP();
+        p.put("GM", new double[]{0, 0});
+        assertThrows(DimensionMismatchException.class, ()->BlackLitterman.parseP(p, Q, data));
     }
+
 }

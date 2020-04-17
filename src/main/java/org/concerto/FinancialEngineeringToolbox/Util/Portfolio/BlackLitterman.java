@@ -95,7 +95,7 @@ public class BlackLitterman {
         return left.add(right.scalarMultiply(-1)).getData();
     }
 
-    static protected double[][] parseP(Map<String, double[]> P, Map<String, double[]> data) throws DimensionMismatchException {
+    static protected double[][] parseP(Map<String, double[]> P, double[] Q, Map<String, double[]> data) throws DimensionMismatchException {
         Set<String> Pkey = P.keySet();
         Set<String> Dkey = data.keySet();
         if(Pkey.size() != Dkey.size() || !Pkey.containsAll(Dkey)) {
@@ -106,7 +106,7 @@ public class BlackLitterman {
         String[] symbols = Pkey.toArray(new String[Pkey.size()]);
         double[][] ret = new double[symbols.length][];
 
-        int size = P.get(symbols[0]).length;
+        int size = Q.length;
         for(int i = 0; i < symbols.length; i++) {
             String s = symbols[i];
             if(P.get(s).length != size) {
