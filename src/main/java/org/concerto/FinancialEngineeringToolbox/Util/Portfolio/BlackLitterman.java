@@ -3,11 +3,8 @@ package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
 
 public class BlackLitterman {
 
@@ -95,28 +92,6 @@ public class BlackLitterman {
         return left.add(right.scalarMultiply(-1)).getData();
     }
 
-    static protected double[][] parseP(Map<String, double[]> P, double[] Q, Map<String, double[]> data) throws DimensionMismatchException {
-        Set<String> Pkey = P.keySet();
-        Set<String> Dkey = data.keySet();
-        if(Pkey.size() != Dkey.size() || !Pkey.containsAll(Dkey)) {
-            String msg = String.format("Key mismatch P: %s, data: %s", Arrays.toString(Pkey.toArray()), Arrays.toString(Dkey.toArray()));
-            throw new DimensionMismatchException(msg, null);
-        }
 
-        String[] symbols = Pkey.toArray(new String[Pkey.size()]);
-        double[][] ret = new double[symbols.length][];
-
-        int size = Q.length;
-        for(int i = 0; i < symbols.length; i++) {
-            String s = symbols[i];
-            if(P.get(s).length != size) {
-                String msg = String.format("P view length mismatch, key: %s, actual length: %d, expect length: %d", s, P.get(s).length, size);
-                throw new DimensionMismatchException(msg, null);
-            }
-            ret[i] = P.get(s);
-        }
-        RealMatrix tmp = new Array2DRowRealMatrix(ret);
-       return tmp.transpose().getData();
-    }
 
 }

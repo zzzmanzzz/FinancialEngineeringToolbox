@@ -17,7 +17,6 @@ import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorExc
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 
 import java.util.Map;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 public class EfficientFrontier extends PortfolioOptimization {
@@ -36,16 +35,7 @@ public class EfficientFrontier extends PortfolioOptimization {
     }
 
     private void init(Constant.ReturnType type) throws UndefinedParameterValueException {
-        Function<double[], double[]> funcRef = getReturnFunction(type);
-        double[][] returns = new double[symbols.length][];
-
-        for(int i = 0 ; i < symbols.length ; i++) {
-            double[] tmp = data.get(symbols[i]);
-            returns[i] = funcRef.apply(tmp);
-        }
-
-        returns = dropna(returns);
-
+        double[][] returns = getReturns(type);
         mean = getMeanReturn(returns, frequency);
         cov = getCovariance(returns, frequency);
     }

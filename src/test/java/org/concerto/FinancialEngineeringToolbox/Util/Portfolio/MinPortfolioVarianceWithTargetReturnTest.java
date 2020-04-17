@@ -14,7 +14,7 @@ class MinPortfolioVarianceWithTargetReturnTest extends LoadData {
     @Test
     void geOptimizeResult() throws ParameterIsNullException, UndefinedParameterValueException {
         double targetReturn = 0.35;
-        MinPortfolioVarianceWithTargetReturn mpv = new MinPortfolioVarianceWithTargetReturn();
+        MinPortfolioVarianceWithTargetReturn mpv = new MinPortfolioVarianceWithTargetReturn(data, riskFreeRate, Constant.TRADINGDAYS);
         Result ret = mpv.getMarkowitzOptimizeResult(data, targetReturn, Constant.ReturnType.common, riskFreeRate, ConstantForTest.TRADINGDAYS);
 
         assertEquals(2.22991, ret.getSharpeRatio(), Constant.EPSILON);

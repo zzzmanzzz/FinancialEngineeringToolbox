@@ -14,8 +14,8 @@ import java.util.function.Function;
 public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
 
 
-    MaxSharpeRatioWithRiskFreeAsset() {
-        super();
+    MaxSharpeRatioWithRiskFreeAsset(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
+        super(data, riskFreeRate, frequency);
     }
 
     public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
@@ -42,7 +42,7 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
             returns[i] = funcRef.apply(tmp);
         }
 
-        returns = dropna(returns);
+        returns = DataProcessor.dropna(returns);
 
         double[][] cov = getCovariance(returns, frequency);
         double[] mean = getMeanReturn(returns, frequency);

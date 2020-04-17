@@ -4,45 +4,71 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.concerto.FinancialEngineeringToolbox.Constant;
+import org.concerto.FinancialEngineeringToolbox.Exception.DateFormatException;
+import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Function;
 
 
 public class MinPortfolioVariance extends PortfolioOptimization {
 
-    public MinPortfolioVariance() {
-        super();
+    public MinPortfolioVariance(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
+        super(data, riskFreeRate, frequency);
     }
 
-    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
-        Object[] tmpK = data.keySet().toArray();
-        String[] keys = new String[tmpK.length];
+    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[][] Omega, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
+        String[] keys = DataProcessor.getDataKey(data);
+        DataProcessor.validateData(data, keys);
+        DataProcessor.validateOmega(Q, Omega);
 
-        for(int i = 0 ; i < keys.length;i++ ) {
-            keys[i] = (String) tmpK[i];
-        }
+        double[][] returns = getReturns(type);
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+        double[][] omega = Omega;
+        double[] marketC = DataProcessor.parseMarketCap(marketCap, data);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketMeanReturn, marketVariance, riskFreeRate);
+        double[] priorReturns = BlackLitterman.getPriorReturns(cov, riskAversion,  riskFreeRate, marketC);
+
+        double[][] BLcov = BlackLitterman.getBLCovariance(cov, p, omega, tau);
+        double[] BLmean = BlackLitterman.getBLMeanReturn(priorReturns, cov, Q, p, omega, tau);
+
+        double[] weight = optimize(BLcov);
+        double weightedReturn = getWeightedReturn(weight, BLmean);
+        double portfolioVariance = getPortfolioVariance(BLcov, weight);
+        double sharpeRatio = getWeightedSharpeRatio(weight, BLmean, BLcov, riskFreeRate);
+        return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
+    }
+    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException {
+        String[] keys = DataProcessor.getDataKey(data);
+        DataProcessor.validateData(data, keys);
+
+        double[][] returns = getReturns(type);
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+        double[][] omega = BlackLitterman.getOmega(cov, p, tau);
+        double[] marketC = DataProcessor.parseMarketCap(marketCap, data);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketMeanReturn, marketVariance, riskFreeRate);
+        double[] priorReturns = BlackLitterman.getPriorReturns(cov, riskAversion,  riskFreeRate, marketC);
+
+        double[][] BLcov = BlackLitterman.getBLCovariance(cov, p, omega, tau);
+        double[] BLmean = BlackLitterman.getBLMeanReturn(priorReturns, cov, Q, p, omega, tau);
 
 
-        for(Object k : keys) {
-            if(data.get(k) == null) {
-                String msg = String.format("key(%s) has null value", k);
-                throw new ParameterIsNullException(msg, null);
-            }
-        }
+        double[] weight = optimize(BLcov);
+        double weightedReturn = getWeightedReturn(weight, BLmean);
+        double portfolioVariance = getPortfolioVariance(BLcov, weight);
+        double sharpeRatio = getWeightedSharpeRatio(weight, BLmean, BLcov, riskFreeRate);
+        return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
+    }
 
-        Function<double[], double[]> funcRef = getReturnFunction(type);
-        double[][] returns = new double[keys.length][];
+    final public Result getMarkowitzOptimizeResult(Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException {
+        String[] keys = DataProcessor.getDataKey(data);
+        DataProcessor.validateData(data, keys);
 
-
-        for(int i = 0 ; i < keys.length ; i++) {
-            double[] tmp = data.get(keys[i]);
-            returns[i] = funcRef.apply(tmp);
-        }
-        returns = dropna(returns);
+        double[][] returns = getReturns(type);
 
         double[][] cov = getCovariance(returns, frequency);
         double[] mean = getMeanReturn(returns, frequency);

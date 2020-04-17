@@ -1,7 +1,6 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
@@ -27,8 +26,6 @@ public abstract class PortfolioOptimization {
     protected double targetReturn;
 
 
-    PortfolioOptimization() {}
-
     PortfolioOptimization(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
         this.riskFreeRate = riskFreeRate;
         this.frequency = frequency;
@@ -41,6 +38,17 @@ public abstract class PortfolioOptimization {
                 throw new ParameterIsNullException(msg, null);
             }
         }
+    }
+
+    final protected double[][] getReturns(Constant.ReturnType type) throws UndefinedParameterValueException {
+        Function<double[], double[]> funcRef = getReturnFunction(type);
+        double[][] returns = new double[symbols.length][];
+
+        for(int i = 0 ; i < symbols.length ; i++) {
+            double[] tmp = data.get(symbols[i]);
+            returns[i] = funcRef.apply(tmp);
+        }
+        return DataProcessor.dropna(returns);
     }
 
     final protected double[] getMeanReturn(double[][] returns, int frequency) {
@@ -104,30 +112,6 @@ public abstract class PortfolioOptimization {
         return funcRef;
     }
 
-    final protected double[][] dropna(double[][] in) {
-        Set<Long> skipLine = new HashSet<>();
-
-        for (double[] doubles : in) {
-            for (int j = 0; j < doubles.length; j++) {
-                if (Double.isNaN(doubles[j])) {
-                    skipLine.add(new Long(j));
-                }
-            }
-        }
-
-       double[][] ret = new double[in.length][];
-
-       for (int i = 0 ; i < in.length; i++) {
-            List<Double> tmp = new LinkedList<>();
-           for(int j = 0 ; j < in[i].length ; j++ ) {
-               if(!skipLine.contains(new Long(j))) {
-                   tmp.add(in[i][j]);
-               }
-           }
-           ret[i] = tmp.stream().mapToDouble(Double::doubleValue).toArray();
-        }
-        return ret;
-    }
 
     protected MultivariateFunction getObjectiveFunction(EfficientFrontier.ObjectiveFunction obj) throws UndefinedParameterValueException {
         class MaxSharpeRatio implements MultivariateFunction, Serializable {
@@ -156,66 +140,6 @@ public abstract class PortfolioOptimization {
         }
 
         MultivariateFunction ret;
-        switch (obj) {
-            case MinVariance:
-                ret = new MinVariance();
-                break;
-            case MaxSharpeRatio:
-                ret = new MaxSharpeRatio();
-                break;
-            case MinVarianceWithTargetReturn:
-                ret = new MinVarianceWithTargetReturn();
-                break;
-            default:
-                throw new UndefinedParameterValueException("Unexpected value: " + obj, null);
-        }
-        return ret;
-    }
-
-    protected MultivariateVectorFunction getObjectiveFunctionGradient(EfficientFrontier.ObjectiveFunction obj) throws UndefinedParameterValueException {
-        class MaxSharpeRatio implements MultivariateVectorFunction, Serializable {
-            @Override
-            public double[] value(double[] weight) {
-                weight = normalizeWeight(weight);
-                RealMatrix mcov = new Array2DRowRealMatrix(cov);
-                RealMatrix m = new Array2DRowRealMatrix(mean);
-                RealMatrix w = new Array2DRowRealMatrix(weight);
-
-                double wcov = getPortfolioVariance(cov, weight);
-                double riskPremium = getWeightedReturn(weight, mean) - riskFreeRate;
-                RealMatrix right = mcov.multiply(w).scalarMultiply(riskPremium);
-                RealMatrix ret = m.scalarMultiply(wcov).add(right.scalarMultiply(-1)).scalarMultiply(Math.pow(wcov, -2));
-                return ret.getColumn(0);
-            }
-        }
-
-        class MinVarianceWithTargetReturn implements MultivariateVectorFunction, Serializable {
-            @Override
-            public double[] value(double[] weight) {
-                weight = normalizeWeight(weight);
-                RealMatrix mcov = new Array2DRowRealMatrix(cov);
-                RealMatrix m = new Array2DRowRealMatrix(mean);
-                RealMatrix w = new Array2DRowRealMatrix(weight);
-                double delta = targetReturn - getWeightedReturn(weight, mean);
-                double[] ret;
-                int sign = Double.compare(delta, 0.0) > 0 ?  -1 : 1;
-                ret = mcov.multiply(w).add(m.scalarMultiply(sign)).getColumn(0);
-
-                return ret;
-            }
-        }
-
-        class MinVariance implements MultivariateVectorFunction, Serializable {
-            @Override
-            public double[] value(double[] weight) {
-                weight = normalizeWeight(weight);
-                RealMatrix mcov = new Array2DRowRealMatrix(cov);
-                RealMatrix w = new Array2DRowRealMatrix(weight);
-                return mcov.multiply(w.transpose()).getColumn(0);
-            }
-        }
-
-        MultivariateVectorFunction ret;
         switch (obj) {
             case MinVariance:
                 ret = new MinVariance();

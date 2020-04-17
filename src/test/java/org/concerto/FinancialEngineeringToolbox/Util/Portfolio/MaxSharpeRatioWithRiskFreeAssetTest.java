@@ -13,7 +13,7 @@ class MaxSharpeRatioWithRiskFreeAssetTest extends LoadData {
     @Test
     void geOptimizeResult() throws ParameterIsNullException, UndefinedParameterValueException {
         double riskFreeRate = 0.02;
-        MaxSharpeRatioWithRiskFreeAsset mpv = new MaxSharpeRatioWithRiskFreeAsset();
+        MaxSharpeRatioWithRiskFreeAsset mpv = new MaxSharpeRatioWithRiskFreeAsset(data, riskFreeRate, Constant.TRADINGDAYS);
         Result ret = mpv.getMarkowitzOptimizeResult(data, riskFreeRate, Constant.ReturnType.common, ConstantForTest.TRADINGDAYS);
 
         assertEquals(2.71645, ret.getSharpeRatio(), Constant.EPSILON);
