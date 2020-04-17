@@ -5,29 +5,12 @@ import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullExcepti
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DataProcessorTest extends LoadData {
-    Map<String, double[]> generateP() {
-        String[] symbles = {"BABA", "GOOG", "AAPL", "RRC", "BAC", "GM", "JPM", "SHLD", "PFE", "T", "UAA", "MA", "SBUX", "XOM", "AMD", "BBY", "FB", "AMZN", "GE", "WMT"};
-        double[][] P = {
-                {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
-        };
-        Map<String, double[]> p = new HashMap<>();
-        for(int i = 0 ; i < symbles.length; i++) {
-            double[] tmp = new double[P.length];
-            for (int j = 0 ; j < P.length; j++ ) {
-                tmp[j] = P[j][i];
-            }
-            p.put(symbles[i], tmp);
-        }
-        return p;
-    }
 
     @Test
     void parsePSuccess() throws DimensionMismatchException, ParameterIsNullException {

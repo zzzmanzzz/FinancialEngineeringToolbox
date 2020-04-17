@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class LoadData {
+class LoadData {
     protected static Logger logger = Logger.getLogger(LoadData.class.getName());
     protected static Map<String, double[]> data;
     protected static List<String> symbles;
@@ -51,5 +51,33 @@ public class LoadData {
 
         csv.forEach((K, V) ->
                data.put(K, V.stream().mapToDouble(Double::doubleValue).toArray()));
+    }
+
+    Map<String, double[]> generateP() {
+        String[] symbols = {"BABA", "GOOG", "AAPL", "RRC", "BAC", "GM", "JPM", "SHLD", "PFE", "T", "UAA", "MA", "SBUX", "XOM", "AMD", "BBY", "FB", "AMZN", "GE", "WMT"};
+        double[][] P = {
+                {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
+        };
+        Map<String, double[]> p = new HashMap<>();
+        for(int i = 0 ; i < symbols.length; i++) {
+            double[] tmp = new double[P.length];
+            for (int j = 0 ; j < P.length; j++ ) {
+                tmp[j] = P[j][i];
+            }
+            p.put(symbols[i], tmp);
+        }
+        return p;
+    }
+
+    Map<String, Double> generateMarketCap() {
+        String[] symbols = {"BABA", "GOOG", "AAPL", "RRC", "BAC", "GM", "JPM", "SHLD", "PFE", "T", "UAA", "MA", "SBUX", "XOM", "AMD", "BBY", "FB", "AMZN", "GE", "WMT"};
+        double[] marketCap = {533e9, 927e9, 1.19e12, 1e9, 301e9, 51e9, 422e9, 0, 212e9, 61e9, 78e9, 288e9, 102e9, 295e9, 43e9, 22e9, 574e9, 867e9, 96e9, 339e9};
+        Map<String, Double> ret = new HashMap<>();
+        for(int i = 0 ; i < symbols.length; i++) {
+            ret.put(symbols[i], marketCap[i]);
+        }
+        return ret;
     }
 }

@@ -19,7 +19,7 @@ public class MinPortfolioVariance extends PortfolioOptimization {
         super(data, riskFreeRate, frequency);
     }
 
-    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
+    final public Result getBlackLittermanOptimizeResult(Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
         String[] keys = DataProcessor.getDataKey(data);
         DataProcessor.validateData(data, keys);
         DataProcessor.validateOmega(Q, Omega);
@@ -41,7 +41,7 @@ public class MinPortfolioVariance extends PortfolioOptimization {
         return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
     }
 
-    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException {
+    final public Result getBlackLittermanOptimizeResult(Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException {
         String[] keys = DataProcessor.getDataKey(data);
         DataProcessor.validateData(data, keys);
 
