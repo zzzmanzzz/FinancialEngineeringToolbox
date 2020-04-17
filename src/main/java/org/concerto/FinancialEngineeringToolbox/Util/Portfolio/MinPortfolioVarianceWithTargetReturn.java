@@ -9,7 +9,6 @@ import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValu
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Function;
 
 public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization {
     private double targetReturn;
@@ -20,31 +19,10 @@ public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization 
 
     final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, double targetReturn, Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
         this.targetReturn = targetReturn;
+        String[] keys = DataProcessor.getDataKey(data);
+        DataProcessor.validateData(data, keys);
 
-        Object[] tmpK = data.keySet().toArray();
-        String[] keys = new String[tmpK.length];
-
-        for(int i = 0 ; i < keys.length;i++ ) {
-            keys[i] = (String) tmpK[i];
-        }
-
-        for(Object k : keys) {
-            if(null == data.get(k)) {
-                String msg = String.format("key(%s) has null value", k);
-                throw new ParameterIsNullException(msg, null);
-            }
-        }
-
-        Function<double[], double[]> funcRef = getReturnFunction(type);
-        double[][] returns = new double[keys.length][];
-
-
-        for(int i = 0 ; i < keys.length ; i++) {
-            double[] tmp = data.get(keys[i]);
-            returns[i] = funcRef.apply(tmp);
-        }
-       returns = DataProcessor.dropna(returns);
-
+        double[][] returns = getReturns(type);
         double[][] cov = getCovariance(returns, frequency);
         double[] mean = getMeanReturn(returns, frequency);
         double[] weight = optimize(mean, cov);
