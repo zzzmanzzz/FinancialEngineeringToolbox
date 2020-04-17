@@ -30,16 +30,23 @@ public class BlackLitterman {
                 .scalarAdd(riskFreeRate).getColumn(0);
     }
 
-    static public double[][] getOmega(double[][] covariance, double[][] P, double tau) {
+    /**
+     *
+     * @param covariance
+     * @param P
+     * @param tau
+     * @return Diagonal elements of omega matrix
+     */
+    static public double[] getOmega(double[][] covariance, double[][] P, double tau) {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
         RealMatrix p = new Array2DRowRealMatrix(P);
         RealMatrix Omega = p
             .multiply(sigma)
             .multiply(p.transpose())
             .scalarMultiply(tau);
-        double[][] ret = new double[Omega.getRowDimension()][Omega.getColumnDimension()];
+        double[] ret = new double[Omega.getRowDimension()];
         for(int i = 0 ; i < ret.length ; i++ ) {
-            ret[i][i] = Omega.getEntry(i, i);
+            ret[i] = Omega.getEntry(i, i);
         }
         return ret;
     }
@@ -55,15 +62,11 @@ public class BlackLitterman {
      * @param tau
      * @return
      */
-    static public double[] getBLMeanReturn(double[] priorReturns, double[][] covariance, double[] Q, double[][] P, double[][] Omega, double tau) {
+    static public double[] getBLMeanReturn(double[] priorReturns, double[][] covariance, double[] Q, double[][] P, double[] Omega, double tau) {
         RealMatrix pi = new Array2DRowRealMatrix(priorReturns);
         RealMatrix q = new Array2DRowRealMatrix(Q);
         RealMatrix p = new Array2DRowRealMatrix(P);
-        double[] tmp = new double[Omega.length];
-        for(int i = 0 ; i < Omega.length; i++ ) {
-            tmp[i] = Omega[i][i];
-        }
-        RealMatrix omega = new DiagonalMatrix(tmp);
+        RealMatrix omega = new DiagonalMatrix(Omega);
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
 
         RealMatrix tauSigmaP = sigma.scalarMultiply(tau).multiply(p.transpose());
@@ -83,14 +86,10 @@ public class BlackLitterman {
      * @param tau
      * @return
      */
-    static public double[][] getBLCovariance(double[][] covariance, double[][] P, double[][] Omega, double tau) {
+    static public double[][] getBLCovariance(double[][] covariance, double[][] P, double[] Omega, double tau) {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
         RealMatrix p = new Array2DRowRealMatrix(P);
-        double[] tmp = new double[Omega.length];
-        for(int i = 0 ; i < Omega.length; i++ ) {
-            tmp[i] = Omega[i][i];
-        }
-        RealMatrix omega = new DiagonalMatrix(tmp);
+        RealMatrix omega = new DiagonalMatrix(Omega);
 
         RealMatrix tauSigmaP = sigma.scalarMultiply(tau).multiply(p.transpose());
         RealMatrix invPtauSigmaQplusOmega = MatrixUtils.inverse(p.multiply(tauSigmaP).add(omega));

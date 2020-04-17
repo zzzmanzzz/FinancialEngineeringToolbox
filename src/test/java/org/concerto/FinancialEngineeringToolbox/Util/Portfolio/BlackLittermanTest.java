@@ -29,8 +29,8 @@ class BlackLittermanTest extends LoadData {
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[][] Q = new double[1][cov.length];
         Arrays.fill(Q[0], 0.1);
-        double[][] Omega = BlackLitterman.getOmega(cov, Q, tau);
-        assertEquals(0.00512, Omega[0][0], ConstantForTest.EPSLION) ;
+        double[] Omega = BlackLitterman.getOmega(cov, Q, tau);
+        assertEquals(0.00512, Omega[0], ConstantForTest.EPSLION) ;
     }
 
     @Test
@@ -69,7 +69,7 @@ class BlackLittermanTest extends LoadData {
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap);
-        double[][] Omega = BlackLitterman.getOmega(cov, P, tau);
+        double[] Omega = BlackLitterman.getOmega(cov, P, tau);
 
         double[] BLReturn = getBLMeanReturn( priorReturn, cov, Q, P, Omega, tau);
         double[] expect = {0.02160, 0.07264, 0.05494, -0.00068, 0.02099, -0.06406, 0.02196, -0.02237, 0.02598, 0.02267, 0.02001, 0.04138, 0.03471, 0.02514, 0.01384, 0.00729, 0.06273, 0.08145, 0.01540, 0.02552};
@@ -90,7 +90,7 @@ class BlackLittermanTest extends LoadData {
         };
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
-        double[][] Omega = BlackLitterman.getOmega(cov, P, tau);
+        double[] Omega = BlackLitterman.getOmega(cov, P, tau);
         double[][] BLcov = BlackLitterman.getBLCovariance(cov, P, Omega, tau);
         assertEquals(true, MatrixUtils.isSymmetric(new Array2DRowRealMatrix(BLcov), ConstantForTest.EPSLION));
     }
@@ -114,7 +114,7 @@ class BlackLittermanTest extends LoadData {
         double[][] cov = ef.getCovariance(ReturnType.common);
         double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap);
         //Zero diagonal matrix, uncertainty = 0
-        double[][] Omega = new double[P.length][P.length];
+        double[] Omega = new double[P.length];
         double[] BLReturn = getBLMeanReturn( priorReturn, cov, Q, P, Omega, tau);
         //GM drop 20%
         assertEquals(-0.2, BLReturn[5], ConstantForTest.EPSLION);

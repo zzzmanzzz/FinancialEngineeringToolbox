@@ -19,7 +19,7 @@ public class MinPortfolioVariance extends PortfolioOptimization {
         super(data, riskFreeRate, frequency);
     }
 
-    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[][] Omega, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
+    final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
         String[] keys = DataProcessor.getDataKey(data);
         DataProcessor.validateData(data, keys);
         DataProcessor.validateOmega(Q, Omega);
@@ -27,13 +27,12 @@ public class MinPortfolioVariance extends PortfolioOptimization {
         double[][] returns = getReturns(type);
         double[][] p = DataProcessor.parseP(P, Q, data);
         double[][] cov = getCovariance(returns, frequency);
-        double[][] omega = Omega;
         double[] marketC = DataProcessor.parseMarketCap(marketCap, data);
         double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketMeanReturn, marketVariance, riskFreeRate);
         double[] priorReturns = BlackLitterman.getPriorReturns(cov, riskAversion,  riskFreeRate, marketC);
 
-        double[][] BLcov = BlackLitterman.getBLCovariance(cov, p, omega, tau);
-        double[] BLmean = BlackLitterman.getBLMeanReturn(priorReturns, cov, Q, p, omega, tau);
+        double[][] BLcov = BlackLitterman.getBLCovariance(cov, p, Omega, tau);
+        double[] BLmean = BlackLitterman.getBLMeanReturn(priorReturns, cov, Q, p, Omega, tau);
 
         double[] weight = optimize(BLcov);
         double weightedReturn = getWeightedReturn(weight, BLmean);
@@ -49,7 +48,7 @@ public class MinPortfolioVariance extends PortfolioOptimization {
         double[][] returns = getReturns(type);
         double[][] p = DataProcessor.parseP(P, Q, data);
         double[][] cov = getCovariance(returns, frequency);
-        double[][] omega = BlackLitterman.getOmega(cov, p, tau);
+        double[] omega = BlackLitterman.getOmega(cov, p, tau);
         double[] marketC = DataProcessor.parseMarketCap(marketCap, data);
         double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketMeanReturn, marketVariance, riskFreeRate);
         double[] priorReturns = BlackLitterman.getPriorReturns(cov, riskAversion,  riskFreeRate, marketC);

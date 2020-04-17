@@ -69,24 +69,7 @@ class DataProcessor {
 
     }
 
-    static protected boolean validateOmega(double[] Q, double[][] Omega) throws DateFormatException {
-        RealMatrix tmp = new  Array2DRowRealMatrix(Omega);
-        //chack square
-        if(!tmp.isSquare()) {
-            String msg = "Omega is not square matrix";
-            throw new DateFormatException(msg, null);
-        }
-
-        //check diagonal
-        double SQsum = 0;
-        for(int i = 0 ; i < Omega.length ; i++) {
-            SQsum += Math.pow(Omega[i][i] ,2);
-        }
-        if(Double.compare(SQsum, tmp.getFrobeniusNorm()) != 0) {
-            String msg = "Omega is not diagonal matrix";
-            throw new DateFormatException(msg, null);
-        }
-
+    static protected boolean validateOmega(double[] Q, double[] Omega) throws DateFormatException {
         //check size
         if(Omega.length != Q.length) {
             String msg = String.format("Omega size(%d) not equal to Q(%d)",Omega.length, Q.length);
