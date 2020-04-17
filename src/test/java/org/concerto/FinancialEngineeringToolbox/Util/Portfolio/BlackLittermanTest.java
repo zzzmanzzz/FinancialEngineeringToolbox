@@ -125,6 +125,27 @@ class BlackLittermanTest extends LoadData {
     }
 
 
+    @Test
+    void completelyUnknown() throws ParameterIsNullException, UndefinedParameterValueException {
+        //BABA, GOOG, AAPL, RRC, BAC, GM, JPM, SHLD, PFE, T, UAA, MA, SBUX, XOM, AMD, BBY, FB, AMZN, GE, WMT";
+        //GM drop 20%
+        //GOOG outperforms BABA by 10%
+        //AMZN and AAPL will outperform T and UAA 5%
+        double[][] P = {
+                {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
+        };
 
-
+        double[] Q = {0.2, 0.1, 0.05};
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn,
+                marketVariance, riskFreeRate);
+        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        double[][] cov = ef.getCovariance(ReturnType.common);
+        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap);
+        //Complete unknown, uncertainty -> infinity. BLReturn closes to prior
+        double[] Omega = {1e100, 1e100, 1e100};
+        double[] BLReturn = getBLMeanReturn( priorReturn, cov, Q, P, Omega, tau);
+        assertArrayEquals(priorReturn, BLReturn, ConstantForTest.EPSLION);
+    }
 }
