@@ -1,17 +1,21 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
-import static org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman.getBLMeanReturn;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Arrays;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.concerto.FinancialEngineeringToolbox.Constant.ReturnType;
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
+import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman.getBLMeanReturn;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class BlackLittermanTest extends LoadData {
@@ -45,7 +49,7 @@ class BlackLittermanTest extends LoadData {
         double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn,
             marketVariance, riskFreeRate);
         double[][] cov = ef.getCovariance(ReturnType.common);
-        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
+        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap);
         double[] expect = {0.10361, 0.10000, 0.09580, 0.06722, 0.09228, 0.073358, 0.08320, 0.06864, 0.05879, 0.04820, 0.09590, 0.08430, 0.07178, 0.06229, 0.10629, 0.06710, 0.10196, 0.11329, 0.06459, 0.052570};
         assertArrayEquals(expect, priorReturn, ConstantForTest.EPSLION);
     }
@@ -56,21 +60,21 @@ class BlackLittermanTest extends LoadData {
         //GM drop 20%
         //GOOG outperforms BABA by 10%
         //AMZN and AAPL will outperform T and UAA 5%
-        double[][] Q = {
+        double[][] P = {
              {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
              {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
         };
-        double[] P = {0.2, 0.1, 0.05};
+        double[] Q = {0.2, 0.1, 0.05};
 
         double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn,
             marketVariance, riskFreeRate);
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
-        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
-        double[][] Omega = BlackLitterman.getOmega(cov, Q, tau);
+        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap);
+        double[][] Omega = BlackLitterman.getOmega(cov, P, tau);
 
-        double[] BLReturn = getBLMeanReturn( priorReturn, cov, P, Q, Omega, tau);
+        double[] BLReturn = getBLMeanReturn( priorReturn, cov, Q, P, Omega, tau);
         double[] expect = {0.02160, 0.07264, 0.05494, -0.00068, 0.02099, -0.06406, 0.02196, -0.02237, 0.02598, 0.02267, 0.02001, 0.04138, 0.03471, 0.02514, 0.01384, 0.00729, 0.06273, 0.08145, 0.01540, 0.02552};
         //logger.info(Arrays.toString(BLReturn));
         assertArrayEquals(expect, BLReturn, ConstantForTest.EPSLION);
@@ -82,16 +86,15 @@ class BlackLittermanTest extends LoadData {
         //GM drop 20%
         //GOOG outperforms BABA by 10%
         //AMZN and AAPL will outperform T and UAA 5%
-        double[][] Q = {
+        double[][] P = {
             {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
         };
-        double[] P = {0.2, 0.1, 0.05};
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
-        double[][] Omega = BlackLitterman.getOmega(cov, Q, tau);
-        double[][] BLcov = BlackLitterman.getBLCovariance(cov, Q, Omega, tau);
+        double[][] Omega = BlackLitterman.getOmega(cov, P, tau);
+        double[][] BLcov = BlackLitterman.getBLCovariance(cov, P, Omega, tau);
         assertEquals(true, MatrixUtils.isSymmetric(new Array2DRowRealMatrix(BLcov), ConstantForTest.EPSLION));
     }
 
@@ -101,21 +104,21 @@ class BlackLittermanTest extends LoadData {
         //GM drop 20%
         //GOOG outperforms BABA by 10%
         //AMZN and AAPL will outperform T and UAA 5%
-        double[][] Q = {
+        double[][] P = {
             {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
         };
 
-        double[] P = {0.2, 0.1, 0.05};
+        double[] Q = {0.2, 0.1, 0.05};
         double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketReturn,
             marketVariance, riskFreeRate);
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
         double[][] cov = ef.getCovariance(ReturnType.common);
-        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap, ConstantForTest.TRADINGDAYS);
+        double[] priorReturn = BlackLitterman.getPriorReturns(cov, riskAversion, riskFreeRate, marketCap);
         //Zero diagonal matrix, uncertainty = 0
         double[][] Omega = new double[P.length][P.length];
-        double[] BLReturn = getBLMeanReturn( priorReturn, cov, P, Q, Omega, tau);
+        double[] BLReturn = getBLMeanReturn( priorReturn, cov, Q, P, Omega, tau);
         //GM drop 20%
         assertEquals(-0.2, BLReturn[5], ConstantForTest.EPSLION);
         //GOOG outperforms BABA by 10%
@@ -124,4 +127,31 @@ class BlackLittermanTest extends LoadData {
         assertEquals(0.1, BLReturn[2] - BLReturn[10] + BLReturn[17] - BLReturn[9], ConstantForTest.EPSLION);
     }
 
+    @Test
+    void parsePSuccess() throws DimensionMismatchException {
+        String[] symbles = {"BABA", "GOOG", "AAPL", "RRC", "BAC", "GM", "JPM", "SHLD", "PFE", "T", "UAA", "MA", "SBUX", "XOM", "AMD", "BBY", "FB", "AMZN", "GE", "WMT"};
+        double[][] P = {
+                {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0},
+        };
+        Map<String, double[]> p = new HashMap<>();
+        for(int i = 0 ; i < symbles.length; i++) {
+            double[] tmp = new double[P.length];
+            for (int j = 0 ; j < P.length; j++ ) {
+                tmp[j] = P[j][i];
+            }
+            p.put(symbles[i], tmp);
+        }
+        double[][] res = BlackLitterman.parseP(p, data);
+        assertEquals(Arrays.deepToString(P), Arrays.deepToString(res));
+    }
+
+    @Test
+    void parsePDataAndPMismatch() {
+    }
+
+    @Test
+    void parsePInnerArraySizeMismatch() {
+    }
 }

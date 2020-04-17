@@ -1,6 +1,5 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
-import java.util.logging.Logger;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.optim.*;
@@ -19,6 +18,7 @@ import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValu
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 public class EfficientFrontier extends PortfolioOptimization {
     protected static Logger logger = Logger.getLogger(EfficientFrontier.class.getName());
@@ -27,11 +27,6 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     EfficientFrontier(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
         super(data, riskFreeRate, frequency);
-    }
-
-    public double[] getMean(Constant.ReturnType type) throws UndefinedParameterValueException {
-        init(type);
-        return mean;
     }
 
     public double[][] getCovariance(Constant.ReturnType type)
