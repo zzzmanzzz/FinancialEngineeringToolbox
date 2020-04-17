@@ -41,6 +41,7 @@ public class MinPortfolioVariance extends PortfolioOptimization {
         double sharpeRatio = getWeightedSharpeRatio(weight, BLmean, BLcov, riskFreeRate);
         return new Result(keys, weight, sharpeRatio, weightedReturn, portfolioVariance);
     }
+
     final public Result getMarkowitzOptimizeResult(Map<String, double[]> data, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type, double riskFreeRate, int frequency) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException {
         String[] keys = DataProcessor.getDataKey(data);
         DataProcessor.validateData(data, keys);

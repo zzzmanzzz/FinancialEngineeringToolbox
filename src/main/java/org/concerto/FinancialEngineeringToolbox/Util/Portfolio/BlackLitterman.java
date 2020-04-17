@@ -1,6 +1,7 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Portfolio;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.DiagonalMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -58,7 +59,11 @@ public class BlackLitterman {
         RealMatrix pi = new Array2DRowRealMatrix(priorReturns);
         RealMatrix q = new Array2DRowRealMatrix(Q);
         RealMatrix p = new Array2DRowRealMatrix(P);
-        RealMatrix omega = new Array2DRowRealMatrix(Omega);
+        double[] tmp = new double[Omega.length];
+        for(int i = 0 ; i < Omega.length; i++ ) {
+            tmp[i] = Omega[i][i];
+        }
+        RealMatrix omega = new DiagonalMatrix(tmp);
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
 
         RealMatrix tauSigmaP = sigma.scalarMultiply(tau).multiply(p.transpose());
@@ -81,7 +86,11 @@ public class BlackLitterman {
     static public double[][] getBLCovariance(double[][] covariance, double[][] P, double[][] Omega, double tau) {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);
         RealMatrix p = new Array2DRowRealMatrix(P);
-        RealMatrix omega = new Array2DRowRealMatrix(Omega);
+        double[] tmp = new double[Omega.length];
+        for(int i = 0 ; i < Omega.length; i++ ) {
+            tmp[i] = Omega[i][i];
+        }
+        RealMatrix omega = new DiagonalMatrix(tmp);
 
         RealMatrix tauSigmaP = sigma.scalarMultiply(tau).multiply(p.transpose());
         RealMatrix invPtauSigmaQplusOmega = MatrixUtils.inverse(p.multiply(tauSigmaP).add(omega));
@@ -91,7 +100,4 @@ public class BlackLitterman {
 
         return left.add(right.scalarMultiply(-1)).getData();
     }
-
-
-
 }
