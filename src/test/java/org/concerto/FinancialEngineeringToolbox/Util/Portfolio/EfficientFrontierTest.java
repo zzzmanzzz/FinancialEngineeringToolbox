@@ -25,7 +25,7 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(lower, 0.0);
         Arrays.fill(init, .05);
 
-        Result ret = ef.getMaxSharpeRatio(upper, lower, init,Constant.ReturnType.common);
+        Result ret = ef.getMaxSharpeRatio(upper, lower, init, Constant.ReturnType.common);
         assertEquals(1.68845, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(0.36789, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.04245, ret.getPortfolioVariance(), Constant.EPSILON);
@@ -64,7 +64,7 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(lower, 0.0);
         Arrays.fill(init, .05);
 
-        Result ret = ef.getMinVarianceWithTargetReturn(upper, lower, init, targetReturn, Constant.ReturnType.common);
+        Result ret = ef.getMinVarianceWithTargetReturn(upper, lower, init, targetReturn);
         assertEquals(1.68196, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(targetReturn, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.04086, ret.getPortfolioVariance(), Constant.EPSILON);

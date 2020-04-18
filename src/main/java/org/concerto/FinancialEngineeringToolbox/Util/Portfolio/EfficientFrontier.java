@@ -11,13 +11,12 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.concerto.FinancialEngineeringToolbox.Constant;
-import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
-import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
+import org.concerto.FinancialEngineeringToolbox.Exception.*;
 
 import java.util.Map;
 import java.util.logging.Logger;
+
+import static org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman.getBLCovariance;
 
 public class EfficientFrontier extends PortfolioOptimization {
     protected static Logger logger = Logger.getLogger(EfficientFrontier.class.getName());
@@ -38,7 +37,7 @@ public class EfficientFrontier extends PortfolioOptimization {
         return cov;
     }
 
-    private Result getResult(double[] bestWeight) {
+    private Result getResult(double[]mean, double[][] cov, double[] bestWeight) {
         double weightedReturns = getWeightedReturn(bestWeight, mean);
         double bestSharpeRatio = getWeightedSharpeRatio(bestWeight, mean, cov, riskFreeRate);
         double variance = Math.pow(((weightedReturns - riskFreeRate) / bestSharpeRatio), 2);
@@ -47,28 +46,226 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at max Sharpe ratio via Markowitz theory
-     *
-     * @param upperBound weight upper bound
-     * @param lowerBound weight lower bound
-     * @param initGuess initial guess value
-     * @param type log return or percentage return, return period should correspond to risk free rate and frequency
-     * @return @See org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result
-     * @throws UndefinedParameterValueException ReturnType is not common or log
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param common
+     * @return
+     * @throws UndefinedParameterValueException
      */
-    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException {
+    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType common) throws UndefinedParameterValueException {
         double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov, ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
-        return getResult(bestWeight);
+        return getResult(mean, cov, bestWeight);
     }
 
-    public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
+    /**
+     * Get optimized portfolio weight at max Sharpe ratio via Black-Litterman theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param P
+     * @param marketCap
+     * @param Q
+     * @param Omega Customized certainty
+     * @param tau
+     * @param marketMeanReturn
+     * @param marketVariance
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws DateFormatException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     * @throws ParameterIsNullException
+     */
+    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
+        DataProcessor.validateOmega(Q, Omega);
+
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+
+        double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
+        double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
+        double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(BLmean, BLcov, ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+        return getResult(BLmean, BLcov, bestWeight);
+    }
+
+    /**
+     * Get optimized portfolio weight at max Sharpe ratio via Black-Litterman theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param P
+     * @param marketCap
+     * @param Q
+     * @param tau
+     * @param marketMeanReturn
+     * @param marketVariance
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws DateFormatException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     * @throws ParameterIsNullException
+     */
+    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+        double[] Omega = BlackLitterman.getOmega(cov, p, tau);
+        double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
+        double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
+        double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(BLmean, BLcov, ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+        return getResult(BLmean, BLcov, bestWeight);
+    }
+
+    /**
+     * Get optimized portfolio weight at min variance with target return via Black-Litterman theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param targetReturn
+     * @param P
+     * @param marketCap
+     * @param Q
+     * @param Omega
+     * @param tau
+     * @param marketMeanReturn
+     * @param marketVariance
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     * @throws DateFormatException
+     * @throws ParameterIsNullException
+     */
+    public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException, DateFormatException, ParameterIsNullException {
+        this.targetReturn = targetReturn;
+        DataProcessor.validateOmega(Q, Omega);
+
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+
+        double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
+        double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess,getObjectiveFunction(BLmean, BLcov, ObjectiveFunction.MinVarianceWithTargetReturn), GoalType.MINIMIZE);
+        return getResult(BLmean, BLcov, bestWeight);
+    }
+
+    /**
+     * Get optimized portfolio weight at min variance with target return via Black-Litterman theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param targetReturn
+     * @param P
+     * @param marketCap
+     * @param Q
+     * @param tau
+     * @param marketMeanReturn
+     * @param marketVariance
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     */
+    public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
+        this.targetReturn = targetReturn;
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+        double[] Omega = BlackLitterman.getOmega(cov, p, tau);
+        double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
+        double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess,getObjectiveFunction(BLmean, BLcov, ObjectiveFunction.MinVarianceWithTargetReturn), GoalType.MINIMIZE);
+        return getResult(BLmean, BLcov, bestWeight);
+    }
+
+    /**
+     * Get optimized portfolio weight at min variance with target return via Markowitz theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param targetReturn
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     */
+    public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         this.targetReturn = targetReturn;
         double[] bestWeight = optimize(upperBound, lowerBound, initGuess,getObjectiveFunction(mean, cov, ObjectiveFunction.MinVarianceWithTargetReturn), GoalType.MINIMIZE);
-        return getResult(bestWeight);
+        return getResult(mean, cov, bestWeight);
     }
 
-    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess,Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
+    /**
+     * Get optimized portfolio weight at min variance with target return via Black Litterman theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param P
+     * @param marketCap
+     * @param Q
+     * @param Omega
+     * @param tau
+     * @param marketMeanReturn
+     * @param marketVariance
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws DateFormatException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     * @throws ParameterIsNullException
+     */
+    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
+        DataProcessor.validateOmega(Q, Omega);
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+        double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
+        double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(BLmean, BLcov, ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
+        return getResult(BLmean, BLcov, bestWeight);
+    }
+
+    /**
+     * Get optimized portfolio weight at min variance with target return via Black Litterman theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param P
+     * @param marketCap
+     * @param Q
+     * @param tau
+     * @param marketMeanReturn
+     * @param marketVariance
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws DateFormatException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     * @throws ParameterIsNullException
+     */
+    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
+        double[][] p = DataProcessor.parseP(P, Q, data);
+        double[][] cov = getCovariance(returns, frequency);
+        double[] Omega = BlackLitterman.getOmega(cov, p, tau);
+        double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
+        double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(BLmean, BLcov, ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
+        return getResult(BLmean, BLcov, bestWeight);
+    }
+
+    /**
+     * Get optimized portfolio weight at min variance via Markowitz theory.
+     * @param upperBound
+     * @param lowerBound
+     * @param initGuess
+     * @param common
+     * @return
+     * @throws UndefinedParameterValueException
+     * @throws ParameterRangeErrorException
+     * @throws DimensionMismatchException
+     */
+    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType common) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov, ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
-        return getResult(bestWeight);
+        return getResult(mean, cov, bestWeight);
     }
 
     protected NonLinearConjugateGradientOptimizer getAnotherOptimizer() {
