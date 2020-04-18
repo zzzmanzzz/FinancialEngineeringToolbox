@@ -39,7 +39,7 @@ class MinPortfolioVarianceTest extends LoadData {
     }
 
     @Test
-    void getBlackLittermanOptimizeResultWithOmega() throws ParameterIsNullException, DateFormatException, UndefinedParameterValueException, DimensionMismatchException {
+    void getBlackLittermanOptimizeResultWithOmega() throws ParameterIsNullException, DateFormatException, UndefinedParameterValueException, DimensionMismatchException, ParameterRangeErrorException {
         double[] Q = {0.2, 0.1, 0.05};
         Map<String, double[]> P = generateP();
         double[] omega = {0.1, 0.3, 0.5};

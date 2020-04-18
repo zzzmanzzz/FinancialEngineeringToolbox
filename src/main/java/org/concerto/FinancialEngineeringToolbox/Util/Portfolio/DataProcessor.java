@@ -5,6 +5,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.concerto.FinancialEngineeringToolbox.Exception.DateFormatException;
 import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
+import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 
 import java.util.*;
 
@@ -69,12 +70,20 @@ class DataProcessor {
 
     }
 
-    static protected boolean validateOmega(double[] Q, double[] Omega) throws DateFormatException {
+    static protected boolean validateOmega(double[] Q, double[] Omega) throws DateFormatException, ParameterRangeErrorException {
         //check size
         if(Omega.length != Q.length) {
             String msg = String.format("Omega size(%d) not equal to Q(%d)",Omega.length, Q.length);
             throw new DateFormatException(msg, null);
         }
+
+        for(double o : Omega) {
+            if(Double.compare(0.0, o) > 0) {
+                String msg = "Elements in Omega should >= 0";
+                throw new ParameterRangeErrorException(msg, null);
+            }
+        }
+
         return true;
     }
 

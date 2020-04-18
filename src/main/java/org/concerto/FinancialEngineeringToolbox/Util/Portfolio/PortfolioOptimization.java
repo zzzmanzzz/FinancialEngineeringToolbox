@@ -14,15 +14,13 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 
-public abstract class PortfolioOptimization {
+abstract class PortfolioOptimization {
     static final protected Mean m = new Mean();
     protected Map<String, double[]> data;
     protected String[] symbols;
     protected int frequency;
 
     protected double riskFreeRate;
-    protected double[] mean;
-    protected double[][] cov;
     protected double targetReturn;
 
 
@@ -113,7 +111,7 @@ public abstract class PortfolioOptimization {
     }
 
 
-    protected MultivariateFunction getObjectiveFunction(EfficientFrontier.ObjectiveFunction obj) throws UndefinedParameterValueException {
+    protected MultivariateFunction getObjectiveFunction(double[] mean, double[][] cov, EfficientFrontier.ObjectiveFunction obj) throws UndefinedParameterValueException {
         class MaxSharpeRatio implements MultivariateFunction, Serializable {
             @Override
             public double value(double[] weight) {

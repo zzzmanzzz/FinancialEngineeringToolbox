@@ -21,6 +21,9 @@ import java.util.logging.Logger;
 
 public class EfficientFrontier extends PortfolioOptimization {
     protected static Logger logger = Logger.getLogger(EfficientFrontier.class.getName());
+    private double[][] returns;
+    private double[][] cov;
+    private double[] mean;
 
     public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance}
 
@@ -59,20 +62,20 @@ public class EfficientFrontier extends PortfolioOptimization {
      */
     public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException {
         init(type);
-        double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+        double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov,ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
         return getResult(bestWeight);
     }
 
     public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         init(type);
         this.targetReturn = targetReturn;
-        double[] bestWeight = optimize(upperBound, lowerBound, initGuess,getObjectiveFunction(ObjectiveFunction.MinVarianceWithTargetReturn), GoalType.MINIMIZE);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess,getObjectiveFunction(mean, cov, ObjectiveFunction.MinVarianceWithTargetReturn), GoalType.MINIMIZE);
         return getResult(bestWeight);
     }
 
     public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess,Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         init(type);
-        double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
+        double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov, ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
         return getResult(bestWeight);
     }
 

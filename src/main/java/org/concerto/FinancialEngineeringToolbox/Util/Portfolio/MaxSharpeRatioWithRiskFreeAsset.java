@@ -4,10 +4,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.concerto.FinancialEngineeringToolbox.Constant;
-import org.concerto.FinancialEngineeringToolbox.Exception.DateFormatException;
-import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
-import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
+import org.concerto.FinancialEngineeringToolbox.Exception.*;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -19,7 +16,7 @@ public class MaxSharpeRatioWithRiskFreeAsset extends PortfolioOptimization {
         super(data, riskFreeRate, frequency);
     }
 
-    final public Result getBlackLittermanOptimizeResult(Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
+    final public Result getBlackLittermanOptimizeResult(Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance,Constant.ReturnType type) throws ParameterIsNullException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException, ParameterRangeErrorException {
         String[] keys = DataProcessor.getDataKey(data);
         DataProcessor.validateData(data, keys);
         DataProcessor.validateOmega(Q, Omega);
