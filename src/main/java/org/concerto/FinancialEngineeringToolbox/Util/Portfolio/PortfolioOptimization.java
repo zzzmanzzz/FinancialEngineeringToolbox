@@ -175,7 +175,7 @@ abstract class PortfolioOptimization {
         return BlackLitterman.getBLMeanReturn(priorReturns, cov, Q, P, Omega, tau);
     }
 
-    protected double[][] getBLcovariance(double[][] cov, double[][] P, double[] Omega, double tau) {
+    protected double[][] getBLCovariance(double[][] cov, double[][] P, double[] Omega, double tau) {
         return BlackLitterman.getBLCovariance(cov, P, Omega, tau);
     }
 }

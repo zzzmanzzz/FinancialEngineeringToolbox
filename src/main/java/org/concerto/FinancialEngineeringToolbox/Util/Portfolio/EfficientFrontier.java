@@ -16,8 +16,6 @@ import org.concerto.FinancialEngineeringToolbox.Exception.*;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import static org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman.getBLCovariance;
-
 public class EfficientFrontier extends PortfolioOptimization {
     protected static Logger logger = Logger.getLogger(EfficientFrontier.class.getName());
     private double[][] returns;
@@ -81,7 +79,6 @@ public class EfficientFrontier extends PortfolioOptimization {
         DataProcessor.validateOmega(Q, Omega);
 
         double[][] p = DataProcessor.parseP(P, Q, data);
-        double[][] cov = getCovariance(returns, frequency);
 
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
         double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
@@ -109,7 +106,6 @@ public class EfficientFrontier extends PortfolioOptimization {
      */
     public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
         double[][] p = DataProcessor.parseP(P, Q, data);
-        double[][] cov = getCovariance(returns, frequency);
         double[] Omega = BlackLitterman.getOmega(cov, p, tau);
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
         double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
@@ -142,7 +138,6 @@ public class EfficientFrontier extends PortfolioOptimization {
         DataProcessor.validateOmega(Q, Omega);
 
         double[][] p = DataProcessor.parseP(P, Q, data);
-        double[][] cov = getCovariance(returns, frequency);
 
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
         double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
@@ -170,7 +165,6 @@ public class EfficientFrontier extends PortfolioOptimization {
     public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
         this.targetReturn = targetReturn;
         double[][] p = DataProcessor.parseP(P, Q, data);
-        double[][] cov = getCovariance(returns, frequency);
         double[] Omega = BlackLitterman.getOmega(cov, p, tau);
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
         double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
@@ -217,7 +211,6 @@ public class EfficientFrontier extends PortfolioOptimization {
     public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double[] Omega, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
         DataProcessor.validateOmega(Q, Omega);
         double[][] p = DataProcessor.parseP(P, Q, data);
-        double[][] cov = getCovariance(returns, frequency);
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
         double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
         double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(BLmean, BLcov, ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
@@ -244,7 +237,6 @@ public class EfficientFrontier extends PortfolioOptimization {
      */
     public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
         double[][] p = DataProcessor.parseP(P, Q, data);
-        double[][] cov = getCovariance(returns, frequency);
         double[] Omega = BlackLitterman.getOmega(cov, p, tau);
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
         double[] BLmean = getBLmean(cov, p, Omega, marketCap, Q, tau, marketMeanReturn, marketVariance);
