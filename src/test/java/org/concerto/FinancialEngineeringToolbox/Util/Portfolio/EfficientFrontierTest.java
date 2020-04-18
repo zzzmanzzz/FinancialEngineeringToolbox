@@ -133,6 +133,7 @@ class EfficientFrontierTest extends LoadData {
         String weight = "{BABA=0.027377002911909316, GOOG=0.008049673221518857, AAPL=0.03056362214259695, RRC=0.0, BAC=0.0, GM=0.003139466964626523, JPM=0.0, SHLD=0.0, PFE=0.19228094679112853, T=0.28647374600274456, UAA=0.0, MA=0.0, SBUX=0.11620020770388369, XOM=0.12498598031936779, AMD=0.0, BBY=0.015267454864065775, FB=0.010607869574562681, AMZN=0.011888696963645345, GE=0.033921039448292806, WMT=0.13924429309165717}";
         assertEquals(weight, ret.getData().toString());
     }
+
     @Test
     void getMinVarianceBLWithExactlyCertaintyOmega() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
         double riskFreeRate = 0.02;
@@ -158,6 +159,7 @@ class EfficientFrontierTest extends LoadData {
         String weight = "{BABA=0.026816053651845282, GOOG=0.008020009489481944, AAPL=0.03053514493155577, RRC=0.0, BAC=0.0, GM=0.010028895807356976, JPM=0.0, SHLD=0.0, PFE=0.19060542351474605, T=0.284589032555058, UAA=0.0, MA=0.0, SBUX=0.11537910959952263, XOM=0.12454764916466751, AMD=0.0, BBY=0.015170285575054735, FB=0.01025113997808897, AMZN=0.011982545409951143, GE=0.03373204830790416, WMT=0.13834266201476678}";
         assertEquals(weight, ret.getData().toString());
     }
+
     @Test
     void getMinVarianceBLWithCompletelyUncertaintyOmega() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
         double riskFreeRate = 0.02;
@@ -222,6 +224,7 @@ class EfficientFrontierTest extends LoadData {
         assertEquals(weight, ret.getData().toString());
     }
 
+    //Seems suboptimal
     @Test
     void getMinVarianceWithTargetReturnBL() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException {
         double riskFreeRate = 0.02;
