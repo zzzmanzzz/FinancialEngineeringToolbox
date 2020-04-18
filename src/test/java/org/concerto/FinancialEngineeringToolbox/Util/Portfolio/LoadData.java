@@ -54,6 +54,10 @@ class LoadData {
     }
 
     Map<String, double[]> generateP() {
+        //BABA, GOOG, AAPL, RRC, BAC, GM, JPM, SHLD, PFE, T, UAA, MA, SBUX, XOM, AMD, BBY, FB, AMZN, GE, WMT";
+        //GM drop 20%
+        //GOOG outperforms BABA by 10%
+        //AMZN and AAPL will outperform T and UAA 5%
         String[] symbols = {"BABA", "GOOG", "AAPL", "RRC", "BAC", "GM", "JPM", "SHLD", "PFE", "T", "UAA", "MA", "SBUX", "XOM", "AMD", "BBY", "FB", "AMZN", "GE", "WMT"};
         double[][] P = {
                 {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
