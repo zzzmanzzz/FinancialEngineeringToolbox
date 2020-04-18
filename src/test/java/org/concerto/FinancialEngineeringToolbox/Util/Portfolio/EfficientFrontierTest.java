@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EfficientFrontierTest extends LoadData {
 
     @Test
     void getMaxSharpeRatio() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException {
         double riskFreeRate = 0.02;
-        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, Constant.ReturnType.common,ConstantForTest.TRADINGDAYS);
         double[] upper = new double[data.size()];
         double[] lower = new double[data.size()];
         double[] init = new double[data.size()];
@@ -36,7 +36,7 @@ class EfficientFrontierTest extends LoadData {
     @Test
     void getMinVariance() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException {
         double riskFreeRate = 0.02;
-        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, Constant.ReturnType.common, ConstantForTest.TRADINGDAYS);
         double[] upper = new double[data.size()];
         double[] lower = new double[data.size()];
         double[] init = new double[data.size()];
@@ -56,7 +56,7 @@ class EfficientFrontierTest extends LoadData {
     void getMinVarianceWithTargetReturn() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException {
         double riskFreeRate = 0.02;
         double targetReturn = 0.36;
-        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, ConstantForTest.TRADINGDAYS);
+        EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, Constant.ReturnType.common,ConstantForTest.TRADINGDAYS);
         double[] upper = new double[data.size()];
         double[] lower = new double[data.size()];
         double[] init = new double[data.size()];

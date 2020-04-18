@@ -27,20 +27,15 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance}
 
-    EfficientFrontier(Map<String, double[]> data, double riskFreeRate, int frequency) throws ParameterIsNullException {
+    EfficientFrontier(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
         super(data, riskFreeRate, frequency);
-    }
-
-    public double[][] getCovariance(Constant.ReturnType type)
-        throws UndefinedParameterValueException {
-        init(type);
-        return cov;
-    }
-
-    private void init(Constant.ReturnType type) throws UndefinedParameterValueException {
-        double[][] returns = getReturns(type);
+        returns = getReturns(type);
         mean = getMeanReturn(returns, frequency);
         cov = getCovariance(returns, frequency);
+    }
+
+    public double[][] getCovariance() {
+        return cov;
     }
 
     private Result getResult(double[] bestWeight) {
@@ -51,7 +46,7 @@ public class EfficientFrontier extends PortfolioOptimization {
     }
 
     /**
-     * Get optimized portfolio weight at max Sharpe ratio
+     * Get optimized portfolio weight at max Sharpe ratio via Markowitz theory
      *
      * @param upperBound weight upper bound
      * @param lowerBound weight lower bound
@@ -61,20 +56,17 @@ public class EfficientFrontier extends PortfolioOptimization {
      * @throws UndefinedParameterValueException ReturnType is not common or log
      */
     public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType type) throws UndefinedParameterValueException {
-        init(type);
-        double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov,ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
+        double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov, ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
         return getResult(bestWeight);
     }
 
     public Result getMinVarianceWithTargetReturn(double[] upperBound, double[] lowerBound, double[] initGuess, double targetReturn, Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
-        init(type);
         this.targetReturn = targetReturn;
         double[] bestWeight = optimize(upperBound, lowerBound, initGuess,getObjectiveFunction(mean, cov, ObjectiveFunction.MinVarianceWithTargetReturn), GoalType.MINIMIZE);
         return getResult(bestWeight);
     }
 
     public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess,Constant.ReturnType type) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
-        init(type);
         double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov, ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
         return getResult(bestWeight);
     }
@@ -89,7 +81,6 @@ public class EfficientFrontier extends PortfolioOptimization {
         final int numIterpolationPoints = 2 * dim + 1;
         return new BOBYQAOptimizer(numIterpolationPoints);
     }
-
 
     protected CMAESOptimizer getCMAESOptimizer() {
         boolean isActiveCMA = true;

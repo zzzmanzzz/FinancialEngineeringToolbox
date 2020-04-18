@@ -52,8 +52,8 @@ class MinPortfolioVarianceWithTargetReturnTest extends LoadData {
         MinPortfolioVarianceWithTargetReturn mpv = new MinPortfolioVarianceWithTargetReturn(data, riskFreeRate, Constant.TRADINGDAYS);
         Result res = mpv.getBlackLittermanOptimizeResult(targetReturn, P, marketCap, Q, omega, tau, marketReturn, marketVariance, Constant.ReturnType.common);
 
-        assertEquals(0.32400, res.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.52281, res.getSharpeRatio(), Constant.EPSILON);
         assertEquals(targetReturn, res.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(1.03736, res.getPortfolioVariance(), Constant.EPSILON);
+        assertEquals(0.39840, res.getPortfolioVariance(), Constant.EPSILON);
     }
 }

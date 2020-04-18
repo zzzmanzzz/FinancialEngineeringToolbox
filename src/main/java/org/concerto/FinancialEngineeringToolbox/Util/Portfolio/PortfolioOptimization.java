@@ -6,6 +6,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.concerto.FinancialEngineeringToolbox.Constant;
+import org.concerto.FinancialEngineeringToolbox.Exception.DimensionMismatchException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.UndefinedParameterValueException;
 import org.concerto.FinancialEngineeringToolbox.Util.Returns.Rate;
@@ -157,5 +158,24 @@ abstract class PortfolioOptimization {
     protected double[] normalizeWeight(double[] w) {
         double sum = Arrays.stream(w).map(Math::abs).sum();
         return Arrays.stream(w).map(e -> Math.abs(e) / sum).toArray();
+    }
+
+    protected double[] getBLmean(double[][] cov, double[][] P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws DimensionMismatchException, ParameterIsNullException {
+        double[] omega = BlackLitterman.getOmega(cov, P, tau);
+        double[] marketC = DataProcessor.parseMarketCap(marketCap, data);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketMeanReturn, marketVariance, riskFreeRate);
+        double[] priorReturns = BlackLitterman.getPriorReturns(cov, riskAversion,  riskFreeRate, marketC);
+        return BlackLitterman.getBLMeanReturn(priorReturns, cov, Q, P, omega, tau);
+    }
+
+    protected double[] getBLmean(double[][] cov, double[][] P, double[] Omega, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws DimensionMismatchException, ParameterIsNullException {
+        double[] marketC = DataProcessor.parseMarketCap(marketCap, data);
+        double riskAversion = BlackLitterman.getMarketImpliedRiskAversion(marketMeanReturn, marketVariance, riskFreeRate);
+        double[] priorReturns = BlackLitterman.getPriorReturns(cov, riskAversion,  riskFreeRate, marketC);
+        return BlackLitterman.getBLMeanReturn(priorReturns, cov, Q, P, Omega, tau);
+    }
+
+    protected double[][] getBLcovariance(double[][] cov, double[][] P, double[] Omega, double tau) {
+        return BlackLitterman.getBLCovariance(cov, P, Omega, tau);
     }
 }
