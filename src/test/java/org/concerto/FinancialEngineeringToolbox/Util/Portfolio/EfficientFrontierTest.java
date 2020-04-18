@@ -250,7 +250,7 @@ class EfficientFrontierTest extends LoadData {
     @Test
     void getMinVarianceWithTargetReturnBLWithExactlyCertaintyOmega() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
         double riskFreeRate = 0.02;
-        double targetReturn = 0.02633;
+        double targetReturn = 0.02632;
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, Constant.ReturnType.common,ConstantForTest.TRADINGDAYS);
         double[] upper = new double[data.size()];
         double[] lower = new double[data.size()];
@@ -266,17 +266,17 @@ class EfficientFrontierTest extends LoadData {
         Map<String, Double> marketCap = generateMarketCap();
 
         Result ret = ef.getMinVarianceWithTargetReturn(upper, lower, init, targetReturn, P, marketCap, Q, Omega, tau, marketReturn, marketVariance);
-        assertEquals(0.03749, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.03745, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(targetReturn, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.02847, ret.getPortfolioVariance(), Constant.EPSILON);
-        String weight = "{BABA=0.0, GOOG=0.4642533490671777, AAPL=4.005345674389752E-4, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.0, SHLD=0.0, PFE=0.0, T=0.2407217623173122, UAA=0.0, MA=0.0, SBUX=0.0, XOM=0.0, AMD=0.0, BBY=0.0, FB=0.0, AMZN=0.1672154842777216, GE=0.0, WMT=0.12740886977034946}";
+        String weight = "{BABA=0.0, GOOG=0.46410105638199983, AAPL=4.195937142715238E-4, RRC=0.0, BAC=0.0, GM=0.0, JPM=0.0, SHLD=0.0, PFE=0.0, T=0.2408194537010501, UAA=0.0, MA=0.0, SBUX=0.0, XOM=0.0, AMD=0.0, BBY=0.0, FB=0.0, AMZN=0.16718349939514546, GE=0.0, WMT=0.12747639680753314}";
         assertEquals(weight, ret.getData().toString());
     }
 
     @Test
     void getMinVarianceWithTargetReturnBLWithCompletelyUncertaintyOmega() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException, DateFormatException {
         double riskFreeRate = 0.02;
-        double targetReturn = 0.06066;
+        double targetReturn = 0.09909;
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, Constant.ReturnType.common,ConstantForTest.TRADINGDAYS);
         double[] upper = new double[data.size()];
         double[] lower = new double[data.size()];
@@ -292,10 +292,10 @@ class EfficientFrontierTest extends LoadData {
         Map<String, Double> marketCap = generateMarketCap();
 
         Result ret = ef.getMinVarianceWithTargetReturn(upper, lower, init, targetReturn, P, marketCap, Q, Omega, tau, marketReturn, marketVariance);
-        assertEquals(0.32409, ret.getSharpeRatio(), Constant.EPSILON);
+        assertEquals(0.42609, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(targetReturn, ret.getWeightedReturns(), Constant.EPSILON);
-        assertEquals(0.01573, ret.getPortfolioVariance(), Constant.EPSILON);
-        String weight = "{BABA=0.03374731811047595, GOOG=0.013189978160072946, AAPL=0.010395132414627601, RRC=0.0, BAC=0.0, GM=0.003014406718048024, JPM=0.0, SHLD=0.0, PFE=0.1977799407911898, T=0.27913316435248386, UAA=0.0, MA=0.0, SBUX=0.13139905850363004, XOM=0.12962982943979198, AMD=0.0, BBY=0.014797986235586893, FB=0.017332533953413925, AMZN=0.0, GE=0.03002673169007729, WMT=0.13955391963060165}";
+        assertEquals(0.03445, ret.getPortfolioVariance(), Constant.EPSILON);
+        String weight = "{BABA=0.09805192564484626, GOOG=0.17588783328002522, AAPL=0.22091877520716133, RRC=0.0, BAC=0.07589603198945312, GM=0.0, JPM=0.07695593966509863, SHLD=0.0016084929106965902, PFE=0.0, T=0.0, UAA=0.020926105790519334, MA=0.041984832077627376, SBUX=0.0, XOM=0.0, AMD=0.010763273766229665, BBY=0.0, FB=0.10631377484433861, AMZN=0.16718089973411077, GE=0.0, WMT=0.003512115089893063}";
         assertEquals(weight, ret.getData().toString());
     }
 }
