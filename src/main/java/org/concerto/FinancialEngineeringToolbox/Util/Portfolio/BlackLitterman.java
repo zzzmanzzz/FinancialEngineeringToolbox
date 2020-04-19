@@ -7,10 +7,15 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.Arrays;
 
+/**
+ * Get parameters of Black-Litterman theory
+ * Reference:
+ * Meucci, A. ”The Black-Litterman Approach: Original Model and Extensions”, Bloomberg Alpha Research & Education Paper, No. 1 (2008)
+ */
 public class BlackLitterman {
 
     /**
-     * Get risk aversion
+     * Get risk aversion parameter
      * Three rates should be in the same period and correspond to the frequency of portfolio returns.
      * @param marketMeanReturn market returns
      * @param marketVariance Variance of market returns
@@ -21,6 +26,14 @@ public class BlackLitterman {
         return (marketMeanReturn - riskFreeRate) / (marketVariance);
     }
 
+    /**
+     * Get prior return according to market data
+     * @param covariance Portfolio covariance
+     * @param riskAversion Risk aversion parameter
+     * @param riskFreeRate Risk free rate
+     * @param marketCap Market capability of portfolio elements
+     * @return Prior return array
+     */
     static public double[] getPriorReturns(double[][] covariance, double riskAversion, double riskFreeRate, double[] marketCap) {
         final double sum = Arrays.stream(marketCap).sum();
         double[] marketCapWeight = Arrays.stream(marketCap).map(d -> d / sum).toArray();
@@ -31,9 +44,9 @@ public class BlackLitterman {
     }
 
     /**
-     *
-     * @param covariance
-     * @param P
+     * Get Omega matrix
+     * @param covariance Portfolio covariance
+     * @param P View matrix
      * @param tau
      * @return Diagonal elements of omega matrix
      */
@@ -51,16 +64,14 @@ public class BlackLitterman {
         return ret;
     }
 
-
     /**
-     *
-     * Meucci, A. ”The Black-Litterman Approach: Original Model and Extensions”, Bloomberg Alpha Research & Education Paper, No. 1 (2008)
-     * @param priorReturns
-     * @param covariance
-     * @param P
-     * @param P
+     * Get Black-Litterman Return
+     * @param priorReturns Prior return array
+     * @param covariance Portfolio covariance
+     * @param Q
+     * @param P View matrix
      * @param tau
-     * @return
+     * @return Black-Litterman Return
      */
     static public double[] getBLMeanReturn(double[] priorReturns, double[][] covariance, double[] Q, double[][] P, double[] Omega, double tau) {
         RealMatrix pi = new Array2DRowRealMatrix(priorReturns);
@@ -78,13 +89,12 @@ public class BlackLitterman {
     }
 
     /**
-     *
-     * Meucci, A. ”The Black-Litterman Approach: Original Model and Extensions”, Bloomberg Alpha Research & Education Paper, No. 1 (2008)
-     * @param covariance
-     * @param P
+     * Get Black-Litterman Covariance
+     * @param covariance Portfolio covariance
+     * @param P View matrix
      * @param Omega
      * @param tau
-     * @return
+     * @return Black-Litterman Covariance
      */
     static public double[][] getBLCovariance(double[][] covariance, double[][] P, double[] Omega, double tau) {
         RealMatrix sigma = new Array2DRowRealMatrix(covariance);

@@ -16,6 +16,9 @@ import org.concerto.FinancialEngineeringToolbox.Exception.*;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * Find optimized portfolio weight via Markowitz and Black-Litterman theory
+ */
 public class EfficientFrontier extends PortfolioOptimization {
     protected static Logger logger = Logger.getLogger(EfficientFrontier.class.getName());
     private double[][] returns;
@@ -24,6 +27,16 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     public enum ObjectiveFunction{MaxSharpeRatio, MinVarianceWithTargetReturn, MinVariance}
 
+    /**
+     *
+     * @param data Price data of portfolio elements
+     * @param riskFreeRate Risk free rate
+     * @param type return type, log return or percentage return
+     * @param frequency frequency of return, this value should correspond to risk free rate and market return,
+     *                  you can use 252 trading days for yearly risk free rate and daily return.
+     * @throws ParameterIsNullException Any parameter is null
+     * @throws UndefinedParameterValueException When type is not common or log.
+     */
     EfficientFrontier(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
         super(data, riskFreeRate, frequency);
         returns = getReturns(type);
@@ -31,10 +44,21 @@ public class EfficientFrontier extends PortfolioOptimization {
         cov = getCovariance(returns, frequency);
     }
 
+    /**
+     * Get covariance
+     * @return covariance
+     */
     public double[][] getCovariance() {
         return cov;
     }
 
+    /**
+     * Generate final result
+     * @param mean mean return of portfolio
+     * @param cov covariance of portfolio
+     * @param bestWeight Optimized portfolio weight
+     * @return Result POJO
+     */
     private Result getResult(double[]mean, double[][] cov, double[] bestWeight) {
         double weightedReturns = getWeightedReturn(bestWeight, mean);
         double bestSharpeRatio = getWeightedSharpeRatio(bestWeight, mean, cov, riskFreeRate);
@@ -44,23 +68,24 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at max Sharpe ratio via Markowitz theory
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
-     * @param common
-     * @return
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
+     * @return Result POJO
      * @throws UndefinedParameterValueException
      */
-    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType common) throws UndefinedParameterValueException {
+    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess) throws UndefinedParameterValueException {
         double[] bestWeight = BOBYQAOptimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov, ObjectiveFunction.MaxSharpeRatio), GoalType.MAXIMIZE);
         return getResult(mean, cov, bestWeight);
     }
 
     /**
      * Get optimized portfolio weight at max Sharpe ratio via Black-Litterman theory.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
      * @param P
      * @param marketCap
      * @param Q
@@ -88,9 +113,10 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at max Sharpe ratio via Black-Litterman theory.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
      * @param P
      * @param marketCap
      * @param Q
@@ -115,10 +141,11 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at min variance with target return via Black-Litterman theory.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
-     * @param targetReturn
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
+     * @param targetReturn Target return of portfolio, the actual optimized return will near this value
      * @param P
      * @param marketCap
      * @param Q
@@ -147,10 +174,11 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at min variance with target return via Black-Litterman theory.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
-     * @param targetReturn
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
+     * @param targetReturn Target return of portfolio, the actual optimized return will near this value
      * @param P
      * @param marketCap
      * @param Q
@@ -174,10 +202,11 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at min variance with target return via Markowitz theory.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
-     * @param targetReturn
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
+     * @param targetReturn Target return of portfolio, the actual optimized return will near this value
      * @return
      * @throws UndefinedParameterValueException
      * @throws ParameterRangeErrorException
@@ -191,9 +220,10 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at min variance with target return via Black Litterman theory.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
      * @param P
      * @param marketCap
      * @param Q
@@ -219,9 +249,10 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at min variance with target return via Black Litterman theory.
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
      * @param P
      * @param marketCap
      * @param Q
@@ -246,6 +277,10 @@ public class EfficientFrontier extends PortfolioOptimization {
 
     /**
      * Get optimized portfolio weight at min variance via Markowitz theory.
+     * @param upperBound Weight upper bond
+     * @param lowerBound Weight lower bond
+     *                   The two bonds will be normalized to [0, 1]
+     * @param initGuess Initialize Guessing weight
      * @param upperBound
      * @param lowerBound
      * @param initGuess
