@@ -87,13 +87,13 @@ public class EfficientFrontier extends PortfolioOptimization {
      *                   The two bonds will be normalized to [0, 1]
      * @param initGuess Initialize Guessing weight
      * @param P
-     * @param marketCap
+     * @param marketCap Market capability of portfolio elements
      * @param Q
      * @param Omega Customized certainty
      * @param tau
-     * @param marketMeanReturn
-     * @param marketVariance
-     * @return
+     * @param marketMeanReturn Market mean return
+     * @param marketVariance Market return variance
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws DateFormatException
      * @throws ParameterRangeErrorException
@@ -118,12 +118,12 @@ public class EfficientFrontier extends PortfolioOptimization {
      *                   The two bonds will be normalized to [0, 1]
      * @param initGuess Initialize Guessing weight
      * @param P
-     * @param marketCap
+     * @param marketCap Market capability of portfolio elements
      * @param Q
      * @param tau
-     * @param marketMeanReturn
-     * @param marketVariance
-     * @return
+     * @param marketMeanReturn Market mean return
+     * @param marketVariance Market return variance
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws DateFormatException
      * @throws ParameterRangeErrorException
@@ -147,13 +147,13 @@ public class EfficientFrontier extends PortfolioOptimization {
      * @param initGuess Initialize Guessing weight
      * @param targetReturn Target return of portfolio, the actual optimized return will near this value
      * @param P
-     * @param marketCap
+     * @param marketCap Market capability of portfolio elements
      * @param Q
      * @param Omega
      * @param tau
-     * @param marketMeanReturn
-     * @param marketVariance
-     * @return
+     * @param marketMeanReturn Market mean return
+     * @param marketVariance Market return variance
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws ParameterRangeErrorException
      * @throws DimensionMismatchException
@@ -179,13 +179,13 @@ public class EfficientFrontier extends PortfolioOptimization {
      *                   The two bonds will be normalized to [0, 1]
      * @param initGuess Initialize Guessing weight
      * @param targetReturn Target return of portfolio, the actual optimized return will near this value
-     * @param P
-     * @param marketCap
+     * @param P View Hash, Assign specific instrument view value for each view
+     * @param marketCap Market capability of portfolio elements
      * @param Q
      * @param tau
-     * @param marketMeanReturn
-     * @param marketVariance
-     * @return
+     * @param marketMeanReturn Market mean return
+     * @param marketVariance Market return variance
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws ParameterRangeErrorException
      * @throws DimensionMismatchException
@@ -207,7 +207,7 @@ public class EfficientFrontier extends PortfolioOptimization {
      *                   The two bonds will be normalized to [0, 1]
      * @param initGuess Initialize Guessing weight
      * @param targetReturn Target return of portfolio, the actual optimized return will near this value
-     * @return
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws ParameterRangeErrorException
      * @throws DimensionMismatchException
@@ -225,13 +225,13 @@ public class EfficientFrontier extends PortfolioOptimization {
      *                   The two bonds will be normalized to [0, 1]
      * @param initGuess Initialize Guessing weight
      * @param P
-     * @param marketCap
+     * @param marketCap Market capability of portfolio elements
      * @param Q
      * @param Omega
      * @param tau
-     * @param marketMeanReturn
-     * @param marketVariance
-     * @return
+     * @param marketMeanReturn Market mean return
+     * @param marketVariance Market return variance
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws DateFormatException
      * @throws ParameterRangeErrorException
@@ -254,12 +254,12 @@ public class EfficientFrontier extends PortfolioOptimization {
      *                   The two bonds will be normalized to [0, 1]
      * @param initGuess Initialize Guessing weight
      * @param P
-     * @param marketCap
+     * @param marketCap Market capability of portfolio elements
      * @param Q
      * @param tau
-     * @param marketMeanReturn
-     * @param marketVariance
-     * @return
+     * @param marketMeanReturn Market mean return
+     * @param marketVariance Market return variance
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws DateFormatException
      * @throws ParameterRangeErrorException
@@ -281,16 +281,12 @@ public class EfficientFrontier extends PortfolioOptimization {
      * @param lowerBound Weight lower bond
      *                   The two bonds will be normalized to [0, 1]
      * @param initGuess Initialize Guessing weight
-     * @param upperBound
-     * @param lowerBound
-     * @param initGuess
-     * @param common
-     * @return
+     * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
      * @throws ParameterRangeErrorException
      * @throws DimensionMismatchException
      */
-    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Constant.ReturnType common) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
+    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException {
         double[] bestWeight = optimize(upperBound, lowerBound, initGuess, getObjectiveFunction(mean, cov, ObjectiveFunction.MinVariance), GoalType.MINIMIZE);
         return getResult(mean, cov, bestWeight);
     }

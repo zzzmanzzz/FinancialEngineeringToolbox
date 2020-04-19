@@ -196,7 +196,7 @@ class EfficientFrontierTest extends LoadData {
         Arrays.fill(lower, 0.0);
         Arrays.fill(init, 0.05);
 
-        Result ret = ef.getMinVariance(upper, lower, init, Constant.ReturnType.common);
+        Result ret = ef.getMinVariance(upper, lower, init);
         assertEquals(0.55476, ret.getSharpeRatio(), Constant.EPSILON);
         assertEquals(0.08785, ret.getWeightedReturns(), Constant.EPSILON);
         assertEquals(0.01496, ret.getPortfolioVariance(), Constant.EPSILON);
