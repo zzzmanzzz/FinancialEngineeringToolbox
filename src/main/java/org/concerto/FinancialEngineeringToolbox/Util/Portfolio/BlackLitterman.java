@@ -47,7 +47,7 @@ public class BlackLitterman {
      * Get Omega matrix
      * @param covariance Portfolio covariance
      * @param P View matrix
-     * @param tau
+     * @param tau Level of confidence in the equilibrium expected returns
      * @return Diagonal elements of omega matrix
      */
     static public double[] getOmega(double[][] covariance, double[][] P, double tau) {
@@ -68,9 +68,9 @@ public class BlackLitterman {
      * Get Black-Litterman Return
      * @param priorReturns Prior return array
      * @param covariance Portfolio covariance
-     * @param Q
+     * @param Q View expected returns matrix
      * @param P View matrix
-     * @param tau
+     * @param tau Level of confidence in the equilibrium expected returns
      * @return Black-Litterman Return
      */
     static public double[] getBLMeanReturn(double[] priorReturns, double[][] covariance, double[] Q, double[][] P, double[] Omega, double tau) {
@@ -92,8 +92,8 @@ public class BlackLitterman {
      * Get Black-Litterman Covariance
      * @param covariance Portfolio covariance
      * @param P View matrix
-     * @param Omega
-     * @param tau
+     * @param Omega Diagonal elements of view uncertainty matrix
+     * @param tau Level of confidence in the equilibrium expected returns
      * @return Black-Litterman Covariance
      */
     static public double[][] getBLCovariance(double[][] covariance, double[][] P, double[] Omega, double tau) {
