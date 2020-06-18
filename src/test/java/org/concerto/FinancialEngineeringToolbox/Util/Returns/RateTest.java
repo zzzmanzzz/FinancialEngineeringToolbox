@@ -84,7 +84,7 @@ class RateTest {
     }
 
     @Test
-    void getCommonReturn() throws ParameterIsNullException {
+    void getCommonReturn() {
         double[] price = {1.0, 0.8, 0.64};
         double[] ret = Rate.getCommonReturn(price);
         double[] exp = {-0.2, -0.2};
@@ -92,7 +92,7 @@ class RateTest {
     }
 
     @Test
-    void getCommonReturnOneValueInput() throws ParameterIsNullException {
+    void getCommonReturnOneValueInput() {
         double[] price = {1.0};
         double[] ret = Rate.getCommonReturn(price);
         double[] exp = new double[0];
@@ -100,7 +100,7 @@ class RateTest {
     }
 
     @Test
-    void getLogReturn() throws ParameterIsNullException {
+    void getLogReturn() {
         double[] price = {1.0, 0.8, 0.64};
         double[] ret = Rate.getLogReturn(price);
         double[] exp = {-0.22314, -0.22314};
@@ -108,7 +108,7 @@ class RateTest {
     }
 
     @Test
-    void getLogReturnOneValueInput() throws ParameterIsNullException {
+    void getLogReturnOneValueInput() {
         double[] price = {1.0};
         double[] ret = Rate.getLogReturn(price);
         double[] exp = new double[0];

@@ -37,7 +37,7 @@ class LoadData {
                     csv.put(s, new LinkedList<Double>());
                 }
                 String n = csvRecord.get(s);
-                double num = 0;
+                double num;
                 if( n.isEmpty() || n.equals("") ) {
                     num = Double.NaN;
                 } else {

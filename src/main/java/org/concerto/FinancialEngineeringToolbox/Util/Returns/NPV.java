@@ -6,12 +6,11 @@ import org.concerto.FinancialEngineeringToolbox.Exception.IndexOutOfRangeExcepti
 public class NPV {
     /**
      All dimension of arrays should be the same
-     @Param  double[] inflow     Cash inflow
-     @Param  double[] outflow    Cash outflow
-     @Param  double[] rate       Required rate
-     @Param  int from            Net cash flow is discounted to this index
-     @Param  int to              Last net cash flow index to discount
-
+     @param  inflow Cash inflow
+     @param  outflow    Cash outflow
+     @param  rate   Required rate
+     @param  from   Net cash flow is discounted to this index
+     @param  to Last net cash flow index to discount
      @return double Present price at time "from"
      */
     static public double getPresentValue(double[] inflow, double[] outflow, double[] rate, int from, int to) throws DimensionMismatchException, IndexOutOfRangeException {
@@ -34,11 +33,11 @@ public class NPV {
 
     /**
      All dimension of arrays should be the same
-     @Param  double[] inflow     Cash inflow
-     @Param  double   outflow    Only initial index has outflow
-     @Param  double[] rate       Required rate
-     @Param  int from            Net cash flow is discounted to this index
-     @Param  int to              Last net cash flow index to discount
+     @param  inflow Cash inflow
+     @param  initialOutflow Only initial index has outflow
+     @param  rate   Required rate
+     @param  from   Net cash flow is discounted to this index
+     @param  to Last net cash flow index to discount
 
      @return double Present price at time "from"
      */
@@ -51,11 +50,11 @@ public class NPV {
 
     /**
      All dimension of arrays should be the same
-     @Param  double[] inflow     Cash inflow
-     @Param  double   outflow    Only initial index has outflow
-     @Param  double   rate       Fix required rate
-     @Param  int from            Net cash flow is discounted to this index
-     @Param  int to              Last net cash flow index to discount
+     @param  inflow Cash inflow
+     @param  initialOutflow Only initial index has outflow
+     @param  rate   Fix required rate
+     @param  from   Net cash flow is discounted to this index
+     @param  to Last net cash flow index to discount
 
      @return double Present price at time "from"
      */
@@ -72,11 +71,11 @@ public class NPV {
 
     /**
      All dimension of arrays should be the same
-     @Param  double[] inflow     Cash inflow
-     @Param  double[] outflow    Cash outflow
-     @Param  double   rate       Fix required rate
-     @Param  int from            Net cash flow is discounted to this index
-     @Param  int to              Last net cash flow index to discount
+     @param inflow  Cash inflow
+     @param outflow Cash outflow
+     @param rate  Fix required rate
+     @param from    Net cash flow is discounted to this index
+     @param to  Last net cash flow index to discount
 
      @return double Present price at time "from"
      */

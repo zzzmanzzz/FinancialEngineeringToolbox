@@ -4,11 +4,7 @@ import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
@@ -17,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JumpDiffusionTest {
 
     @Test
-    void dynamicSimulate() throws ParameterRangeErrorException, IOException {
+    void dynamicSimulate() throws ParameterRangeErrorException {
         double S0 = 100;
         double sigma = 0.2;
         double lambda = 0.75;

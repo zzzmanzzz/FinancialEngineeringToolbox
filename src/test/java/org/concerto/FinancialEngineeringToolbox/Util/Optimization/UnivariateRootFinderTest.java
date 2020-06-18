@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UnivariateRootFinderTest {
 
     @Test
-    void solve() throws ParameterRangeErrorException {
+    void solve() {
         UnivariateFunction u = s -> {
             BlackScholes bs = new BlackScholes(100, 100, s, 0.06, 1, 0);
             return bs.getCallPrice() - 25.91834;

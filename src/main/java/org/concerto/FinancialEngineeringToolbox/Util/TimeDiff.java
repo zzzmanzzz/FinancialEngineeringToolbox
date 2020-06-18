@@ -9,9 +9,9 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 
 public class TimeDiff {
-    private static String format = "yyyy-MM-dd";
 
     public static long getDaysBetweenDates(String early, String late) throws DateFormatException {
+        final String format = "yyyy-MM-dd";
         DateTimeFormatter dtf =  DateTimeFormatter.ofPattern(format);
         LocalDate dateEarly;
         LocalDate dateLate;

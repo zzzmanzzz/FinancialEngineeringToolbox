@@ -1,7 +1,6 @@
 package org.concerto.FinancialEngineeringToolbox.Util;
 
 import org.concerto.FinancialEngineeringToolbox.ConstantForTest;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

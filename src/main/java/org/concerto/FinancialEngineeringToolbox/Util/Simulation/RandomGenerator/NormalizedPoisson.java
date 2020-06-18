@@ -15,7 +15,7 @@ public class NormalizedPoisson implements Generator {
 
     private void init(double mean, int dimension, int randomSeed) throws ParameterRangeErrorException {
         if(dimension < 1) {
-            String msg = String.format("Dimension(%d) should >= 1");
+            String msg = "Dimension(%d) should >= 1";
             throw new ParameterRangeErrorException(msg, null);
         }
         poisson = new PoissonDistribution(new MersenneTwister(randomSeed), mean, PoissonDistribution.DEFAULT_EPSILON, PoissonDistribution.DEFAULT_MAX_ITERATIONS);

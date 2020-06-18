@@ -10,7 +10,7 @@ public class BlackScholes {
     private double r; // continuously compounded risk-free interest rate
     private double t;
     private double y; // continuously compounded dividend yield
-    private NormalDistribution n;
+    private final NormalDistribution n;
     private double d_1;
     private double d_2;
     private double tradingDays; // default 252

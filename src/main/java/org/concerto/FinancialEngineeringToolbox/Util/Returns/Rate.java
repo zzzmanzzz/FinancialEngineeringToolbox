@@ -1,6 +1,5 @@
 package org.concerto.FinancialEngineeringToolbox.Util.Returns;
 
-import org.concerto.FinancialEngineeringToolbox.Exception.ParameterIsNullException;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 
 public class  Rate {

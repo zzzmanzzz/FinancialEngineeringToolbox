@@ -9,8 +9,6 @@ import org.concerto.FinancialEngineeringToolbox.Exception.*;
 import java.util.Arrays;
 import java.util.Map;
 
-import static org.concerto.FinancialEngineeringToolbox.Util.Portfolio.BlackLitterman.getBLCovariance;
-
 public class MinPortfolioVarianceWithTargetReturn extends PortfolioOptimization {
     final private String[] keys;
 

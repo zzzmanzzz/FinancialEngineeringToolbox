@@ -18,7 +18,7 @@ public abstract class AbstractBinomialTree extends Tree {
     public double getFairPrice(Constant.OptionType optionType, boolean[] strikeSchedule) throws UndefinedParameterValueException {
         double[] St = new double[N + 1];
         double[] prevC = new double[N + 1];
-        double[] currentC = null;
+        double[] currentC;
 
         St[0] = S0 * Math.pow(D, N);
 
@@ -42,9 +42,9 @@ public abstract class AbstractBinomialTree extends Tree {
 
             for (int j = 0; j <= i ; j++) {
                 double tempPrice = discount * (probabilityUp * prevC[j + 1] + probabilityDown * prevC[j]);
-                double executeReword = 0;
+                double executeReword;
 
-                if(strikeSchedule[i - 1] == false) {
+                if(!strikeSchedule[i - 1]) {
                     currentC[j] = tempPrice;
                 } else {
                     executeReword = ExecutionReward.execute(St[j], K, optionType);

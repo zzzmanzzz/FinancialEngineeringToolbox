@@ -10,7 +10,7 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.concerto.FinancialEngineeringToolbox.Exception.ParameterRangeErrorException;
 
 public class CorrelatedGaussianVector {
-    private CorrelatedRandomVectorGenerator RG;
+    private final CorrelatedRandomVectorGenerator RG;
     static final private Mean m = new Mean();
     static final private StandardDeviation std = new StandardDeviation();
 

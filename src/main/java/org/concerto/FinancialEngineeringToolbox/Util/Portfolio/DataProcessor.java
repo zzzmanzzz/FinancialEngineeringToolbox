@@ -28,7 +28,7 @@ class DataProcessor {
         for (double[] doubles : in) {
             for (int j = 0; j < doubles.length; j++) {
                 if (Double.isNaN(doubles[j])) {
-                    skipLine.add(new Long(j));
+                    skipLine.add(Long.valueOf(j));
                 }
             }
         }
@@ -38,7 +38,7 @@ class DataProcessor {
         for (int i = 0 ; i < in.length; i++) {
             List<Double> tmp = new LinkedList<>();
             for(int j = 0 ; j < in[i].length ; j++ ) {
-                if(!skipLine.contains(new Long(j))) {
+                if(!skipLine.contains(Long.valueOf(j))) {
                     tmp.add(in[i][j]);
                 }
             }
@@ -54,7 +54,7 @@ class DataProcessor {
             String msg = String.format("Key mismatch MarketCap: %s, data: %s", Arrays.toString(Mkey.toArray()), Arrays.toString(Dkey.toArray()));
             throw new DimensionMismatchException(msg, null);
         }
-        String[] symbols = Mkey.toArray(new String[Mkey.size()]);
+        String[] symbols = Mkey.toArray(new String[0]);
         double[] ret = new double[symbols.length];
 
         for(int i = 0; i < symbols.length; i++) {
@@ -70,7 +70,7 @@ class DataProcessor {
 
     }
 
-    static protected boolean validateOmega(double[] Q, double[] Omega) throws DateFormatException, ParameterRangeErrorException {
+    static protected void validateOmega(double[] Q, double[] Omega) throws DateFormatException, ParameterRangeErrorException {
         //check size
         if(Omega.length != Q.length) {
             String msg = String.format("Omega size(%d) not equal to Q(%d)",Omega.length, Q.length);
@@ -84,17 +84,15 @@ class DataProcessor {
             }
         }
 
-        return true;
     }
 
-    static protected boolean validateData(Map<String, double[]> data, String[] dataKeys) throws ParameterIsNullException {
+    static protected void validateData(Map<String, double[]> data, String[] dataKeys) throws ParameterIsNullException {
         for(Object k : dataKeys) {
             if(data.get(k) == null) {
                 String msg = String.format("key(%s) has null value", k);
                 throw new ParameterIsNullException(msg, null);
             }
         }
-        return true;
     }
 
 
@@ -106,7 +104,7 @@ class DataProcessor {
             throw new DimensionMismatchException(msg, null);
         }
 
-        String[] symbols = Pkey.toArray(new String[Pkey.size()]);
+        String[] symbols = Pkey.toArray(new String[0]);
         double[][] ret = new double[symbols.length][];
 
         int size = Q.length;

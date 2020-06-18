@@ -8,7 +8,7 @@ import static org.concerto.FinancialEngineeringToolbox.Constant.OptionType.put;
 
 public class ExecutionReward {
     static public double execute(double St, double K, Constant.OptionType optionType) throws UndefinedParameterValueException {
-        double executeReword = 0;
+        double executeReword;
         if(optionType.equals(put)){
             executeReword = Math.max(K - St, 0);
         } else if(optionType.equals(call)) {

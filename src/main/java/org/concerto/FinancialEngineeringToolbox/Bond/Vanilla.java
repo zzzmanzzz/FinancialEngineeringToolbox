@@ -33,10 +33,7 @@ public class Vanilla extends AbstractBond {
         Map<String, double[]> cashflow = getCashFlow();
         try {
             return NPV.getPresentValue(cashflow.get("inflow"), 0.0, requiredYield, 0, N);
-        } catch (DimensionMismatchException e) {
-            //this should be internal error
-            throw new RuntimeException(e.getMessage());
-        } catch (IndexOutOfRangeException e) {
+        } catch (DimensionMismatchException | IndexOutOfRangeException e) {
             //this should be internal error
             throw new RuntimeException(e.getMessage());
         }
@@ -88,7 +85,7 @@ public class Vanilla extends AbstractBond {
                 continue;
             }
 
-            if(i > 0 && i < N) {
+            if(i < N) {
                 inflow[i] = couponRate * parValue;
                 outflow[i] = 0;
             }

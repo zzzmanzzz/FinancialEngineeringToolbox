@@ -21,7 +21,6 @@ import java.util.logging.Logger;
  */
 public class EfficientFrontier extends PortfolioOptimization {
     protected static Logger logger = Logger.getLogger(EfficientFrontier.class.getName());
-    private double[][] returns;
     private double[][] cov;
     private double[] mean;
 
@@ -39,7 +38,7 @@ public class EfficientFrontier extends PortfolioOptimization {
      */
     EfficientFrontier(Map<String, double[]> data, double riskFreeRate, Constant.ReturnType type, int frequency) throws ParameterIsNullException, UndefinedParameterValueException {
         super(data, riskFreeRate, frequency);
-        returns = getReturns(type);
+        double[][] returns = getReturns(type);
         mean = getMeanReturn(returns, frequency);
         cov = getCovariance(returns, frequency);
     }
@@ -125,12 +124,10 @@ public class EfficientFrontier extends PortfolioOptimization {
      * @param marketVariance Market return variance
      * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
-     * @throws DateFormatException
-     * @throws ParameterRangeErrorException
      * @throws DimensionMismatchException
      * @throws ParameterIsNullException
      */
-    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
+    public Result getMaxSharpeRatio(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DimensionMismatchException, ParameterIsNullException {
         double[][] p = DataProcessor.parseP(P, Q, data);
         double[] Omega = BlackLitterman.getOmega(cov, p, tau);
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
@@ -261,12 +258,11 @@ public class EfficientFrontier extends PortfolioOptimization {
      * @param marketVariance Market return variance
      * @return Result POJO {@link org.concerto.FinancialEngineeringToolbox.Util.Portfolio.Result}
      * @throws UndefinedParameterValueException
-     * @throws DateFormatException
      * @throws ParameterRangeErrorException
      * @throws DimensionMismatchException
      * @throws ParameterIsNullException
      */
-    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, DateFormatException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
+    public Result getMinVariance(double[] upperBound, double[] lowerBound, double[] initGuess, Map<String, double[]> P, Map<String, Double> marketCap, double[] Q, double tau, double marketMeanReturn, double marketVariance) throws UndefinedParameterValueException, ParameterRangeErrorException, DimensionMismatchException, ParameterIsNullException {
         double[][] p = DataProcessor.parseP(P, Q, data);
         double[] Omega = BlackLitterman.getOmega(cov, p, tau);
         double[][] BLcov = getBLCovariance(cov, p, Omega, tau);
@@ -356,7 +352,7 @@ public class EfficientFrontier extends PortfolioOptimization {
         return normalizeWeight(solution.getPoint());
     }
 
-    protected double[] optimize(double[] upperBound, double[] lowerBound, double[] initGuess, MultivariateFunction fun, GoalType goal) throws ParameterRangeErrorException, DimensionMismatchException {
+    protected double[] optimize(double[] upperBound, double[] lowerBound, double[] initGuess, MultivariateFunction fun, GoalType goal) throws DimensionMismatchException {
 
         final int size = symbols.length;
         if(upperBound.length != size) {

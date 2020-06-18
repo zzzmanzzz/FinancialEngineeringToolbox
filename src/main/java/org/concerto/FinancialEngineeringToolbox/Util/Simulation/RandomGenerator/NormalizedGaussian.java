@@ -16,7 +16,7 @@ public class NormalizedGaussian implements Generator {
 
     private void init(int dimension, int randomSeed) throws ParameterRangeErrorException {
         if(dimension < 1) {
-            String msg = String.format("Dimension(%d) should >= 1");
+            String msg = "Dimension(%d) should >= 1";
             throw new ParameterRangeErrorException(msg, null);
         }
         NormalizedRandomGenerator nr = new GaussianRandomGenerator(new MersenneTwister(randomSeed));

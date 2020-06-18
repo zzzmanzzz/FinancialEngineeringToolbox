@@ -16,7 +16,7 @@ class EfficientFrontierTest extends LoadData {
     final static double marketVariance = 0.03294;
 
     @Test
-    void getMaxSharpeRatio() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException, DimensionMismatchException {
+    void getMaxSharpeRatio() throws ParameterIsNullException, UndefinedParameterValueException {
         double riskFreeRate = 0.02;
         EfficientFrontier ef = new EfficientFrontier(data, riskFreeRate, Constant.ReturnType.common,ConstantForTest.TRADINGDAYS);
         double[] upper = new double[data.size()];

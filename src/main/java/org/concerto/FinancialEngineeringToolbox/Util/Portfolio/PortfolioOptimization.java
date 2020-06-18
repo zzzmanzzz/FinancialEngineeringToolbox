@@ -30,7 +30,7 @@ abstract class PortfolioOptimization {
         this.frequency = frequency;
         this.data = data;
         Set<String> keys = data.keySet();
-        this.symbols = keys.toArray(new String[keys.size()]);
+        this.symbols = keys.toArray(new String[0]);
         for(String s : symbols) {
             if(data.get(s) == null) {
                 String msg = String.format("key(%s) has null value", s);

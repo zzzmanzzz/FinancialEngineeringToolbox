@@ -15,7 +15,7 @@ class MinPortfolioVarianceTest extends LoadData {
     final static double marketVariance = 0.03294;
 
     @Test
-    void getMarkowitzOptimizeResult() throws ParameterIsNullException, ParameterRangeErrorException, UndefinedParameterValueException {
+    void getMarkowitzOptimizeResult() throws ParameterIsNullException, UndefinedParameterValueException {
         MinPortfolioVariance mpv = new MinPortfolioVariance(data, riskFreeRate, Constant.TRADINGDAYS);
         Result ret = mpv.getMarkowitzOptimizeResult(Constant.ReturnType.common);
 
